@@ -678,7 +678,7 @@ namespace Framework.ViewModel
                 {
                     ColorProcessedImage = Tools.Convert(GrayInitialImage);
                     ColorProcessedImage = Tools.Crop(ColorProcessedImage, VectorOfMousePosition.Last(c=>c != LastPosition), LastPosition);
-                    ProcessedImage = Convert(GrayProcessedImage);
+                    ProcessedImage = Convert(ColorProcessedImage);
                 }
                 else if (ColorInitialImage != null)
                 {
