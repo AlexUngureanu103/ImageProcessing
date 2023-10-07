@@ -1,21 +1,19 @@
-﻿using Emgu.CV;
+﻿using Algorithms.Tools;
+using Algorithms.Utilities;
+using Emgu.CV;
 using Emgu.CV.Structure;
-
-using System.Windows;
+using Framework.View;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Controls;
-
-using Framework.View;
-using static Framework.Utilities.DataProvider;
-using static Framework.Utilities.FileHelper;
-using static Framework.Utilities.DrawingHelper;
 using static Framework.Converters.ImageConverter;
-
-using Algorithms.Sections;
-using Algorithms.Tools;
-using Algorithms.Utilities;
+using static Framework.Utilities.DataProvider;
+using static Framework.Utilities.DrawingHelper;
+using static Framework.Utilities.FileHelper;
 
 namespace Framework.ViewModel
 {
@@ -599,6 +597,246 @@ namespace Framework.ViewModel
         #endregion
 
         #region Thresholding
+
+        private ICommand _thresholdingCommand;
+        public ICommand ThresholdingCommand
+        {
+            get
+            {
+                if (_thresholdingCommand == null)
+                {
+                    _thresholdingCommand = new RelayCommand(ThresholdingImage);
+                }
+                return _thresholdingCommand;
+            }
+        }
+
+        private void ThresholdingImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            List<string> parameters = new List<string>();
+            parameters.Add("Threshold");
+
+            DialogBox box = new DialogBox(_mainVM, parameters);
+            box.ShowDialog();
+
+            List<double> values = box.GetValues();
+            if (values != null)
+            {
+                byte threshhold = (byte)(values[0] + 0.5);
+                if (GrayInitialImage != null)
+                {
+                    GrayProcessedImage = Tools.Thresholding(GrayInitialImage, threshhold);
+                    ProcessedImage = Convert(GrayProcessedImage);
+                }
+                else if (ColorInitialImage != null)
+                {
+                    GrayProcessedImage = Tools.Convert(ColorInitialImage);
+                    GrayProcessedImage = Tools.Thresholding(GrayProcessedImage, threshhold);
+                    ProcessedImage = Convert(GrayProcessedImage);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Crop Image
+
+        private ICommand _cropCommand;
+        public ICommand CropCommand
+        {
+            get
+            {
+                if (_cropCommand == null)
+                {
+                    _cropCommand = new RelayCommand(CropImage);
+                }
+                return _cropCommand;
+            }
+        }
+
+        private void CropImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            var canvases = (object[])parameter;
+            ClearProcessedCanvas(canvases[1]);
+            RemoveInitialDrawnShapes(canvases[0]);
+
+            if (VectorOfMousePosition.Count >= 2)
+            {
+                Point firstPoint = VectorOfMousePosition.Last(c => c != LastPosition);
+                Point secondPoint = LastPosition;
+
+                if (firstPoint.X.Equals(secondPoint.X) || firstPoint.Y.Equals(secondPoint.Y))
+                {
+                    MessageBox.Show("Points must be different", "Warning");
+                    return;
+                }
+                if (GrayInitialImage != null)
+                {
+                    ColorProcessedImage = Tools.Convert(GrayInitialImage);
+                    ColorProcessedImage = Tools.Crop(ColorProcessedImage, firstPoint, secondPoint);
+                    ProcessedImage = Convert(ColorProcessedImage);
+
+                    DrawSelectedZone(canvases[0]);
+                }
+                else if (ColorInitialImage != null)
+                {
+                    ColorProcessedImage = Tools.Crop(ColorInitialImage, firstPoint, secondPoint);
+                    ProcessedImage = Convert(ColorProcessedImage);
+
+                    DrawSelectedZone(canvases[0]);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select at least 2 points !");
+                return;
+            }
+
+        }
+
+        private void DrawSelectedZone(object canvas)
+        {
+            var topLeftPoint = Tools.GetTopLeftPoint(VectorOfMousePosition.Last(c => c != LastPosition), LastPosition);
+            var bottomRightPoint = Tools.GetBottomRightPoint(VectorOfMousePosition.Last(c => c != LastPosition), LastPosition);
+            DrawRectangle(canvas as Canvas, topLeftPoint, bottomRightPoint, 1, Brushes.Red, ScaleValue);
+        }
+
+        #endregion
+
+        #region Mirror Image
+
+        private ICommand _mirrorImageCommand;
+        public ICommand MirrorImageCommand
+        {
+            get
+            {
+                if (_mirrorImageCommand == null)
+                {
+                    _mirrorImageCommand = new RelayCommand(MirrorImage);
+                }
+                return _mirrorImageCommand;
+            }
+        }
+
+        private void MirrorImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            if (GrayInitialImage != null)
+            {
+                ColorProcessedImage = Tools.Convert(GrayInitialImage);
+                ColorProcessedImage = Tools.Mirror(ColorProcessedImage);
+                ProcessedImage = Convert(ColorProcessedImage);
+
+            }
+            else if (ColorInitialImage != null)
+            {
+                ColorProcessedImage = Tools.Mirror(ColorInitialImage);
+                ProcessedImage = Convert(ColorProcessedImage);
+            }
+        }
+
+        #endregion
+
+        #region Rotate Image
+
+        #region Clockwise
+        private ICommand _rotateClockwiseCommand;
+        public ICommand RotateClockwiseCommand
+        {
+            get
+            {
+                if (_rotateClockwiseCommand == null)
+                {
+                    _rotateClockwiseCommand = new RelayCommand(RotateImageClockwise);
+                }
+                return _rotateClockwiseCommand;
+            }
+        }
+
+        private void RotateImageClockwise(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            if (GrayInitialImage != null)
+            {
+                ColorProcessedImage = Tools.Convert(GrayInitialImage);
+                ColorProcessedImage = Tools.RotateImage(ColorProcessedImage, 90);
+                ProcessedImage = Convert(ColorProcessedImage);
+
+            }
+            else if (ColorInitialImage != null)
+            {
+                ColorProcessedImage = Tools.RotateImage(ColorInitialImage, 90);
+                ProcessedImage = Convert(ColorProcessedImage);
+            }
+        }
+        #endregion
+
+        #region Anti-Clockwise
+        private ICommand _rotateAntiClockwiseCommand;
+        public ICommand RotateAntiClockwiseCommand
+        {
+            get
+            {
+                if (_rotateAntiClockwiseCommand == null)
+                {
+                    _rotateAntiClockwiseCommand = new RelayCommand(RotateImageAntiClockwise);
+                }
+                return _rotateAntiClockwiseCommand;
+            }
+        }
+
+        private void RotateImageAntiClockwise(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            if (GrayInitialImage != null)
+            {
+                ColorProcessedImage = Tools.Convert(GrayInitialImage);
+                ColorProcessedImage = Tools.RotateImage(ColorProcessedImage, -90);
+                ProcessedImage = Convert(ColorProcessedImage);
+
+            }
+            else if (ColorInitialImage != null)
+            {
+                ColorProcessedImage = Tools.RotateImage(ColorInitialImage, -90);
+                ProcessedImage = Convert(ColorProcessedImage);
+            }
+        }
+        #endregion
         #endregion
 
         #region Filters

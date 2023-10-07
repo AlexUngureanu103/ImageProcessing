@@ -176,8 +176,47 @@
             </MenuItem>
 
             <MenuItem Header="Thresholding"
+                      Command="{Binding Path=MenuCommands.ThresholdingCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+            </MenuItem>
+
+            <MenuItem Header="Crop"
+                      Command="{Binding Path=MenuCommands.CropCommand}"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+                <MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
+                        <Binding ElementName="canvasOriginalImage"/>
+                        <Binding ElementName="canvasProcessedImage"/>
+                    </MultiBinding>
+                </MenuItem.CommandParameter>
+
+            </MenuItem>
+
+            <MenuItem Header="Mirror"
+                      Command="{Binding Path=MenuCommands.MirrorImageCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+            </MenuItem>
+
+            <MenuItem Header="Rotate"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+                <MenuItem Header="Clockwise"
+                      Command="{Binding Path=MenuCommands.RotateClockwiseCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+
+                </MenuItem>
+                <MenuItem Header=" Anti-clockwise."
+                      Command="{Binding Path=MenuCommands.RotateAntiClockwiseCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+
+                </MenuItem>
 
             </MenuItem>
 

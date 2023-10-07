@@ -1,5 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
+using System;
+using System.Windows;
 
 namespace Algorithms.Tools
 {
@@ -55,6 +57,110 @@ namespace Algorithms.Tools
             Image<Gray, byte> result = inputImage.Convert<Gray, byte>();
             return result;
         }
+        public static Image<Bgr, byte> Convert(Image<Gray, byte> inputImage)
+        {
+            Image<Bgr, byte> result = inputImage.Convert<Bgr, byte>();
+            return result;
+        }
+        #endregion
+
+        #region Thresholding
+
+        public static Image<Gray, byte> Thresholding(Image<Gray, byte> inputImage, byte treshold)
+        {
+            Image<Gray, byte> result = new Image<Gray, byte>(inputImage.Size);
+
+            for (int y = 0; y < inputImage.Height; y++)
+            {
+                for (int x = 0; x < inputImage.Width; x++)
+                {
+                    if (inputImage.Data[y, x, 0] >= treshold)
+                    {
+                        result.Data[y, x, 0] = 255;
+                    }
+                    else
+                    {
+                        result.Data[y, x, 0] = 0;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region GetPoints
+
+        public static Point GetTopLeftPoint(Point firstPoint, Point secondPoint)
+        {
+            Point topLeftPoint = new Point(Math.Min(firstPoint.X, secondPoint.X), Math.Min(firstPoint.Y, secondPoint.Y));
+            return topLeftPoint;
+        }
+
+        public static Point GetBottomRightPoint(Point firstPoint, Point secondPoint)
+        {
+            Point bottomRightPoint = new Point(Math.Max(firstPoint.X, secondPoint.X), Math.Max(firstPoint.Y, secondPoint.Y));
+            return bottomRightPoint;
+        }
+
+        #endregion
+
+        #region Crop Image
+
+        public static Image<Bgr, byte> Crop(Image<Bgr, byte> inputImage, Point firstPoint, Point secondPoint)
+        {
+            Point topLeftPoint = GetTopLeftPoint(firstPoint, secondPoint);
+            Point bottomRightPoint = GetBottomRightPoint(firstPoint, secondPoint);
+
+            Image<Bgr, byte> result = new Image<Bgr, byte>((int)(bottomRightPoint.X - topLeftPoint.X + 1), (int)(bottomRightPoint.Y - topLeftPoint.Y + 1));
+
+            for (int y = 0; y < (int)(bottomRightPoint.Y - topLeftPoint.Y); y++)
+            {
+                for (int x = 0; x < (int)(bottomRightPoint.X - topLeftPoint.X); x++)
+                {
+
+                    result.Data[y, x, 0] = inputImage.Data[y + (int)topLeftPoint.Y, x + (int)topLeftPoint.X, 0];
+                    result.Data[y, x, 1] = inputImage.Data[y + (int)topLeftPoint.Y, x + (int)topLeftPoint.X, 1];
+                    result.Data[y, x, 2] = inputImage.Data[y + (int)topLeftPoint.Y, x + (int)topLeftPoint.X, 2];
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Mirror Image
+
+        public static Image<Bgr, byte> Mirror(Image<Bgr, byte> inputImage)
+        {
+            Image<Bgr, byte> result = new Image<Bgr, byte>(inputImage.Size);
+
+            for (int y = 0; y < inputImage.Height; y++)
+            {
+                for (int x = 0; x < inputImage.Width; x++)
+                {
+                    result.Data[y, x, 0] = inputImage.Data[y, inputImage.Width - x - 1, 0];
+                    result.Data[y, x, 1] = inputImage.Data[y, inputImage.Width - x - 1, 1];
+                    result.Data[y, x, 2] = inputImage.Data[y, inputImage.Width - x - 1, 2];
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Rotate Image
+
+        public static Image<Bgr, byte> RotateImage(Image<Bgr, byte> inputImage, double angle)
+        {
+            inputImage = inputImage.Rotate(angle, new Bgr(0, 0, 0), false);
+
+            return inputImage;
+        }
+
         #endregion
     }
 }
