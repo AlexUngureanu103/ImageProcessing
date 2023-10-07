@@ -90,13 +90,30 @@ namespace Algorithms.Tools
 
         #endregion
 
+        #region GetPoints
+
+        public static Point GetTopLeftPoint(Point firstPoint, Point secondPoint)
+        {
+            Point topLeftPoint = new Point(Math.Min(firstPoint.X, secondPoint.X), Math.Min(firstPoint.Y, secondPoint.Y));
+            return topLeftPoint;
+        }
+        
+        public static Point GetBottomRightPoint(Point firstPoint, Point secondPoint)
+        {
+            Point bottomRightPoint = new Point(Math.Max(firstPoint.X, secondPoint.X), Math.Max(firstPoint.Y, secondPoint.Y));
+            return bottomRightPoint;
+        }
+        
+        #endregion
+
         #region Crop Image
 
 
         public static Image<Bgr, byte> Crop(Image<Bgr, byte> inputImage, Point firstPoint, Point secondPoint)
         {
-            Point topLeftPoint = new Point(Math.Min(firstPoint.X, secondPoint.X), Math.Min(firstPoint.Y, secondPoint.Y));
-            Point bottomRightPoint = new Point(Math.Max(firstPoint.X, secondPoint.X), Math.Max(firstPoint.Y, secondPoint.Y));
+            Point topLeftPoint = GetTopLeftPoint(firstPoint, secondPoint);
+            Point bottomRightPoint = GetBottomRightPoint(firstPoint, secondPoint);
+
             Image<Bgr, byte> result = new Image<Bgr, byte>((int)(bottomRightPoint.X - topLeftPoint.X), (int)(bottomRightPoint.Y - topLeftPoint.Y));
 
             for (int y = 0; y < bottomRightPoint.Y - topLeftPoint.Y; y++)

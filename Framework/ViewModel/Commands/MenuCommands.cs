@@ -670,22 +670,49 @@ namespace Framework.ViewModel
                 return;
             }
 
-            ClearProcessedCanvas(parameter);
+            var canvases = (object[])parameter;
+            ClearProcessedCanvas(canvases[1]);
+            RemoveInitialDrawnShapes(canvases[0]);
 
             if (VectorOfMousePosition.Count >= 2)
             {
+                Point firstPoint = VectorOfMousePosition.Last(c => c != LastPosition);
+                Point secondPoint = LastPosition;
+
+                if (firstPoint.X.Equals(secondPoint.X) || firstPoint.Y.Equals(secondPoint.Y))
+                {
+                    MessageBox.Show("Points must be different", "Warning");
+                    return;
+                }
                 if (GrayInitialImage != null)
                 {
                     ColorProcessedImage = Tools.Convert(GrayInitialImage);
-                    ColorProcessedImage = Tools.Crop(ColorProcessedImage, VectorOfMousePosition.Last(c=>c != LastPosition), LastPosition);
+                    ColorProcessedImage = Tools.Crop(ColorProcessedImage, firstPoint, secondPoint);
                     ProcessedImage = Convert(ColorProcessedImage);
+
+                    DrawSelectedZone(canvases[0]);
                 }
                 else if (ColorInitialImage != null)
                 {
-                    ColorProcessedImage = Tools.Crop(ColorInitialImage, VectorOfMousePosition.Last(c => c != LastPosition), LastPosition);
+                    ColorProcessedImage = Tools.Crop(ColorInitialImage, firstPoint, secondPoint);
                     ProcessedImage = Convert(ColorProcessedImage);
+
+                    DrawSelectedZone(canvases[0]);
                 }
             }
+            else
+            {
+                MessageBox.Show("Please select at least 2 points !");
+                return;
+            }
+
+        }
+
+        private void DrawSelectedZone(object canvas)
+        {
+            var topLeftPoint = Tools.GetTopLeftPoint(VectorOfMousePosition.Last(c => c != LastPosition), LastPosition);
+            var bottomRightPoint = Tools.GetBottomRightPoint(VectorOfMousePosition.Last(c => c != LastPosition), LastPosition);
+            DrawRectangle(canvas as Canvas, topLeftPoint, bottomRightPoint, 1, Brushes.Red, ScaleValue);
         }
 
         #endregion
