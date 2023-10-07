@@ -1,21 +1,18 @@
-﻿using Emgu.CV;
+﻿using Algorithms.Tools;
+using Algorithms.Utilities;
+using Emgu.CV;
 using Emgu.CV.Structure;
-
-using System.Windows;
+using Framework.View;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Controls;
-
-using Framework.View;
-using static Framework.Utilities.DataProvider;
-using static Framework.Utilities.FileHelper;
-using static Framework.Utilities.DrawingHelper;
 using static Framework.Converters.ImageConverter;
-
-using Algorithms.Sections;
-using Algorithms.Tools;
-using Algorithms.Utilities;
+using static Framework.Utilities.DataProvider;
+using static Framework.Utilities.DrawingHelper;
+using static Framework.Utilities.FileHelper;
 
 namespace Framework.ViewModel
 {
@@ -599,6 +596,53 @@ namespace Framework.ViewModel
         #endregion
 
         #region Thresholding
+
+        private ICommand _thresholdingCommand;
+        public ICommand ThresholdingCommand
+        {
+            get
+            {
+                if (_thresholdingCommand == null)
+                {
+                    _thresholdingCommand = new RelayCommand(ThresholdingImage);
+                }
+                return _thresholdingCommand;
+            }
+        }
+
+        private void ThresholdingImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            List<string> parameters = new List<string>();
+            parameters.Add("Threshold");
+
+            DialogBox box = new DialogBox(_mainVM, parameters);
+            box.ShowDialog();
+
+            List<double> values = box.GetValues();
+            if (values != null)
+            {
+                byte threshhold = (byte)(values[0] + 0.5);
+                if (GrayInitialImage != null)
+                {
+                    GrayProcessedImage = Tools.Thresholding(GrayInitialImage, threshhold);
+                    ProcessedImage = Convert(GrayProcessedImage);
+                }
+                else if (ColorInitialImage != null)
+                {
+                    GrayProcessedImage = Tools.Convert(ColorInitialImage);
+                    GrayProcessedImage = Tools.Thresholding(GrayProcessedImage, threshhold);
+                    ProcessedImage = Convert(GrayProcessedImage);
+                }
+            }
+        }
         #endregion
 
         #region Filters

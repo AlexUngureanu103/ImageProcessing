@@ -56,5 +56,31 @@ namespace Algorithms.Tools
             return result;
         }
         #endregion
+
+        #region Thresholding
+
+        public static Image<Gray, byte> Thresholding(Image<Gray, byte> inputImage, byte treshold)
+        {
+            Image<Gray, byte> result = new Image<Gray, byte>(inputImage.Size);
+
+            for (int y = 0; y < inputImage.Height; y++)
+            {
+                for (int x = 0; x < inputImage.Width; x++)
+                {
+                    if (inputImage.Data[y, x, 0] >= treshold)
+                    {
+                        result.Data[y, x, 0] = 255;
+                    }
+                    else
+                    {
+                        result.Data[y, x, 0] = 0;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 }
