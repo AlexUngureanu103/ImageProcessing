@@ -97,13 +97,13 @@ namespace Algorithms.Tools
             Point topLeftPoint = new Point(Math.Min(firstPoint.X, secondPoint.X), Math.Min(firstPoint.Y, secondPoint.Y));
             return topLeftPoint;
         }
-        
+
         public static Point GetBottomRightPoint(Point firstPoint, Point secondPoint)
         {
             Point bottomRightPoint = new Point(Math.Max(firstPoint.X, secondPoint.X), Math.Max(firstPoint.Y, secondPoint.Y));
             return bottomRightPoint;
         }
-        
+
         #endregion
 
         #region Crop Image
@@ -113,11 +113,11 @@ namespace Algorithms.Tools
             Point topLeftPoint = GetTopLeftPoint(firstPoint, secondPoint);
             Point bottomRightPoint = GetBottomRightPoint(firstPoint, secondPoint);
 
-            Image<Bgr, byte> result = new Image<Bgr, byte>((int)(bottomRightPoint.X - topLeftPoint.X+1), (int)(bottomRightPoint.Y - topLeftPoint.Y+1));
+            Image<Bgr, byte> result = new Image<Bgr, byte>((int)(bottomRightPoint.X - topLeftPoint.X + 1), (int)(bottomRightPoint.Y - topLeftPoint.Y + 1));
 
-            for (int y = 0; y < bottomRightPoint.Y - topLeftPoint.Y; y++)
+            for (int y = 0; y < (int)(bottomRightPoint.Y - topLeftPoint.Y); y++)
             {
-                for (int x = 0; x < bottomRightPoint.X - topLeftPoint.X; x++)
+                for (int x = 0; x < (int)(bottomRightPoint.X - topLeftPoint.X); x++)
                 {
 
                     result.Data[y, x, 0] = inputImage.Data[y + (int)topLeftPoint.Y, x + (int)topLeftPoint.X, 0];
@@ -148,6 +148,17 @@ namespace Algorithms.Tools
             }
 
             return result;
+        }
+
+        #endregion
+
+        #region Rotate Image
+
+        public static Image<Bgr, byte> RotateImage(Image<Bgr, byte> inputImage, double angle)
+        {
+            inputImage = inputImage.Rotate(angle, new Bgr(0, 0, 0), false);
+
+            return inputImage;
         }
 
         #endregion

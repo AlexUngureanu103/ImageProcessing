@@ -719,7 +719,6 @@ namespace Framework.ViewModel
 
         #region Mirror Image
 
-
         private ICommand _mirrorImageCommand;
         public ICommand MirrorImageCommand
         {
@@ -757,6 +756,87 @@ namespace Framework.ViewModel
             }
         }
 
+        #endregion
+
+        #region Rotate Image
+
+        #region Clockwise
+        private ICommand _rotateClockwiseCommand;
+        public ICommand RotateClockwiseCommand
+        {
+            get
+            {
+                if (_rotateClockwiseCommand == null)
+                {
+                    _rotateClockwiseCommand = new RelayCommand(RotateImageClockwise);
+                }
+                return _rotateClockwiseCommand;
+            }
+        }
+
+        private void RotateImageClockwise(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            if (GrayInitialImage != null)
+            {
+                ColorProcessedImage = Tools.Convert(GrayInitialImage);
+                ColorProcessedImage = Tools.RotateImage(ColorProcessedImage, 90);
+                ProcessedImage = Convert(ColorProcessedImage);
+
+            }
+            else if (ColorInitialImage != null)
+            {
+                ColorProcessedImage = Tools.RotateImage(ColorInitialImage, 90);
+                ProcessedImage = Convert(ColorProcessedImage);
+            }
+        }
+        #endregion
+
+        #region Anti-Clockwise
+        private ICommand _rotateAntiClockwiseCommand;
+        public ICommand RotateAntiClockwiseCommand
+        {
+            get
+            {
+                if (_rotateAntiClockwiseCommand == null)
+                {
+                    _rotateAntiClockwiseCommand = new RelayCommand(RotateImageAntiClockwise);
+                }
+                return _rotateAntiClockwiseCommand;
+            }
+        }
+
+        private void RotateImageAntiClockwise(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            if (GrayInitialImage != null)
+            {
+                ColorProcessedImage = Tools.Convert(GrayInitialImage);
+                ColorProcessedImage = Tools.RotateImage(ColorProcessedImage, -90);
+                ProcessedImage = Convert(ColorProcessedImage);
+
+            }
+            else if (ColorInitialImage != null)
+            {
+                ColorProcessedImage = Tools.RotateImage(ColorInitialImage, -90);
+                ProcessedImage = Convert(ColorProcessedImage);
+            }
+        }
+        #endregion
         #endregion
 
         #region Filters

@@ -181,8 +181,8 @@
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
 
-            </MenuItem> 
-            
+            </MenuItem>
+
             <MenuItem Header="Crop"
                       Command="{Binding Path=MenuCommands.CropCommand}"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
@@ -201,6 +201,22 @@
                       CommandParameter="{Binding ElementName=canvasProcessedImage}"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+            </MenuItem>
+
+            <MenuItem Header="Rotate"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+                <MenuItem Header="Clockwise"
+                      Command="{Binding Path=MenuCommands.RotateClockwiseCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+
+                </MenuItem>
+                <MenuItem Header=" Anti-clockwise."
+                      Command="{Binding Path=MenuCommands.RotateAntiClockwiseCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+
+                </MenuItem>
 
             </MenuItem>
 
