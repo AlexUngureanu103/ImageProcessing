@@ -108,13 +108,12 @@ namespace Algorithms.Tools
 
         #region Crop Image
 
-
         public static Image<Bgr, byte> Crop(Image<Bgr, byte> inputImage, Point firstPoint, Point secondPoint)
         {
             Point topLeftPoint = GetTopLeftPoint(firstPoint, secondPoint);
             Point bottomRightPoint = GetBottomRightPoint(firstPoint, secondPoint);
 
-            Image<Bgr, byte> result = new Image<Bgr, byte>((int)(bottomRightPoint.X - topLeftPoint.X), (int)(bottomRightPoint.Y - topLeftPoint.Y));
+            Image<Bgr, byte> result = new Image<Bgr, byte>((int)(bottomRightPoint.X - topLeftPoint.X+1), (int)(bottomRightPoint.Y - topLeftPoint.Y+1));
 
             for (int y = 0; y < bottomRightPoint.Y - topLeftPoint.Y; y++)
             {
@@ -124,6 +123,27 @@ namespace Algorithms.Tools
                     result.Data[y, x, 0] = inputImage.Data[y + (int)topLeftPoint.Y, x + (int)topLeftPoint.X, 0];
                     result.Data[y, x, 1] = inputImage.Data[y + (int)topLeftPoint.Y, x + (int)topLeftPoint.X, 1];
                     result.Data[y, x, 2] = inputImage.Data[y + (int)topLeftPoint.Y, x + (int)topLeftPoint.X, 2];
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Mirror Image
+
+        public static Image<Bgr, byte> Mirror(Image<Bgr, byte> inputImage)
+        {
+            Image<Bgr, byte> result = new Image<Bgr, byte>(inputImage.Size);
+
+            for (int y = 0; y < inputImage.Height; y++)
+            {
+                for (int x = 0; x < inputImage.Width; x++)
+                {
+                    result.Data[y, x, 0] = inputImage.Data[y, inputImage.Width - x - 1, 0];
+                    result.Data[y, x, 1] = inputImage.Data[y, inputImage.Width - x - 1, 1];
+                    result.Data[y, x, 2] = inputImage.Data[y, inputImage.Width - x - 1, 2];
                 }
             }
 

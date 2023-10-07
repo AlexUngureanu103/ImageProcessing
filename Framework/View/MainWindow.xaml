@@ -196,6 +196,14 @@
 
             </MenuItem>
 
+            <MenuItem Header="Mirror"
+                      Command="{Binding Path=MenuCommands.MirrorImageCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+            </MenuItem>
+
             <MenuItem Header="Filters" 
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">

@@ -717,6 +717,48 @@ namespace Framework.ViewModel
 
         #endregion
 
+        #region Mirror Image
+
+
+        private ICommand _mirrorImageCommand;
+        public ICommand MirrorImageCommand
+        {
+            get
+            {
+                if (_mirrorImageCommand == null)
+                {
+                    _mirrorImageCommand = new RelayCommand(MirrorImage);
+                }
+                return _mirrorImageCommand;
+            }
+        }
+
+        private void MirrorImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            if (GrayInitialImage != null)
+            {
+                ColorProcessedImage = Tools.Convert(GrayInitialImage);
+                ColorProcessedImage = Tools.Mirror(ColorProcessedImage);
+                ProcessedImage = Convert(ColorProcessedImage);
+
+            }
+            else if (ColorInitialImage != null)
+            {
+                ColorProcessedImage = Tools.Mirror(ColorInitialImage);
+                ProcessedImage = Convert(ColorProcessedImage);
+            }
+        }
+
+        #endregion
+
         #region Filters
         #endregion
 
