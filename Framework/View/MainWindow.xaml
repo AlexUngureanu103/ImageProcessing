@@ -181,6 +181,14 @@
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
 
+            </MenuItem> 
+            
+            <MenuItem Header="Crop"
+                      Command="{Binding Path=MenuCommands.CropCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
             </MenuItem>
 
             <MenuItem Header="Filters" 

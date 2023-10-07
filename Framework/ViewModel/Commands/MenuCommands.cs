@@ -5,6 +5,7 @@ using Emgu.CV.Structure;
 using Framework.View;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -643,6 +644,50 @@ namespace Framework.ViewModel
                 }
             }
         }
+
+        #endregion
+
+        #region Crop Image
+
+        private ICommand _cropCommand;
+        public ICommand CropCommand
+        {
+            get
+            {
+                if (_cropCommand == null)
+                {
+                    _cropCommand = new RelayCommand(CropImage);
+                }
+                return _cropCommand;
+            }
+        }
+
+        private void CropImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            ClearProcessedCanvas(parameter);
+
+            if (VectorOfMousePosition.Count >= 2)
+            {
+                if (GrayInitialImage != null)
+                {
+                    ColorProcessedImage = Tools.Convert(GrayInitialImage);
+                    ColorProcessedImage = Tools.Crop(ColorProcessedImage, VectorOfMousePosition.Last(c=>c != LastPosition), LastPosition);
+                    ProcessedImage = Convert(GrayProcessedImage);
+                }
+                else if (ColorInitialImage != null)
+                {
+                    ColorProcessedImage = Tools.Crop(ColorInitialImage, VectorOfMousePosition.Last(c => c != LastPosition), LastPosition);
+                    ProcessedImage = Convert(ColorProcessedImage);
+                }
+            }
+        }
+
         #endregion
 
         #region Filters
