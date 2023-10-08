@@ -1,10 +1,10 @@
 ﻿<Window x:Class="Framework.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Framework.ViewModel"
         xmlns:convert="clr-namespace:Framework.Converters"
+        xmlns:local="clr-namespace:Framework.ViewModel"
         mc:Ignorable="d"
         Title="Image Processing"
         Height="750"
@@ -167,6 +167,49 @@
                           Foreground="#1E1E1E"
                           Command="{Binding Path=MenuCommands.ConvertImageToGrayscaleCommand}"
                           CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+                <Separator/>
+
+                <MenuItem Header="Thresholding"
+                      Command="{Binding Path=MenuCommands.ThresholdingCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
+                      Foreground="#1E1E1E">
+
+                </MenuItem>
+
+                <MenuItem Header="Crop"
+                      Command="{Binding Path=MenuCommands.CropCommand}"
+                      Foreground="#1E1E1E">
+                    <MenuItem.CommandParameter>
+                        <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
+                            <Binding ElementName="canvasOriginalImage"/>
+                            <Binding ElementName="canvasProcessedImage"/>
+                        </MultiBinding>
+                    </MenuItem.CommandParameter>
+
+                </MenuItem>
+
+                <MenuItem Header="Mirror"
+                      Command="{Binding Path=MenuCommands.MirrorImageCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
+                      Foreground="#1E1E1E">
+
+                </MenuItem>
+
+                <MenuItem Header="Rotate"
+                      Foreground="#1E1E1E">
+                    <MenuItem Header="Clockwise"
+                      Command="{Binding Path=MenuCommands.RotateClockwiseCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+
+                    </MenuItem>
+                    <MenuItem Header=" Anti-clockwise."
+                      Command="{Binding Path=MenuCommands.RotateAntiClockwiseCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+
+                    </MenuItem>
+
+                </MenuItem>
+
             </MenuItem>
 
             <MenuItem Header="Pointwise operations"
@@ -175,50 +218,6 @@
 
             </MenuItem>
 
-            <MenuItem Header="Thresholding"
-                      Command="{Binding Path=MenuCommands.ThresholdingCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
-                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
-                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
-
-            </MenuItem>
-
-            <MenuItem Header="Crop"
-                      Command="{Binding Path=MenuCommands.CropCommand}"
-                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
-                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
-                <MenuItem.CommandParameter>
-                    <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
-                        <Binding ElementName="canvasOriginalImage"/>
-                        <Binding ElementName="canvasProcessedImage"/>
-                    </MultiBinding>
-                </MenuItem.CommandParameter>
-
-            </MenuItem>
-
-            <MenuItem Header="Mirror"
-                      Command="{Binding Path=MenuCommands.MirrorImageCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
-                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
-                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
-
-            </MenuItem>
-
-            <MenuItem Header="Rotate"
-                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
-                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
-                <MenuItem Header="Clockwise"
-                      Command="{Binding Path=MenuCommands.RotateClockwiseCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
-
-                </MenuItem>
-                <MenuItem Header=" Anti-clockwise."
-                      Command="{Binding Path=MenuCommands.RotateAntiClockwiseCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
-
-                </MenuItem>
-
-            </MenuItem>
 
             <MenuItem Header="Filters" 
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
