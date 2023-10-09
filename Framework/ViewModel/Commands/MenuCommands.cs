@@ -628,6 +628,11 @@ namespace Framework.ViewModel
             box.ShowDialog();
 
             List<double> values = box.GetValues();
+            if (values[0] < 10 || values[0] > 154)
+            {
+                MessageBox.Show("Please add an thresholding value between 10 and 154 !");
+                return;
+            }
             if (values != null)
             {
                 byte threshhold = (byte)(values[0] + 0.5);
@@ -699,6 +704,10 @@ namespace Framework.ViewModel
 
                     DrawSelectedZone(canvases[0]);
                 }
+
+                var mean = ColorProcessedImage.GetAverage();
+
+                MessageBox.Show($"Valoarea medie of selected Zone: B:{mean.Blue}, G:{mean.Green}, R:{mean.Red}\r\nAbaterea medie patratica: B:{mean.Blue}, G:{mean.Green}, R:{mean.Red}");
             }
             else
             {

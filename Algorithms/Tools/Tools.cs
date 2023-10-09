@@ -68,24 +68,7 @@ namespace Algorithms.Tools
 
         public static Image<Gray, byte> Thresholding(Image<Gray, byte> inputImage, byte treshold)
         {
-            //Image<Gray, byte> result = new Image<Gray, byte>(inputImage.Size);
-
-            //for (int y = 0; y < inputImage.Height; y++)
-            //{
-            //    for (int x = 0; x < inputImage.Width; x++)
-            //    {
-            //        if (inputImage.Data[y, x, 0] >= treshold)
-            //        {
-            //            result.Data[y, x, 0] = 255;
-            //        }
-            //        else
-            //        {
-            //            result.Data[y, x, 0] = 0;
-            //        }
-            //    }
-            //}
-
-            Image<Gray, byte> emguCvImg = inputImage.ThresholdBinary(new Gray(treshold), new Gray(treshold));
+            Image<Gray, byte> emguCvImg = inputImage.ThresholdBinary(new Gray(treshold), new Gray(255));
 
             return emguCvImg;
         }
@@ -128,8 +111,6 @@ namespace Algorithms.Tools
                 }
             }
 
-            //Image<Bgr, byte> result = inputImage.cr
-
             return result;
         }
 
@@ -139,7 +120,6 @@ namespace Algorithms.Tools
 
         public static Image<Bgr, byte> Mirror(Image<Bgr, byte> inputImage)
         {
-
             Image<Bgr, byte> result = inputImage.Flip(Emgu.CV.CvEnum.FlipType.Vertical);
 
             return result;
