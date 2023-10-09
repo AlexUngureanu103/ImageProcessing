@@ -705,9 +705,12 @@ namespace Framework.ViewModel
                     DrawSelectedZone(canvases[0]);
                 }
 
-                var mean = ColorProcessedImage.GetAverage();
+                Bgr avegare;
+                MCvScalar standardDeviation;
 
-                MessageBox.Show($"Valoarea medie of selected Zone: B:{mean.Blue}, G:{mean.Green}, R:{mean.Red}\r\nAbaterea medie patratica: B:{mean.Blue}, G:{mean.Green}, R:{mean.Red}");
+                ColorProcessedImage.AvgSdv(out avegare, out standardDeviation);
+
+                MessageBox.Show($"Valoarea medie of selected Zone: B:{avegare.Blue}, G:{avegare.Green}, R:{avegare.Red}\r\nAbaterea medie patratica: B:{standardDeviation.V0 * standardDeviation.V0}, G:{standardDeviation.V1 * standardDeviation.V1}, R:{standardDeviation.V2 * standardDeviation.V2}");
             }
             else
             {
