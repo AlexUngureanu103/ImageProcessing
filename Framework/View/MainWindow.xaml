@@ -169,13 +169,6 @@
                           CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
                 <Separator/>
 
-                <MenuItem Header="Thresholding"
-                      Command="{Binding Path=MenuCommands.ThresholdingCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
-                      Foreground="#1E1E1E">
-
-                </MenuItem>
-
                 <MenuItem Header="Crop"
                       Command="{Binding Path=MenuCommands.CropCommand}"
                       Foreground="#1E1E1E">
@@ -195,21 +188,6 @@
 
                 </MenuItem>
 
-                <MenuItem Header="Rotate"
-                      Foreground="#1E1E1E">
-                    <MenuItem Header="Clockwise"
-                      Command="{Binding Path=MenuCommands.RotateClockwiseCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
-
-                    </MenuItem>
-                    <MenuItem Header=" Anti-clockwise."
-                      Command="{Binding Path=MenuCommands.RotateAntiClockwiseCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
-
-                    </MenuItem>
-
-                </MenuItem>
-
             </MenuItem>
 
             <MenuItem Header="Pointwise operations"
@@ -218,6 +196,13 @@
 
             </MenuItem>
 
+            <MenuItem Header="Thresholding"
+                      Command="{Binding Path=MenuCommands.ThresholdingCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+            </MenuItem>
 
             <MenuItem Header="Filters" 
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
@@ -241,6 +226,21 @@
             <MenuItem Header="Geometric transformations"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+                <MenuItem Header="Rotate"
+                      Foreground="#1E1E1E">
+                    <MenuItem Header="Clockwise"
+                      Command="{Binding Path=MenuCommands.RotateClockwiseCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+
+                    </MenuItem>
+                    <MenuItem Header=" Anti-clockwise."
+                      Command="{Binding Path=MenuCommands.RotateAntiClockwiseCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+
+                    </MenuItem>
+
+                </MenuItem>
 
             </MenuItem>
 
