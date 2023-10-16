@@ -628,6 +628,11 @@ namespace Framework.ViewModel
             box.ShowDialog();
 
             List<double> values = box.GetValues();
+            if (values[0] < 10 || values[0] > 154)
+            {
+                MessageBox.Show("Please add an thresholding value between 10 and 154 !");
+                return;
+            }
             if (values != null)
             {
                 byte threshhold = (byte)(values[0] + 0.5);
@@ -699,6 +704,13 @@ namespace Framework.ViewModel
 
                     DrawSelectedZone(canvases[0]);
                 }
+
+                Bgr avegare;
+                MCvScalar standardDeviation;
+
+                ColorProcessedImage.AvgSdv(out avegare, out standardDeviation);
+
+                MessageBox.Show($"Valoarea medie of selected Zone: B:{avegare.Blue}, G:{avegare.Green}, R:{avegare.Red}\r\nAbaterea medie patratica: B:{standardDeviation.V0 * standardDeviation.V0}, G:{standardDeviation.V1 * standardDeviation.V1}, R:{standardDeviation.V2 * standardDeviation.V2}");
             }
             else
             {
