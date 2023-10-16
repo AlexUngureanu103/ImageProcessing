@@ -43,10 +43,6 @@
                            MouseLeftButtonDown="ImageMouseLeftButtonDown"
                            MouseRightButtonDown="ImageMouseRightButtonDown"
                            Source="{Binding Path=Graph}">
-                        <Image.LayoutTransform>
-                            <ScaleTransform ScaleX="{Binding ElementName=sliderZoom, Path=Value}" 
-                                            ScaleY="{Binding ElementName=sliderZoom, Path=Value}"/>
-                        </Image.LayoutTransform>
                     </Image>
                 </Canvas>
             </ScrollViewer>

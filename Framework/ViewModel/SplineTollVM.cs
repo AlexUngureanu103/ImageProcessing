@@ -15,7 +15,7 @@ namespace Framework.ViewModel
             ScaleValue = 1;
             
 
-            Graph = Convert(new Image<Gray, byte>(500, 300, new Gray(0)));
+            Graph = Convert(new Image<Gray, byte>(500, 300, new Gray(128)));
 
             string theme = Properties.Settings.Default.Theme;
             SetThemeMode(theme);
