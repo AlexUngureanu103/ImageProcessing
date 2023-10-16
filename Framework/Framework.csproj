@@ -86,6 +86,7 @@
     <Compile Include="ViewModel\GraphVM.cs" />
     <Compile Include="ViewModel\MainVM.cs" />
     <Compile Include="ViewModel\SliderVM.cs" />
+    <Compile Include="ViewModel\SplineTollVM.cs" />
     <Compile Include="View\DialogBox.xaml.cs">
       <DependentUpon>DialogBox.xaml</DependentUpon>
     </Compile>
@@ -103,6 +104,9 @@
     </Compile>
     <Compile Include="View\SliderWindow.xaml.cs">
       <DependentUpon>SliderWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SplineToolWindow.xaml.cs">
+      <DependentUpon>SplineToolWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="View\HistogramWindow.xaml">
       <SubType>Designer</SubType>
@@ -137,6 +141,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SliderWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SplineToolWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

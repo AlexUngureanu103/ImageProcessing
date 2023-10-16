@@ -194,6 +194,10 @@
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
 
+                <MenuItem Header="Spline Tool"
+                          Foreground="#1E1E1E"
+                          Command="{Binding Path=MenuCommands.SplineToolCommand}"/>
+                
             </MenuItem>
 
             <MenuItem Header="Thresholding"
