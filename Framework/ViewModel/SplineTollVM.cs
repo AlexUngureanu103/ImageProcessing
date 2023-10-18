@@ -1,5 +1,5 @@
-﻿using Emgu.CV.Structure;
-using Emgu.CV;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
 using Framework.Model;
 using System.Windows.Media;
 using static Framework.Converters.ImageConverter;
@@ -15,8 +15,9 @@ namespace Framework.ViewModel
             ScaleValue = 1;
             
 
-            Graph = Convert(new Image<Gray, byte>(500, 300, new Gray(128)));
-
+            Image<Bgr, byte> image = new Image<Bgr, byte>((int)OriginalCanvasWidth, (int)OriginalCanvasHeight, new Bgr(255,255,255));
+            
+            Graph = Convert(image);
             string theme = Properties.Settings.Default.Theme;
             SetThemeMode(theme);
         }
