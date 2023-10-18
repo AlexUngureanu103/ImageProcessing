@@ -16,13 +16,13 @@ namespace Framework.View
     /// </summary>
     public partial class SplineToolWindow : Window
     {
-        private readonly SplineTollVM _splinetoolVM;
+        private readonly SplineToolVM _splinetoolVM;
 
         public SplineToolWindow()
         {
             InitializeComponent();
 
-            _splinetoolVM = new SplineTollVM();
+            _splinetoolVM = new SplineToolVM();
             DataContext = _splinetoolVM;
         }
         

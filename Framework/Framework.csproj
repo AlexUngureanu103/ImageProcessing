@@ -86,7 +86,7 @@
     <Compile Include="ViewModel\GraphVM.cs" />
     <Compile Include="ViewModel\MainVM.cs" />
     <Compile Include="ViewModel\SliderVM.cs" />
-    <Compile Include="ViewModel\SplineTollVM.cs" />
+    <Compile Include="ViewModel\SplineToolVM.cs" />
     <Compile Include="View\DialogBox.xaml.cs">
       <DependentUpon>DialogBox.xaml</DependentUpon>
     </Compile>

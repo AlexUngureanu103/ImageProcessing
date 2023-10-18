@@ -1,14 +1,15 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using Framework.Model;
+using System.Windows.Input;
 using System.Windows.Media;
 using static Framework.Converters.ImageConverter;
 
 namespace Framework.ViewModel
 {
-    public class SplineTollVM : BaseVM
+    public class SplineToolVM : BaseVM
     {
-        public SplineTollVM()
+        public SplineToolVM()
         {      
             OriginalCanvasHeight = 300;
             OriginalCanvasWidth = 500;
@@ -164,7 +165,26 @@ namespace Framework.ViewModel
                 NotifyPropertyChanged(nameof(BlueValue));
             }
         }
-        
+
+        #region Reset zoom
+        private ICommand _resetZoomCommand;
+        public ICommand ResetZoomCommand
+        {
+            get
+            {
+                if (_resetZoomCommand == null)
+                    _resetZoomCommand = new RelayCommand(ResetZoom);
+
+                return _resetZoomCommand;
+            }
+        }
+
+        public void ResetZoom(object parameter)
+        {
+            ScaleValue = 1;
+        }
+        #endregion
+
         #region Canvases properties
         public double _originalCanvasWidth;
         public double OriginalCanvasWidth
