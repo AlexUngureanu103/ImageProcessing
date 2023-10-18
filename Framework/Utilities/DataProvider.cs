@@ -6,7 +6,7 @@ using PointCollection = System.Windows.Media.PointCollection;
 
 namespace Framework.Utilities
 {
-    class DataProvider
+    public class DataProvider
     {
         public static Image<Gray, byte> GrayInitialImage { get; set; }
         public static Image<Gray, byte> GrayProcessedImage { get; set; }

@@ -1,24 +1,24 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
+using Framework.Converters;
 using Framework.Model;
 using System.Windows.Input;
 using System.Windows.Media;
-using static Framework.Converters.ImageConverter;
 
 namespace Framework.ViewModel
 {
     public class SplineToolVM : BaseVM
     {
         public SplineToolVM()
-        {      
+        {
             OriginalCanvasHeight = 300;
             OriginalCanvasWidth = 500;
             ScaleValue = 1;
-            
 
-            Image<Bgr, byte> image = new Image<Bgr, byte>((int)OriginalCanvasWidth, (int)OriginalCanvasHeight, new Bgr(255,255,255));
-            
-            Graph = Convert(image);
+
+            Image<Bgr, byte> image = new Image<Bgr, byte>((int)OriginalCanvasWidth, (int)OriginalCanvasHeight, new Bgr(255, 255, 255));
+
+            Graph = ImageConverter.Convert(image);
             string theme = Properties.Settings.Default.Theme;
             SetThemeMode(theme);
         }

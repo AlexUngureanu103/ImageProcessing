@@ -1,13 +1,11 @@
-﻿using Framework.ViewModel;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using Framework.Utilities;
+using Framework.ViewModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static Framework.Utilities.DataProvider;
-using static Framework.Utilities.UiHelper;
-using static Framework.Utilities.DrawingHelper;
-using Emgu.CV;
-using Emgu.CV.Structure;
 
 namespace Framework.View
 {
@@ -22,15 +20,17 @@ namespace Framework.View
         {
             InitializeComponent();
 
+            DataProvider.VectorOfMousePosition.Clear();
+
             _splinetoolVM = new SplineToolVM();
             DataContext = _splinetoolVM;
         }
-        
+
         public void Update()
         {
 
-            RemoveUiElements(canvasOriginalImage, null);
-            DrawUiElements(canvasOriginalImage, null, _splinetoolVM.ScaleValue);
+            UiHelper.RemoveUiElements(canvasOriginalImage, null);
+            UiHelper.DrawUiElements(canvasOriginalImage, null, _splinetoolVM.ScaleValue);
         }
 
         private void SetUiValues(Image<Gray, byte> grayImage, Image<Bgr, byte> colorImage, int x, int y)
@@ -51,32 +51,34 @@ namespace Framework.View
         private void ImageMouseMove(object sender, MouseEventArgs e)
         {
             var position = e.GetPosition(MyGraph);
-            SetUiValues(GrayProcessedImage, ColorProcessedImage, (int)position.X, (int)position.Y);
+            SetUiValues(DataProvider.GrayProcessedImage, DataProvider.ColorProcessedImage, (int)position.X, (int)position.Y);
         }
 
         private void ImageMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MousePosition = e.GetPosition(MyGraph);
+            DataProvider.MousePosition = e.GetPosition(MyGraph);
 
-            if (LastPosition != MousePosition)
+            if (DataProvider.LastPosition != DataProvider.MousePosition)
             {
-                VectorOfMousePosition.Add(MousePosition);
-                LastPosition = MousePosition;
+                DataProvider.VectorOfMousePosition.Add(DataProvider.MousePosition);
+
+                DataProvider.LastPosition = DataProvider.MousePosition;
+                UiHelper.DrawSplineToolGraphUI(canvasOriginalImage, _splinetoolVM.ScaleValue, DataProvider.VectorOfMousePosition);
             }
         }
 
         private void ImageMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            VectorOfMousePosition.Clear();
+            DataProvider.VectorOfMousePosition.Clear();
         }
 
         private void CanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Update();
 
-            if (MagnifierOn == true)
+            if (DataProvider.MagnifierOn == true)
                 Application.Current.Windows.OfType<MagnifierWindow>().First().Update();
-            if (RowColorLevelsOn == true || ColumnColorLevelsOn == true)
+            if (DataProvider.RowColorLevelsOn == true || DataProvider.ColumnColorLevelsOn == true)
                 Application.Current.Windows.OfType<ColorLevelsWindow>().All(window => { window.Update(); return true; });
         }
 
@@ -84,7 +86,7 @@ namespace Framework.View
         {
             double scaleValue = sliderZoom.Value;
 
-            UpdateShapesProperties(canvasOriginalImage, scaleValue);
+            DrawingHelper.UpdateShapesProperties(canvasOriginalImage, scaleValue);
 
             if (_splinetoolVM != null)
             {
@@ -102,7 +104,7 @@ namespace Framework.View
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            CloseWindows();
+            DataProvider.CloseWindows();
         }
     }
 }
