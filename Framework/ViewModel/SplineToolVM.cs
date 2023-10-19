@@ -2,6 +2,7 @@
 using Emgu.CV.Structure;
 using Framework.Converters;
 using Framework.Model;
+using Framework.ViewModel.Commands;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -9,8 +10,10 @@ namespace Framework.ViewModel
 {
     public class SplineToolVM : BaseVM
     {
+        public SplineToolsMenuCommands SplineToolsMenuCommands { get; set; }
         public SplineToolVM()
         {
+            SplineToolsMenuCommands = new SplineToolsMenuCommands(this);
             OriginalCanvasHeight = 300;
             OriginalCanvasWidth = 500;
             ScaleValue = 1;

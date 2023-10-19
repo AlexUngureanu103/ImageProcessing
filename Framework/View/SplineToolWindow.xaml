@@ -30,6 +30,33 @@
             <convert:ArrayMultiValueConverter x:Key="arrayMultiValueConverter"/>
         </Grid.Resources>
 
+        <Menu Background="{Binding Path=Theme.MenuBackgroundColor}"
+              Grid.Row="0" 
+              Grid.ColumnSpan="2">
+            <Menu.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel HorizontalAlignment="Stretch"/>
+                </ItemsPanelTemplate>
+            </Menu.ItemsPanel>
+
+            <MenuItem Header="Draw Hermit Curve"
+                      Command="{Binding Path=SplineToolsMenuCommands.DrawHermitCurveCommand}"
+                      CommandParameter="{Binding ElementName=canvasOriginalImage}"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+            </MenuItem>
+            
+            <MenuItem Header="Reset"
+                      Command="{Binding Path=SplineToolsMenuCommands.ResetCommand}"
+                      CommandParameter="{Binding ElementName=canvasOriginalImage}"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+            </MenuItem>
+            
+        </Menu>
+
         <Label Grid.Column="1"
                Grid.Row="2"
                Width="auto"

@@ -59,6 +59,10 @@ namespace Framework.Utilities
 
             _splineToolColumnLines.Add(DrawingHelper.DrawLine(canvas, new Point(0, imgHeigth), new Point(0, 0), 3, Brushes.Black, scaleValue));
             _splineToolColumnLines.Add(DrawingHelper.DrawLine(canvas, new Point(0, imgHeigth), new Point(imgWidth, imgHeigth), 3, Brushes.Black, scaleValue));
+            
+            _splineToolPointsElipses.Add(DrawingHelper.DrawEllipse(canvas, new Point(0, imgHeigth), 10, 10, 5, Brushes.Black, scaleValue));
+            _splineToolPointsElipses.Add(DrawingHelper.DrawEllipse(canvas, new Point(imgWidth, 0), 10, 10, 5, Brushes.Black, scaleValue));
+            
             foreach (var point in vectorOfMousePosition.Skip(Math.Max(0, vectorOfMousePosition.Count() - 5)))
             {
                 var startR = new Point(0, point.Y);
