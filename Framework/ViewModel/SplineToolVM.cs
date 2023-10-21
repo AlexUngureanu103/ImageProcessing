@@ -1,26 +1,27 @@
-﻿using System.Windows.Input;
-using System.Windows.Media;
-using Emgu.CV;
+﻿using Emgu.CV;
 using Emgu.CV.Structure;
+using Framework.Converters;
 using Framework.Model;
-using static Framework.Converters.ImageConverter;
-
+using Framework.ViewModel.Commands;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Framework.ViewModel
 {
-    public class MainVM : BaseVM
+    public class SplineToolVM : BaseVM
     {
-        public MenuCommands MenuCommands { get; set; }
-
-        public MainVM()
+        public SplineToolsMenuCommands SplineToolsMenuCommands { get; set; }
+        public SplineToolVM()
         {
-            MenuCommands = new MenuCommands(this);
+            SplineToolsMenuCommands = new SplineToolsMenuCommands(this);
+            OriginalCanvasHeight = 600;
+            OriginalCanvasWidth = 800;
             ScaleValue = 1;
 
-            Image<Bgr, byte> image = new Image<Bgr, byte>((int)500, (int)300, new Bgr(255, 255, 255));
 
-            InitialImage = Convert(image);
+            Image<Bgr, byte> image = new Image<Bgr, byte>((int)OriginalCanvasWidth, (int)OriginalCanvasHeight, new Bgr(255, 255, 255));
 
+            Graph = ImageConverter.Convert(image);
             string theme = Properties.Settings.Default.Theme;
             SetThemeMode(theme);
         }
@@ -65,58 +66,6 @@ namespace Framework.ViewModel
             }
         }
 
-        private ImageSource _initialImage;
-        public ImageSource InitialImage
-        {
-            get
-            {
-                return _initialImage;
-            }
-            set
-            {
-                _initialImage = value;
-
-                if (_initialImage != null)
-                {
-                    OriginalCanvasWidth = InitialImage.Width * ScaleValue;
-                    OriginalCanvasHeight = InitialImage.Height * ScaleValue;
-                }
-                else
-                {
-                    OriginalCanvasWidth = 0;
-                    OriginalCanvasHeight = 0;
-                }
-
-                NotifyPropertyChanged(nameof(InitialImage));
-            }
-        }
-
-        private ImageSource _processedImage;
-        public ImageSource ProcessedImage
-        {
-            get
-            {
-                return _processedImage;
-            }
-            set
-            {
-                _processedImage = value;
-
-                if (_processedImage != null)
-                {
-                    ProcessedCanvasWidth = ProcessedImage.Width * ScaleValue;
-                    ProcessedCanvasHeight = ProcessedImage.Height * ScaleValue;
-                }
-                else
-                {
-                    ProcessedCanvasWidth = 0;
-                    ProcessedCanvasHeight = 0;
-                }
-
-                NotifyPropertyChanged(nameof(ProcessedImage));
-            }
-        }
-
         private double _scaleValue;
         public double ScaleValue
         {
@@ -125,6 +74,32 @@ namespace Framework.ViewModel
             {
                 _scaleValue = value;
                 NotifyPropertyChanged(nameof(ScaleValue));
+            }
+        }
+
+        public ImageSource _graph;
+        public ImageSource Graph
+        {
+            get
+            {
+                return _graph;
+            }
+            set
+            {
+                _graph = value;
+
+                if (_graph != null)
+                {
+                    OriginalCanvasWidth = Graph.Width * ScaleValue;
+                    OriginalCanvasHeight = Graph.Height * ScaleValue;
+                }
+                else
+                {
+                    OriginalCanvasWidth = 0;
+                    OriginalCanvasHeight = 0;
+                }
+
+                NotifyPropertyChanged(nameof(Graph));
             }
         }
 
@@ -236,27 +211,27 @@ namespace Framework.ViewModel
             }
         }
 
-        public double _processedCanvasWidth;
-        public double ProcessedCanvasWidth
-        {
-            get => _processedCanvasWidth;
-            set
-            {
-                _processedCanvasWidth = value;
-                NotifyPropertyChanged(nameof(ProcessedCanvasWidth));
-            }
-        }
+        //public double _processedCanvasWidth;
+        //public double ProcessedCanvasWidth
+        //{
+        //    get => _processedCanvasWidth;
+        //    set
+        //    {
+        //        _processedCanvasWidth = value;
+        //        NotifyPropertyChanged(nameof(ProcessedCanvasWidth));
+        //    }
+        //}
 
-        public double _processedCanvasHeight;
-        public double ProcessedCanvasHeight
-        {
-            get => _processedCanvasHeight;
-            set
-            {
-                _processedCanvasHeight = value;
-                NotifyPropertyChanged(nameof(ProcessedCanvasHeight));
-            }
-        }
+        //public double _processedCanvasHeight;
+        //public double ProcessedCanvasHeight
+        //{
+        //    get => _processedCanvasHeight;
+        //    set
+        //    {
+        //        _processedCanvasHeight = value;
+        //        NotifyPropertyChanged(nameof(ProcessedCanvasHeight));
+        //    }
+        //}
         #endregion
     }
 }

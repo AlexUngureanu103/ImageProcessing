@@ -79,6 +79,28 @@ namespace Framework.Utilities
             return line;
         }
 
+        public static Line DrawDottedLine(
+    Canvas canvas, Point start, Point end, int thickness, Brush color, double scaleValue, double dotSpacing)
+        {
+            Line line = new Line
+            {
+                X1 = start.X,
+                Y1 = start.Y,
+                X2 = end.X,
+                Y2 = end.Y,
+                StrokeThickness = thickness,
+                Stroke = color
+            };
+
+            // Set up the dashed pattern
+            line.StrokeDashArray = new DoubleCollection() { dotSpacing, dotSpacing };
+
+            VectorOfLines.Add(line);
+            AddShapeProperties(canvas, line, Canvas.GetLeft(line), Canvas.GetTop(line), scaleValue);
+
+            return line;
+        }
+
         public static Rectangle DrawRectangle(
             Canvas canvas, Point leftTop, Point rightBottom, int thickness, Brush color, double scaleValue)
         {

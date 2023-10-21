@@ -594,6 +594,30 @@ namespace Framework.ViewModel
         #endregion
 
         #region Pointwise operations
+        private ICommand _splineToolCommand;
+        public ICommand SplineToolCommand
+        {
+            get
+            {
+                if (_splineToolCommand == null)
+                {
+                    _splineToolCommand = new RelayCommand(SplineTool);
+                }
+                return _splineToolCommand;
+            }
+        }
+
+        private void SplineTool(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            SplineToolWindow splineToolWindow = new SplineToolWindow();
+            splineToolWindow.Show();
+        }
         #endregion
 
         #region Thresholding
