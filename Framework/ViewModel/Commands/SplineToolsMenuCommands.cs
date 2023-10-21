@@ -62,7 +62,7 @@ namespace Framework.ViewModel.Commands
             points.Add(new Point(-points[1].X, points[1].Y));
             points = points.OrderBy(point => point.X).ToList();
 
-            List<Point> curve = GenerateSpline_V2(points);
+            List<Point> curve = GenerateCubicHermiteSplinePoints(points);
 
             curve = curve.Select(point => new Point(point.X, _splineToolVM.Graph.Height - point.Y)).ToList();
 
@@ -71,15 +71,20 @@ namespace Framework.ViewModel.Commands
             Canvas canvas = parameter as Canvas;
         }
 
-        public List<Point> GenerateSpline_V2( List<Point> points)
+        public List<Point> GenerateCubicHermiteSplinePoints(List<Point> points)
         {
             List<Point> result = new List<Point>();
+            double s = 2 * 0.78d;
             for (int i = 0; i < points.Count - 1; i++)
             {
                 Point p0 = i == 0 ? points[i] : points[i - 1];
                 Point p1 = points[i];
                 Point p2 = points[i + 1];
                 Point p3 = i == points.Count - 2 ? points[i + 1] : points[i + 2];
+
+
+                Point dv1 = new Point((p2.X - p0.X) / s, (p2.Y - p0.Y) / s);
+                Point dv2 = new Point((p3.X - p1.X) / s, (p3.Y - p1.Y) / s);
 
                 for (double t = 0; t <= 1; t += 0.01f)
                 {
@@ -90,8 +95,8 @@ namespace Framework.ViewModel.Commands
                     double h10 = tPow3 - 2 * tPow2 + t;
                     double h11 = tPow3 - tPow2;
 
-                    double x = h00 * p1.X + h01 * p2.X + h10 * (p2.X - p0.X) + h11 * (p3.X - p1.X);
-                    double y = h00 * p1.Y + h01 * p2.Y + h10 * (p2.Y - p0.Y) + h11 * (p3.Y - p1.Y);
+                    double x = h00 * p1.X + h01 * p2.X + h10 * dv1.X + h11 * dv2.X;
+                    double y = h00 * p1.Y + h01 * p2.Y + h10 * dv1.Y + h11 * dv2.Y;
 
                     result.Add(new Point(x, y));
                 }
@@ -101,7 +106,8 @@ namespace Framework.ViewModel.Commands
         }
 
         #endregion
-        #region Magnifier
+
+        #region Reset
 
         private ICommand _resetCommand;
         public ICommand ResetCommand
@@ -120,6 +126,5 @@ namespace Framework.ViewModel.Commands
             DataProvider.VectorOfMousePosition.Clear();
         }
         #endregion
-
     }
 }
