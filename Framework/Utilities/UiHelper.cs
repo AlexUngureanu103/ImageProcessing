@@ -21,6 +21,7 @@ namespace Framework.Utilities
         private static Line _processedColumnLine;
 
         private static List<Line> _splineToolRowLines = new List<Line>();
+        private static List<Line> _splineToolCurveLines = new List<Line>();
         private static List<Line> _splineToolColumnLines = new List<Line>();
         private static List<Ellipse> _splineToolPointsElipses = new List<Ellipse>();
 
@@ -52,17 +53,26 @@ namespace Framework.Utilities
             DrawSplineToolUIInteractivePoints(canvas, scaleValue, vectorOfMousePosition);
         }
 
+        public static void DrawSplineToolCurve(Canvas canvas, List<Point> points, double scaleValue, Brush brushes)
+        {
+            DataProvider.VectorOfMousePosition.Clear();
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                _splineToolCurveLines.Add(DrawingHelper.DrawLine(canvas, points[i], points[i + 1], 1, brushes, scaleValue));
+            }
+        }
+
         private static void DrawSplineToolUIInteractivePoints(Canvas canvas, double scaleValue, System.Windows.Media.PointCollection vectorOfMousePosition)
         {
-            int imgWidth = 500;
-            int imgHeigth = 300;
+            int imgWidth = 800;
+            int imgHeigth = 600;
 
             _splineToolColumnLines.Add(DrawingHelper.DrawLine(canvas, new Point(0, imgHeigth), new Point(0, 0), 3, Brushes.Black, scaleValue));
             _splineToolColumnLines.Add(DrawingHelper.DrawLine(canvas, new Point(0, imgHeigth), new Point(imgWidth, imgHeigth), 3, Brushes.Black, scaleValue));
-            
-            _splineToolPointsElipses.Add(DrawingHelper.DrawEllipse(canvas, new Point(0, imgHeigth), 10, 10, 5, Brushes.Black, scaleValue));
-            _splineToolPointsElipses.Add(DrawingHelper.DrawEllipse(canvas, new Point(imgWidth, 0), 10, 10, 5, Brushes.Black, scaleValue));
-            
+
+            _splineToolPointsElipses.Add(DrawingHelper.DrawEllipse(canvas, new Point(0, imgHeigth), 3, 3, 2, Brushes.Black, scaleValue));
+            _splineToolPointsElipses.Add(DrawingHelper.DrawEllipse(canvas, new Point(imgWidth, 0), 3, 3, 2, Brushes.Black, scaleValue));
+
             foreach (var point in vectorOfMousePosition.Skip(Math.Max(0, vectorOfMousePosition.Count() - 5)))
             {
                 var startR = new Point(0, point.Y);
@@ -73,7 +83,7 @@ namespace Framework.Utilities
                 var endC = new Point(point.X, 0);
                 _splineToolColumnLines.Add(DrawingHelper.DrawDottedLine(canvas, startC, point, 1, Brushes.Black, scaleValue, 7));
 
-                _splineToolPointsElipses.Add(DrawingHelper.DrawEllipse(canvas, point, 10, 10, 5, Brushes.Black, scaleValue));
+                _splineToolPointsElipses.Add(DrawingHelper.DrawEllipse(canvas, point, 3, 3, 2, Brushes.Black, scaleValue));
             }
         }
 
@@ -94,6 +104,13 @@ namespace Framework.Utilities
                 DrawingHelper.RemoveUiElement(canvas, el);
             }
             _splineToolRowLines.Clear();
+            foreach (var el in _splineToolCurveLines)
+            {
+                DrawingHelper.RemoveUiElement(canvas, el);
+            }
+            _splineToolCurveLines.Clear();
+
+            RemoveUiElements(canvas, null);
         }
 
         public static void RemoveUiElements(Canvas initialCanvas, Canvas processedCanvas)

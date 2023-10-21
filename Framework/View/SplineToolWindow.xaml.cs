@@ -35,8 +35,8 @@ namespace Framework.View
 
         private void SetUiValues(Image<Gray, byte> grayImage, Image<Bgr, byte> colorImage, int x, int y)
         {
-            _splinetoolVM.XPos = x >= 0 ? "X: " + x.ToString() : "";
-            _splinetoolVM.YPos = y >= 0 ? "Y: " + y.ToString() : "";
+            _splinetoolVM.XPos = x >= 0 ? "X: " + (x / _splinetoolVM.OriginalCanvasWidth * 255).ToString() : "";
+            _splinetoolVM.YPos = y >= 0 ? "Y: " + ((_splinetoolVM.OriginalCanvasHeight - y) / _splinetoolVM.OriginalCanvasHeight * 255).ToString() : "";
 
             _splinetoolVM.GrayValue = (grayImage != null && y >= 0 && y < grayImage.Height && x >= 0 && x < grayImage.Width) ?
                 "Gray: " + grayImage.Data[y, x, 0] : "";
