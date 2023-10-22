@@ -196,7 +196,7 @@
 
         <Grid Grid.Column="0"
               Grid.Row="4"
-              Grid.ColumnSpan="2">
+              Grid.ColumnSpan="4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -211,13 +211,15 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="1" 
+            <TextBlock Grid.Column="1"
+                       Grid.ColumnSpan="2"
                        Grid.Row="1"
                        Foreground="{Binding Path=Theme.TextForeground}"
                        Text="{Binding Path=XPos}"
                        FontSize="15" 
                        HorizontalAlignment="Center"/>
-            <TextBlock Grid.Column="2" 
+            <TextBlock Grid.Column="3"
+                       Grid.ColumnSpan="2"
                        Grid.Row="1"
                        Foreground="{Binding Path=Theme.TextForeground}"
                        Text="{Binding Path=YPos}"
