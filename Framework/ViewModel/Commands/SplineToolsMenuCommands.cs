@@ -1,4 +1,5 @@
-﻿using Framework.Utilities;
+﻿using Framework.Converters;
+using Framework.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Framework.ViewModel.Commands
 {
@@ -30,7 +32,7 @@ namespace Framework.ViewModel.Commands
             set => _splineToolVM.ScaleValue = value;
         }
 
-        #region Magnifier
+        #region HermitCurve
 
         private ICommand _drawHermitCurveCommand;
         public ICommand DrawHermitCurveCommand
@@ -43,13 +45,16 @@ namespace Framework.ViewModel.Commands
             }
         }
 
-        private void DrawHermitCurve(object parameter)
+        private void DrawHermitCurve(object parameters)
         {
             if (DataProvider.VectorOfMousePosition.Count < 3)
             {
                 MessageBox.Show("Please select at least 3 first.");
                 return;
             }
+
+            var canvases = (object[])parameters;
+
             DataProvider.SplineToolVectorOfMousePosition.Clear();
             DataProvider.SplineToolVectorOfMousePosition.Add(new Point(0, _splineToolVM.Graph.Height));
             for (int i = Math.Max(DataProvider.VectorOfMousePosition.Count - 5, 0); i < DataProvider.VectorOfMousePosition.Count; i++)
@@ -57,31 +62,28 @@ namespace Framework.ViewModel.Commands
                 DataProvider.SplineToolVectorOfMousePosition.Add(DataProvider.VectorOfMousePosition[i]);
             }
             DataProvider.SplineToolVectorOfMousePosition.Add(new Point(_splineToolVM.Graph.Width, 0));
+
             var points = DataProvider.SplineToolVectorOfMousePosition.OrderBy(point => point.X).Select(point => new Point(point.X, _splineToolVM.Graph.Height - point.Y)).ToList();
             points.Add(new Point(points[points.Count - 1].X - (points[points.Count - 2].X - points[points.Count - 1].X), points[points.Count - 2].Y));
             points.Add(new Point(-points[1].X, points[1].Y));
             points = points.OrderBy(point => point.X).ToList();
 
             List<Point> curve = GenerateCubicHermiteSplinePoints(points);
-
             curve = curve.Select(point => new Point(point.X, _splineToolVM.Graph.Height - point.Y)).ToList();
 
-            UiHelper.DrawSplineToolCurve(parameter as Canvas, curve, ScaleValue, Brushes.Blue);
-
-            Canvas canvas = parameter as Canvas;
+            UiHelper.DrawSplineToolCurve(canvases[0] as Canvas,canvases[1] as Canvas, curve, ScaleValue, Brushes.Blue);
         }
 
         public List<Point> GenerateCubicHermiteSplinePoints(List<Point> points)
         {
             List<Point> result = new List<Point>();
-            double s = 2 * 0.78d;
+            double s = 2 * 0.85d;
             for (int i = 0; i < points.Count - 1; i++)
             {
                 Point p0 = i == 0 ? points[i] : points[i - 1];
                 Point p1 = points[i];
                 Point p2 = points[i + 1];
                 Point p3 = i == points.Count - 2 ? points[i + 1] : points[i + 2];
-
 
                 Point dv1 = new Point((p2.X - p0.X) / s, (p2.Y - p0.Y) / s);
                 Point dv2 = new Point((p3.X - p1.X) / s, (p3.Y - p1.Y) / s);
@@ -120,9 +122,12 @@ namespace Framework.ViewModel.Commands
             }
         }
 
-        private void Reset(object parameter)
+        private void Reset(object parameters)
         {
-            DrawingHelper.RemoveUiElements(parameter as Canvas);
+            var canvases = (object[])parameters;
+
+            DrawingHelper.RemoveUiElements(canvases[0] as Canvas);
+            DrawingHelper.RemoveUiElements(canvases[1] as Canvas);
             DataProvider.VectorOfMousePosition.Clear();
         }
         #endregion

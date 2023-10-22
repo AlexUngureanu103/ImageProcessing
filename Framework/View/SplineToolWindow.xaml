@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Framework.View.SplineToolWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:convert="clr-namespace:Framework.Converters"
         xmlns:local="clr-namespace:Framework.ViewModel"
@@ -21,9 +21,10 @@
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
 
         <Grid.Resources>
@@ -32,7 +33,7 @@
 
         <Menu Background="{Binding Path=Theme.MenuBackgroundColor}"
               Grid.Row="0" 
-              Grid.ColumnSpan="2">
+              Grid.ColumnSpan="4">
             <Menu.ItemsPanel>
                 <ItemsPanelTemplate>
                     <DockPanel HorizontalAlignment="Stretch"/>
@@ -41,20 +42,39 @@
 
             <MenuItem Header="Draw Hermit Curve"
                       Command="{Binding Path=SplineToolsMenuCommands.DrawHermitCurveCommand}"
-                      CommandParameter="{Binding ElementName=canvasOriginalImage}"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
-
+                <MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
+                        <Binding ElementName="canvasOriginalImage"/>
+                        <Binding ElementName="canvasProcessedImage"/>
+                    </MultiBinding>
+                </MenuItem.CommandParameter>
             </MenuItem>
-            
+
             <MenuItem Header="Reset"
                       Command="{Binding Path=SplineToolsMenuCommands.ResetCommand}"
-                      CommandParameter="{Binding ElementName=canvasOriginalImage}"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
-
+                <MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
+                        <Binding ElementName="canvasOriginalImage"/>
+                        <Binding ElementName="canvasProcessedImage"/>
+                    </MultiBinding>
+                </MenuItem.CommandParameter>
             </MenuItem>
-            
+
+            <MenuItem Header="Update Gray Values"
+                      Command="{Binding Path=SplineToolsMenuCommands.UpdateGrayValuesCommand}"
+                      Background="{Binding Path=Theme.MenuItemBackgroundColor}"
+                      Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+                <MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
+                        <Binding Path="InitialImage"/>
+                    </MultiBinding>
+                </MenuItem.CommandParameter>
+            </MenuItem>
+
         </Menu>
 
         <Label Grid.Column="1"
@@ -91,9 +111,45 @@
                 </Canvas>
             </ScrollViewer>
         </Label>
-        
+
+        <Label Grid.Column="2"
+               Grid.Row="2"
+               Width="auto"
+               Height="auto"
+               Margin="10,0,10,0"
+               Background="{Binding Path=Theme.CanvasBackgroundColor}"
+               BorderBrush="{Binding Path=Theme.CanvasBorderBrush}"
+               BorderThickness="5"
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Center">
+            <ScrollViewer x:Name="scrollViewerProcessed"
+                          HorizontalScrollBarVisibility="Auto" 
+                          VerticalScrollBarVisibility="Auto" 
+                          ScrollChanged="ScrollChanged">
+                <Canvas x:Name="canvasProcessedImage"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="{Binding Path=ProcessedCanvasWidth}"
+                        Height="{Binding Path=ProcessedCanvasHeight}"
+                        MouseLeftButtonDown="CanvasMouseLeftButtonDown">
+                    <Image x:Name="ProcessedGraph"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Mouse.MouseMove="ImageMouseMove"
+                           MouseLeftButtonDown="ImageMouseLeftButtonDown"
+                           MouseRightButtonDown="ImageMouseRightButtonDown"
+                           Source="{Binding Path=ProcessedGraph}">
+                        <Image.LayoutTransform>
+                            <ScaleTransform ScaleX="{Binding ElementName=sliderZoom, Path=Value}" 
+                                            ScaleY="{Binding ElementName=sliderZoom, Path=Value}"/>
+                        </Image.LayoutTransform>
+                    </Image>
+                </Canvas>
+            </ScrollViewer>
+        </Label>
+
+
         <Grid Grid.Row="3"
-                    Grid.ColumnSpan="2"
+                    Grid.ColumnSpan="4"
                     Height="40"
                     Margin="10,0,10,0">
             <Button Content="Reset"

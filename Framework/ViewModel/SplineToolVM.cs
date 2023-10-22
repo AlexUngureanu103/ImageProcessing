@@ -2,6 +2,7 @@
 using Emgu.CV.Structure;
 using Framework.Converters;
 using Framework.Model;
+using Framework.Utilities;
 using Framework.ViewModel.Commands;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -11,6 +12,7 @@ namespace Framework.ViewModel
     public class SplineToolVM : BaseVM
     {
         public SplineToolsMenuCommands SplineToolsMenuCommands { get; set; }
+
         public SplineToolVM()
         {
             SplineToolsMenuCommands = new SplineToolsMenuCommands(this);
@@ -18,10 +20,10 @@ namespace Framework.ViewModel
             OriginalCanvasWidth = 800;
             ScaleValue = 1;
 
-
             Image<Bgr, byte> image = new Image<Bgr, byte>((int)OriginalCanvasWidth, (int)OriginalCanvasHeight, new Bgr(255, 255, 255));
 
             Graph = ImageConverter.Convert(image);
+            ProcessedGraph = ImageConverter.Convert(image);
             string theme = Properties.Settings.Default.Theme;
             SetThemeMode(theme);
         }
@@ -77,18 +79,33 @@ namespace Framework.ViewModel
             }
         }
 
-        public ImageSource _graph;
+        //private ImageSource _initialImage;
+        //public ImageSource InitialImage
+        //{
+        //    get
+        //    {
+        //        return _initialImage;
+        //    }
+        //    set
+        //    {
+        //        _initialImage = value;
+
+        //        NotifyPropertyChanged(nameof(InitialImage));
+        //    }
+        //}
+
+        private ImageSource _initialGraph;
         public ImageSource Graph
         {
             get
             {
-                return _graph;
+                return _initialGraph;
             }
             set
             {
-                _graph = value;
+                _initialGraph = value;
 
-                if (_graph != null)
+                if (_initialGraph != null)
                 {
                     OriginalCanvasWidth = Graph.Width * ScaleValue;
                     OriginalCanvasHeight = Graph.Height * ScaleValue;
@@ -100,6 +117,29 @@ namespace Framework.ViewModel
                 }
 
                 NotifyPropertyChanged(nameof(Graph));
+            }
+        }
+
+        private ImageSource _processedGraph;
+        public ImageSource ProcessedGraph
+        {
+            get
+            {
+                return _processedGraph;
+            }
+            set
+            {
+                _processedGraph = value;
+                if(_processedGraph != null)
+                {
+                    ProcessedCanvasWidth = ProcessedGraph.Width * ScaleValue;
+                    ProcessedCanvasHeight = ProcessedGraph.Height * ScaleValue;
+                }
+                else
+                {
+                    ProcessedCanvasWidth = 0;
+                    ProcessedCanvasHeight = 0;
+                }
             }
         }
 
@@ -211,27 +251,27 @@ namespace Framework.ViewModel
             }
         }
 
-        //public double _processedCanvasWidth;
-        //public double ProcessedCanvasWidth
-        //{
-        //    get => _processedCanvasWidth;
-        //    set
-        //    {
-        //        _processedCanvasWidth = value;
-        //        NotifyPropertyChanged(nameof(ProcessedCanvasWidth));
-        //    }
-        //}
+        public double _processedCanvasWidth;
+        public double ProcessedCanvasWidth
+        {
+            get => _processedCanvasWidth;
+            set
+            {
+                _processedCanvasWidth = value;
+                NotifyPropertyChanged(nameof(ProcessedCanvasWidth));
+            }
+        }
 
-        //public double _processedCanvasHeight;
-        //public double ProcessedCanvasHeight
-        //{
-        //    get => _processedCanvasHeight;
-        //    set
-        //    {
-        //        _processedCanvasHeight = value;
-        //        NotifyPropertyChanged(nameof(ProcessedCanvasHeight));
-        //    }
-        //}
+        public double _processedCanvasHeight;
+        public double ProcessedCanvasHeight
+        {
+            get => _processedCanvasHeight;
+            set
+            {
+                _processedCanvasHeight = value;
+                NotifyPropertyChanged(nameof(ProcessedCanvasHeight));
+            }
+        }
         #endregion
     }
 }

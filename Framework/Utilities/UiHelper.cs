@@ -21,6 +21,7 @@ namespace Framework.Utilities
         private static Line _processedColumnLine;
 
         private static List<Line> _splineToolRowLines = new List<Line>();
+        private static List<Line> _splineToolCurverocessedLines = new List<Line>();
         private static List<Line> _splineToolCurveLines = new List<Line>();
         private static List<Line> _splineToolColumnLines = new List<Line>();
         private static List<Ellipse> _splineToolPointsElipses = new List<Ellipse>();
@@ -53,13 +54,25 @@ namespace Framework.Utilities
             DrawSplineToolUIInteractivePoints(canvas, scaleValue, vectorOfMousePosition);
         }
 
-        public static void DrawSplineToolCurve(Canvas canvas, List<Point> points, double scaleValue, Brush brushes)
+        public static void DrawSplineToolCurve(Canvas initialCanvas,Canvas processedCanvas, List<Point> points, double scaleValue, Brush brushes)
         {
+            RemoveProcessedSplineToolCurve(processedCanvas);
+
             DataProvider.VectorOfMousePosition.Clear();
             for (int i = 0; i < points.Count - 1; i++)
             {
-                _splineToolCurveLines.Add(DrawingHelper.DrawLine(canvas, points[i], points[i + 1], 1, brushes, scaleValue));
+                _splineToolCurveLines.Add(DrawingHelper.DrawLine(initialCanvas, points[i], points[i + 1], 1, brushes, scaleValue));
+                _splineToolCurverocessedLines.Add(DrawingHelper.DrawLine(processedCanvas, points[i], points[i + 1], 1, brushes, scaleValue));
             }
+        }
+
+        private static void RemoveProcessedSplineToolCurve(Canvas processedCanvas)
+        {
+            foreach (var el in _splineToolCurverocessedLines)
+            {
+                DrawingHelper.RemoveUiElement(processedCanvas, el);
+            }
+            _splineToolCurverocessedLines.Clear();
         }
 
         private static void DrawSplineToolUIInteractivePoints(Canvas canvas, double scaleValue, System.Windows.Media.PointCollection vectorOfMousePosition)

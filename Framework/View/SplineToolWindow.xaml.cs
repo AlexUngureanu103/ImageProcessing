@@ -1,11 +1,14 @@
-﻿using Emgu.CV;
+﻿using Algorithms.Tools;
+using Emgu.CV;
 using Emgu.CV.Structure;
+using Framework.Converters;
 using Framework.Utilities;
 using Framework.ViewModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Framework.View
 {
@@ -22,6 +25,8 @@ namespace Framework.View
 
             DataProvider.VectorOfMousePosition.Clear();
 
+            //var initialImage = DataProvider.GrayInitialImage != null ? ImageConverter.Convert( DataProvider.GrayInitialImage) : ImageConverter.Convert(DataProvider.ColorInitialImage);
+
             _splinetoolVM = new SplineToolVM();
             DataContext = _splinetoolVM;
         }
@@ -29,8 +34,8 @@ namespace Framework.View
         public void Update()
         {
 
-            UiHelper.RemoveUiElements(canvasOriginalImage, null);
-            UiHelper.DrawUiElements(canvasOriginalImage, null, _splinetoolVM.ScaleValue);
+            UiHelper.RemoveUiElements(canvasOriginalImage, canvasProcessedImage);
+            UiHelper.DrawUiElements(canvasOriginalImage, canvasProcessedImage, _splinetoolVM.ScaleValue);
         }
 
         private void SetUiValues(Image<Gray, byte> grayImage, Image<Bgr, byte> colorImage, int x, int y)
@@ -51,12 +56,26 @@ namespace Framework.View
         private void ImageMouseMove(object sender, MouseEventArgs e)
         {
             var position = e.GetPosition(MyGraph);
-            SetUiValues(DataProvider.GrayProcessedImage, DataProvider.ColorProcessedImage, (int)position.X, (int)position.Y);
+            if (sender == MyGraph)
+            {
+                SetUiValues(DataProvider.GrayProcessedImage, DataProvider.ColorProcessedImage, (int)position.X, (int)position.Y);
+            }
+            else if (sender == ProcessedGraph)
+            {
+                SetUiValues(DataProvider.GrayProcessedImage, DataProvider.ColorProcessedImage, (int)(position.X / _splinetoolVM.ScaleValue), (int)(position.Y / _splinetoolVM.ScaleValue));
+            }
         }
 
         private void ImageMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DataProvider.MousePosition = e.GetPosition(MyGraph);
+            if (sender == MyGraph)
+            {
+                DataProvider.MousePosition = e.GetPosition(MyGraph);
+            }
+            else if (sender == ProcessedGraph)
+            {
+                DataProvider.MousePosition = e.GetPosition(ProcessedGraph);
+            }
 
             if (DataProvider.LastPosition != DataProvider.MousePosition)
             {
@@ -87,18 +106,30 @@ namespace Framework.View
             double scaleValue = sliderZoom.Value;
 
             DrawingHelper.UpdateShapesProperties(canvasOriginalImage, scaleValue);
+            DrawingHelper.UpdateShapesProperties(canvasProcessedImage, scaleValue);
 
             if (_splinetoolVM != null)
             {
                 _splinetoolVM.OriginalCanvasWidth = MyGraph.ActualWidth * scaleValue;
                 _splinetoolVM.OriginalCanvasHeight = MyGraph.ActualHeight * scaleValue;
+
+                _splinetoolVM.ProcessedCanvasWidth = ProcessedGraph.ActualWidth * scaleValue;
+                _splinetoolVM.ProcessedCanvasHeight = ProcessedGraph.ActualHeight * scaleValue;
             }
         }
 
         private void ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            scrollViewerInitial.ScrollToVerticalOffset(e.VerticalOffset);
-            scrollViewerInitial.ScrollToHorizontalOffset(e.HorizontalOffset);
+            if (sender == scrollViewerInitial)
+            {
+                scrollViewerInitial.ScrollToVerticalOffset(e.VerticalOffset);
+                scrollViewerInitial.ScrollToHorizontalOffset(e.HorizontalOffset);
+            }
+            else
+            {
+                scrollViewerProcessed.ScrollToVerticalOffset(e.VerticalOffset);
+                scrollViewerProcessed.ScrollToHorizontalOffset(e.HorizontalOffset);
+            }
         }
 
 
