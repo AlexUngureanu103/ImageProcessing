@@ -148,10 +148,9 @@ namespace Framework.ViewModel.Commands
                         byte grayValue = image.Data[y, x, 0];
                         byte lutRawValue = (byte)lutValues[grayValue];
 
-                        byte lutValue = (byte)(255 - lutRawValue);
-                        image.Data[y, x, 0] = lutValue;
-                        image.Data[y, x, 1] = lutValue;
-                        image.Data[y, x, 2] = lutValue;
+                        image.Data[y, x, 0] = lutRawValue;
+                        //image.Data[y, x, 1] = lutValue;
+                        //image.Data[y, x, 2] = lutValue;
                     }
                 }
                 Graph = ImageConverter.Convert(image);
@@ -217,7 +216,7 @@ namespace Framework.ViewModel.Commands
         {
             var canvases = (object[])parameters;
 
-            Image<Bgr, byte> image = new Image<Bgr, byte>((int)_splineToolVM.OriginalCanvasWidth, (int)_splineToolVM.OriginalCanvasHeight, new Bgr(255, 255, 255));
+            Image<Bgr, byte> image = new Image<Bgr, byte>(800, 600, new Bgr(255, 255, 255));
 
             Graph = ImageConverter.Convert(image);
 

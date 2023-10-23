@@ -20,7 +20,7 @@ namespace Framework.ViewModel
             OriginalCanvasWidth = 800;
             ScaleValue = 1;
 
-            Image<Bgr, byte> image = new Image<Bgr, byte>((int)OriginalCanvasWidth, (int)OriginalCanvasHeight, new Bgr(255, 255, 255));
+            Image<Bgr, byte> image = new Image<Bgr, byte>(800, 600, new Bgr(255, 255, 255));
 
             Graph = ImageConverter.Convert(image);
             ProcessedGraph = ImageConverter.Convert(image);
