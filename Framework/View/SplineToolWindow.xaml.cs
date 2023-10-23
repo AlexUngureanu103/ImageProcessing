@@ -1,14 +1,11 @@
-﻿using Algorithms.Tools;
-using Emgu.CV;
+﻿using Emgu.CV;
 using Emgu.CV.Structure;
-using Framework.Converters;
 using Framework.Utilities;
 using Framework.ViewModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Framework.View
 {
@@ -19,7 +16,7 @@ namespace Framework.View
     {
         private readonly SplineToolVM _splinetoolVM;
 
-        public SplineToolWindow()
+        public SplineToolWindow(MainVM mainVM)
         {
             InitializeComponent();
 
@@ -28,6 +25,8 @@ namespace Framework.View
             //var initialImage = DataProvider.GrayInitialImage != null ? ImageConverter.Convert( DataProvider.GrayInitialImage) : ImageConverter.Convert(DataProvider.ColorInitialImage);
 
             _splinetoolVM = new SplineToolVM();
+            _splinetoolVM.MainVM = mainVM;
+
             DataContext = _splinetoolVM;
         }
 

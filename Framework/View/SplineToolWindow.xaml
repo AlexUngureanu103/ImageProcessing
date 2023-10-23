@@ -68,11 +68,6 @@
                       Command="{Binding Path=SplineToolsMenuCommands.UpdateGrayValuesCommand}"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
-                <MenuItem.CommandParameter>
-                    <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
-                        <Binding Path="InitialImage"/>
-                    </MultiBinding>
-                </MenuItem.CommandParameter>
             </MenuItem>
 
         </Menu>

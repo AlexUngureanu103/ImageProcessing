@@ -1,5 +1,5 @@
-﻿using Emgu.CV.Structure;
-using Emgu.CV;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
 using Framework.Converters;
 using Framework.Utilities;
 using System;
@@ -140,20 +140,43 @@ namespace Framework.ViewModel.Commands
                     .GroupBy(point => NormalizeValue(point.X, _splineToolVM.OriginalCanvasWidth))
                     .ToDictionary(group => group.Key, group => NormalizeValue(_splineToolVM.OriginalCanvasHeight - group.Last().Y, _splineToolVM.OriginalCanvasHeight));
 
-                var image = DataProvider.ColorInitialImage.Clone();
-                for (int y = 0; y < image.Height; y++)
+                if (DataProvider.ColorInitialImage != null)
                 {
-                    for (int x = 0; x < image.Width; x++)
-                    {
-                        byte grayValue = image.Data[y, x, 0];
-                        byte lutRawValue = (byte)lutValues[grayValue];
+                    var image = DataProvider.ColorInitialImage.Clone();
 
-                        image.Data[y, x, 0] = lutRawValue;
-                        //image.Data[y, x, 1] = lutValue;
-                        //image.Data[y, x, 2] = lutValue;
+                    for (int y = 0; y < image.Height; y++)
+                    {
+                        for (int x = 0; x < image.Width; x++)
+                        {
+                            byte grayValue = image.Data[y, x, 0];
+                            byte lutRawValue = (byte)lutValues[grayValue];
+
+                            image.Data[y, x, 0] = lutRawValue;
+                            //image.Data[y, x, 1] = lutValue;
+                            //image.Data[y, x, 2] = lutValue;
+                        }
                     }
+                    _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
                 }
-                Graph = ImageConverter.Convert(image);
+                else if (DataProvider.GrayInitialImage != null)
+                {
+                    var image = DataProvider.GrayInitialImage.Clone();
+
+
+                    for (int y = 0; y < image.Height; y++)
+                    {
+                        for (int x = 0; x < image.Width; x++)
+                        {
+                            byte grayValue = image.Data[y, x, 0];
+                            byte lutRawValue = (byte)lutValues[grayValue];
+
+                            image.Data[y, x, 0] = lutRawValue;
+                            //image.Data[y, x, 1] = lutRawValue;
+                            //image.Data[y, x, 2] = lutValue;
+                        }
+                    }
+                    _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
+                }
             }
             catch (Exception e)
             {

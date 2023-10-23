@@ -2,7 +2,6 @@
 using Emgu.CV.Structure;
 using Framework.Converters;
 using Framework.Model;
-using Framework.Utilities;
 using Framework.ViewModel.Commands;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -79,20 +78,7 @@ namespace Framework.ViewModel
             }
         }
 
-        //private ImageSource _initialImage;
-        //public ImageSource InitialImage
-        //{
-        //    get
-        //    {
-        //        return _initialImage;
-        //    }
-        //    set
-        //    {
-        //        _initialImage = value;
-
-        //        NotifyPropertyChanged(nameof(InitialImage));
-        //    }
-        //}
+        public MainVM MainVM { get; set; }
 
         private ImageSource _initialGraph;
         public ImageSource Graph
@@ -130,7 +116,7 @@ namespace Framework.ViewModel
             set
             {
                 _processedGraph = value;
-                if(_processedGraph != null)
+                if (_processedGraph != null)
                 {
                     ProcessedCanvasWidth = ProcessedGraph.Width * ScaleValue;
                     ProcessedCanvasHeight = ProcessedGraph.Height * ScaleValue;
