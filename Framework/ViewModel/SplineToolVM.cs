@@ -15,8 +15,13 @@ namespace Framework.ViewModel
         public SplineToolVM()
         {
             SplineToolsMenuCommands = new SplineToolsMenuCommands(this);
+
             OriginalCanvasHeight = 600;
             OriginalCanvasWidth = 800;
+
+            ProcessedCanvasHeight = 600;
+            ProcessedCanvasWidth = 800;
+
             ScaleValue = 1;
 
             Image<Bgr, byte> image = new Image<Bgr, byte>(800, 600, new Bgr(255, 255, 255));

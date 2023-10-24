@@ -137,37 +137,37 @@ namespace Framework.ViewModel.Commands
             {
                 var curvePoints = GetCurvePointsAtSinglePixel();
                 lutValues = curvePoints
-                    .GroupBy(point => NormalizeValue(point.X, _splineToolVM.OriginalCanvasWidth))
-                    .ToDictionary(group => group.Key, group => NormalizeValue(_splineToolVM.OriginalCanvasHeight - group.Last().Y, _splineToolVM.OriginalCanvasHeight));
+                    .GroupBy(point => NormalizeValue(point.X, _splineToolVM.Graph.Width))
+                    .ToDictionary(group => group.Key, group => NormalizeValue(_splineToolVM.Graph.Height - group.Last().Y, _splineToolVM.Graph.Height));
 
                 if (DataProvider.ColorInitialImage != null)
                 {
-                    var image = DataProvider.ColorInitialImage.Clone();
+                    var image = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Size);
+
 
                     for (int y = 0; y < image.Height; y++)
                     {
                         for (int x = 0; x < image.Width; x++)
                         {
-                            byte grayValue = image.Data[y, x, 0];
-                            byte lutRawValue = (byte)lutValues[grayValue];
+                            //byte grayValue = image.Data[y, x, 0];
+                            //byte lutRawValue = (byte)lutValues[grayValue];
 
-                            image.Data[y, x, 0] = lutRawValue;
-                            //image.Data[y, x, 1] = lutValue;
-                            //image.Data[y, x, 2] = lutValue;
+                            image.Data[y, x, 0] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 0]];
+                            image.Data[y, x, 1] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 1]];
+                            image.Data[y, x, 2] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 2]];
                         }
                     }
                     _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
                 }
                 else if (DataProvider.GrayInitialImage != null)
                 {
-                    var image = DataProvider.GrayInitialImage.Clone();
-
+                    var image = new Image<Gray, byte>(DataProvider.GrayInitialImage.Size);
 
                     for (int y = 0; y < image.Height; y++)
                     {
                         for (int x = 0; x < image.Width; x++)
                         {
-                            byte grayValue = image.Data[y, x, 0];
+                            byte grayValue = DataProvider.GrayInitialImage.Data[y, x, 0];
                             byte lutRawValue = (byte)lutValues[grayValue];
 
                             image.Data[y, x, 0] = lutRawValue;
@@ -180,7 +180,7 @@ namespace Framework.ViewModel.Commands
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                MessageBox.Show(e.Message + $"{lutValues.Count}");
             }
             finally
             {
@@ -246,6 +246,7 @@ namespace Framework.ViewModel.Commands
             DrawingHelper.RemoveUiElements(canvases[0] as Canvas);
             DrawingHelper.RemoveUiElements(canvases[1] as Canvas);
             DataProvider.VectorOfMousePosition.Clear();
+            DataProvider.SplineToolCurvePoints.Clone();
         }
         #endregion
     }

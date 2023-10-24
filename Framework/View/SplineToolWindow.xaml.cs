@@ -39,8 +39,8 @@ namespace Framework.View
 
         private void SetUiValues(Image<Gray, byte> grayImage, Image<Bgr, byte> colorImage, int x, int y)
         {
-            _splinetoolVM.XPos = x >= 0 ? "X: " + (x / _splinetoolVM.OriginalCanvasWidth * 255).ToString() : "";
-            _splinetoolVM.YPos = y >= 0 ? "Y: " + ((_splinetoolVM.OriginalCanvasHeight - y) / _splinetoolVM.OriginalCanvasHeight * 255).ToString() : "";
+            _splinetoolVM.XPos = x >= 0 ? "X: " + (x / _splinetoolVM.Graph.Width * 255).ToString() : "";
+            _splinetoolVM.YPos = y >= 0 ? "Y: " + ((_splinetoolVM.Graph.Height - y) / _splinetoolVM.Graph.Height * 255).ToString() : "";
 
             _splinetoolVM.GrayValue = (grayImage != null && y >= 0 && y < grayImage.Height && x >= 0 && x < grayImage.Width) ?
                 "Gray: " + grayImage.Data[y, x, 0] : "";
@@ -57,7 +57,7 @@ namespace Framework.View
             var position = e.GetPosition(MyGraph);
             if (sender == MyGraph)
             {
-                SetUiValues(DataProvider.GrayProcessedImage, DataProvider.ColorProcessedImage, (int)position.X, (int)position.Y);
+                SetUiValues(DataProvider.GrayInitialImage, DataProvider.ColorInitialImage, (int)position.X, (int)position.Y);
             }
             else if (sender == ProcessedGraph)
             {

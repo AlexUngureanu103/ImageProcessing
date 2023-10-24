@@ -58,7 +58,6 @@ namespace Framework.Utilities
         {
             RemoveProcessedSplineToolCurve(processedCanvas);
 
-            DataProvider.VectorOfMousePosition.Clear();
             for (int i = 0; i < points.Count - 1; i++)
             {
                 _splineToolCurveLines.Add(DrawingHelper.DrawLine(initialCanvas, points[i], points[i + 1], 1, brushes, scaleValue));
