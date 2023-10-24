@@ -1,6 +1,4 @@
-﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using Framework.Utilities;
+﻿using Framework.Utilities;
 using Framework.ViewModel;
 using System.Linq;
 using System.Windows;
@@ -37,31 +35,23 @@ namespace Framework.View
             UiHelper.DrawUiElements(canvasOriginalImage, canvasProcessedImage, _splinetoolVM.ScaleValue);
         }
 
-        private void SetUiValues(Image<Gray, byte> grayImage, Image<Bgr, byte> colorImage, int x, int y)
+        private void SetUiValues(int x, int y)
         {
             _splinetoolVM.XPos = x >= 0 ? "X: " + (x / _splinetoolVM.Graph.Width * 255).ToString() : "";
             _splinetoolVM.YPos = y >= 0 ? "Y: " + ((_splinetoolVM.Graph.Height - y) / _splinetoolVM.Graph.Height * 255).ToString() : "";
-
-            _splinetoolVM.GrayValue = (grayImage != null && y >= 0 && y < grayImage.Height && x >= 0 && x < grayImage.Width) ?
-                "Gray: " + grayImage.Data[y, x, 0] : "";
-            _splinetoolVM.BlueValue = (colorImage != null && y >= 0 && y < colorImage.Height && x >= 0 && x < colorImage.Width) ?
-                "B: " + colorImage.Data[y, x, 0] : "";
-            _splinetoolVM.GreenValue = (colorImage != null && y >= 0 && y < colorImage.Height && x >= 0 && x < colorImage.Width) ?
-                "G: " + colorImage.Data[y, x, 1] : "";
-            _splinetoolVM.RedValue = (colorImage != null && y >= 0 && y < colorImage.Height && x >= 0 && x < colorImage.Width) ?
-                "R: " + colorImage.Data[y, x, 2] : "";
         }
 
         private void ImageMouseMove(object sender, MouseEventArgs e)
         {
-            var position = e.GetPosition(MyGraph);
             if (sender == MyGraph)
             {
-                SetUiValues(DataProvider.GrayInitialImage, DataProvider.ColorInitialImage, (int)position.X, (int)position.Y);
+                var position = e.GetPosition(MyGraph);
+                SetUiValues((int)position.X, (int)position.Y);
             }
             else if (sender == ProcessedGraph)
             {
-                SetUiValues(DataProvider.GrayProcessedImage, DataProvider.ColorProcessedImage, (int)(position.X / _splinetoolVM.ScaleValue), (int)(position.Y / _splinetoolVM.ScaleValue));
+                var position = e.GetPosition(ProcessedGraph);
+                SetUiValues((int)(position.X / _splinetoolVM.ScaleValue), (int)(position.Y / _splinetoolVM.ScaleValue));
             }
         }
 
@@ -70,24 +60,29 @@ namespace Framework.View
             if (sender == MyGraph)
             {
                 DataProvider.MousePosition = e.GetPosition(MyGraph);
+                if (DataProvider.LastPosition != DataProvider.MousePosition)
+                {
+                    DataProvider.VectorOfMousePosition.Add(DataProvider.MousePosition);
+
+                    DataProvider.LastPosition = DataProvider.MousePosition;
+                    UiHelper.DrawSplineToolGraphUI(canvasOriginalImage, _splinetoolVM.ScaleValue, DataProvider.VectorOfMousePosition);
+                }
             }
             else if (sender == ProcessedGraph)
             {
                 DataProvider.MousePosition = e.GetPosition(ProcessedGraph);
+
             }
 
-            if (DataProvider.LastPosition != DataProvider.MousePosition)
-            {
-                DataProvider.VectorOfMousePosition.Add(DataProvider.MousePosition);
-
-                DataProvider.LastPosition = DataProvider.MousePosition;
-                UiHelper.DrawSplineToolGraphUI(canvasOriginalImage, _splinetoolVM.ScaleValue, DataProvider.VectorOfMousePosition);
-            }
         }
 
         private void ImageMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            DataProvider.VectorOfMousePosition.Clear();
+            if (sender == MyGraph)
+            {
+                DataProvider.VectorOfMousePosition.Clear();
+                DrawingHelper.RemoveUiElements(canvasOriginalImage);
+            }
         }
 
         private void CanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

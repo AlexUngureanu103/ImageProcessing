@@ -156,50 +156,6 @@ namespace Framework.ViewModel
             }
         }
 
-        private string _grayValue;
-        public string GrayValue
-        {
-            get => _grayValue;
-            set
-            {
-                _grayValue = value;
-                NotifyPropertyChanged(nameof(GrayValue));
-            }
-        }
-
-        private string _redValue;
-        public string RedValue
-        {
-            get => _redValue;
-            set
-            {
-                _redValue = value;
-                NotifyPropertyChanged(nameof(RedValue));
-            }
-        }
-
-        private string _greenValue;
-        public string GreenValue
-        {
-            get => _greenValue;
-            set
-            {
-                _greenValue = value;
-                NotifyPropertyChanged(nameof(GreenValue));
-            }
-        }
-
-        private string _blueValue;
-        public string BlueValue
-        {
-            get => _blueValue;
-            set
-            {
-                _blueValue = value;
-                NotifyPropertyChanged(nameof(BlueValue));
-            }
-        }
-
         #region Reset zoom
         private ICommand _resetZoomCommand;
         public ICommand ResetZoomCommand

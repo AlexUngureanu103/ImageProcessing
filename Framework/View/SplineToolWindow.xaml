@@ -220,32 +220,6 @@
                        Text="{Binding Path=YPos}"
                        FontSize="15" 
                        HorizontalAlignment="Center"/>
-
-            <TextBlock Grid.Column="5"
-                       Grid.Row="1"
-                       Foreground="{Binding Path=Theme.TextForeground}"
-                       Text="{Binding Path=GrayValue}"
-                       FontSize="15"
-                       HorizontalAlignment="Center"/>
-
-            <TextBlock Grid.Column="4"
-                       Grid.Row="1"
-                       Foreground="{Binding Path=Theme.TextForeground}"
-                       Text="{Binding Path=RedValue}"
-                       FontSize="15"
-                       HorizontalAlignment="Center"/>
-            <TextBlock Grid.Column="5"
-                       Grid.Row="1"
-                       Foreground="{Binding Path=Theme.TextForeground}"
-                       Text="{Binding Path=GreenValue}"
-                       FontSize="15"
-                       HorizontalAlignment="Center"/>
-            <TextBlock Grid.Column="6"
-                       Grid.Row="1"
-                       Foreground="{Binding Path=Theme.TextForeground}"
-                       Text="{Binding Path=BlueValue}"
-                       FontSize="15"
-                       HorizontalAlignment="Center"/>
         </Grid>
     </Grid>
 </Window>
