@@ -73,6 +73,143 @@ namespace Algorithms.Tools
             return emguCvImg;
         }
 
+        public static Image<Gray, byte> TriangleThresholding(Image<Gray, byte> image)
+        {
+            var img = image.Clone();
+
+            var histogram = GrayHistogram(img);
+
+            int threshold = TriangleThreshold(histogram);
+
+            int threshold2 = TriangleMethod(img);
+
+            img = img.ThresholdBinary(new Gray(threshold), new Gray(255));
+
+            return img;
+        }
+
+        public static double[] GrayHistogram(Image<Gray, byte> grayImage)
+        {
+            double[] histogram = new double[256];
+
+            for (int y = 0; y < grayImage.Size.Height; ++y)
+                for (int x = 0; x < grayImage.Size.Width; ++x)
+                    histogram[grayImage.Data[y, x, 0]] += 1;
+
+            //for (int i = 0; i < 256; ++i)
+            //    histogram[i] /= grayImage.Size.Height * grayImage.Size.Width;
+
+            return histogram;
+        }
+
+        private static int TriangleThreshold(double[] histogram)
+        {
+            int threshold = 0;
+            double minEntropy = double.MaxValue;
+
+            for (int i = 0; i < histogram.Length; i++)
+            {
+                double w1 = 0;
+                double w2 = 0;
+                double u1 = 0;
+                double u2 = 0;
+
+                for (int j = 0; j <= i; j++)
+                {
+                    w1 += histogram[j];
+                    u1 += j * histogram[j];
+                }
+
+                for (int j = i + 1; j < histogram.Length; j++)
+                {
+                    w2 += histogram[j];
+                    u2 += j * histogram[j];
+                }
+
+                if (w1 == 0 || w2 == 0)
+                {
+                    continue;
+                }
+
+                u1 /= w1;
+                u2 /= w2;
+
+                double entropy = w1 * Math.Log(w1) + w2 * Math.Log(w2);
+
+                if (entropy < minEntropy)
+                {
+                    minEntropy = entropy;
+                    threshold = i;
+                }
+            }
+
+            return threshold;
+        }
+
+        private static double PointToLineDistance(double x0, double y0, double x1, double y1, double x2, double y2)
+        {
+            double numerator = System.Math.Abs(((x2 - x1) * (y1 - y0)) - ((x1 - x0) * (y2 - y1)));
+            double denominator = System.Math.Sqrt(System.Math.Pow(x2 - x1, 2) + System.Math.Pow(y2 - y1, 2));
+            return numerator / denominator;
+        }
+
+        public static int TriangleMethod(Image<Gray, byte> grayImage)
+        {
+            double[] histogram = GrayHistogram(grayImage);
+            double histogramMax = -0.1, histogramMin = 1.1;
+            int histogramMaxPos = 0, histogramMinPos = 0;
+
+            for (int i = 0; i < histogram.Length; ++i)
+            {
+                if (histogram[i] > histogramMax)
+                {
+                    histogramMax = histogram[i];
+                    histogramMaxPos = i;
+                }
+                if (histogram[i] < histogramMin)
+                {
+                    histogramMin = histogram[i];
+                    histogramMinPos = i;
+                }
+            }
+
+            for (int i = 0; i < histogram.Length; ++i)
+                if (histogram[i] == histogramMin && System.Math.Abs(i - histogramMaxPos) > System.Math.Abs(histogramMinPos - histogramMaxPos))
+                    histogramMinPos = i;
+
+            double xMax, yMax, xMin, yMin, xCrt, yCrt, distMax = -1;
+            int result = 0;
+            yMax = 1;
+            yMin = 0;
+
+            if (histogramMaxPos < histogramMinPos)
+            {
+                xMax = 0;
+                xMin = 1;
+            }
+            else
+            {
+                xMax = 1;
+                xMin = 0;
+            }
+
+            for (int i = System.Math.Min(histogramMaxPos, histogramMinPos) + 1; i < System.Math.Max(histogramMaxPos, histogramMinPos); ++i)
+            {
+                double num1 = i - System.Math.Min(histogramMaxPos, histogramMinPos);
+                double num2 = System.Math.Abs(histogramMaxPos - histogramMinPos);
+
+                xCrt = num1 / num2;
+                yCrt = histogram[i];
+                double distance = PointToLineDistance(xCrt, yCrt, xMax, yMax, xMin, yMin);
+                if (distance > distMax)
+                {
+                    distMax = distance;
+                    result = i;
+                }
+            }
+
+            return result;
+        }
         #endregion
 
         #region GetPoints

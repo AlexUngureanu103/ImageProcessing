@@ -699,7 +699,24 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image !");
                 return;
             }
+
+
+            ClearProcessedCanvas(parameter);
+
+            if (GrayInitialImage != null)
+            {
+                GrayProcessedImage = Tools.TriangleThresholding(GrayInitialImage);
+                ProcessedImage = Convert(GrayProcessedImage);
+            }
+            else if (ColorInitialImage != null)
+            {
+                GrayProcessedImage = Tools.Convert(ColorInitialImage);
+                GrayProcessedImage = Tools.TriangleThresholding(GrayProcessedImage);
+                ProcessedImage = Convert(GrayProcessedImage);
+            }
         }
+
+        #endregion
 
         #endregion
 
