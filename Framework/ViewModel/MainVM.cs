@@ -17,10 +17,6 @@ namespace Framework.ViewModel
             MenuCommands = new MenuCommands(this);
             ScaleValue = 1;
 
-            Image<Bgr, byte> image = new Image<Bgr, byte>((int)500, (int)300, new Bgr(255, 255, 255));
-
-            InitialImage = Convert(image);
-
             string theme = Properties.Settings.Default.Theme;
             SetThemeMode(theme);
         }

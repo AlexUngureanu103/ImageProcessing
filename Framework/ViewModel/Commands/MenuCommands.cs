@@ -615,7 +615,7 @@ namespace Framework.ViewModel
                 return;
             }
 
-            SplineToolWindow splineToolWindow = new SplineToolWindow();
+            SplineToolWindow splineToolWindow = new SplineToolWindow(_mainVM);
             splineToolWindow.Show();
         }
         #endregion

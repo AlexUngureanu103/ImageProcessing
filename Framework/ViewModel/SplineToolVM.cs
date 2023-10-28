@@ -11,17 +11,23 @@ namespace Framework.ViewModel
     public class SplineToolVM : BaseVM
     {
         public SplineToolsMenuCommands SplineToolsMenuCommands { get; set; }
+
         public SplineToolVM()
         {
             SplineToolsMenuCommands = new SplineToolsMenuCommands(this);
+
             OriginalCanvasHeight = 600;
             OriginalCanvasWidth = 800;
+
+            ProcessedCanvasHeight = 600;
+            ProcessedCanvasWidth = 800;
+
             ScaleValue = 1;
 
-
-            Image<Bgr, byte> image = new Image<Bgr, byte>((int)OriginalCanvasWidth, (int)OriginalCanvasHeight, new Bgr(255, 255, 255));
+            Image<Bgr, byte> image = new Image<Bgr, byte>(800, 600, new Bgr(255, 255, 255));
 
             Graph = ImageConverter.Convert(image);
+            ProcessedGraph = ImageConverter.Convert(image);
             string theme = Properties.Settings.Default.Theme;
             SetThemeMode(theme);
         }
@@ -77,18 +83,20 @@ namespace Framework.ViewModel
             }
         }
 
-        public ImageSource _graph;
+        public MainVM MainVM { get; set; }
+
+        private ImageSource _initialGraph;
         public ImageSource Graph
         {
             get
             {
-                return _graph;
+                return _initialGraph;
             }
             set
             {
-                _graph = value;
+                _initialGraph = value;
 
-                if (_graph != null)
+                if (_initialGraph != null)
                 {
                     OriginalCanvasWidth = Graph.Width * ScaleValue;
                     OriginalCanvasHeight = Graph.Height * ScaleValue;
@@ -100,6 +108,29 @@ namespace Framework.ViewModel
                 }
 
                 NotifyPropertyChanged(nameof(Graph));
+            }
+        }
+
+        private ImageSource _processedGraph;
+        public ImageSource ProcessedGraph
+        {
+            get
+            {
+                return _processedGraph;
+            }
+            set
+            {
+                _processedGraph = value;
+                if (_processedGraph != null)
+                {
+                    ProcessedCanvasWidth = ProcessedGraph.Width * ScaleValue;
+                    ProcessedCanvasHeight = ProcessedGraph.Height * ScaleValue;
+                }
+                else
+                {
+                    ProcessedCanvasWidth = 0;
+                    ProcessedCanvasHeight = 0;
+                }
             }
         }
 
@@ -122,50 +153,6 @@ namespace Framework.ViewModel
             {
                 _yPos = value;
                 NotifyPropertyChanged(nameof(YPos));
-            }
-        }
-
-        private string _grayValue;
-        public string GrayValue
-        {
-            get => _grayValue;
-            set
-            {
-                _grayValue = value;
-                NotifyPropertyChanged(nameof(GrayValue));
-            }
-        }
-
-        private string _redValue;
-        public string RedValue
-        {
-            get => _redValue;
-            set
-            {
-                _redValue = value;
-                NotifyPropertyChanged(nameof(RedValue));
-            }
-        }
-
-        private string _greenValue;
-        public string GreenValue
-        {
-            get => _greenValue;
-            set
-            {
-                _greenValue = value;
-                NotifyPropertyChanged(nameof(GreenValue));
-            }
-        }
-
-        private string _blueValue;
-        public string BlueValue
-        {
-            get => _blueValue;
-            set
-            {
-                _blueValue = value;
-                NotifyPropertyChanged(nameof(BlueValue));
             }
         }
 
@@ -211,27 +198,27 @@ namespace Framework.ViewModel
             }
         }
 
-        //public double _processedCanvasWidth;
-        //public double ProcessedCanvasWidth
-        //{
-        //    get => _processedCanvasWidth;
-        //    set
-        //    {
-        //        _processedCanvasWidth = value;
-        //        NotifyPropertyChanged(nameof(ProcessedCanvasWidth));
-        //    }
-        //}
+        public double _processedCanvasWidth;
+        public double ProcessedCanvasWidth
+        {
+            get => _processedCanvasWidth;
+            set
+            {
+                _processedCanvasWidth = value;
+                NotifyPropertyChanged(nameof(ProcessedCanvasWidth));
+            }
+        }
 
-        //public double _processedCanvasHeight;
-        //public double ProcessedCanvasHeight
-        //{
-        //    get => _processedCanvasHeight;
-        //    set
-        //    {
-        //        _processedCanvasHeight = value;
-        //        NotifyPropertyChanged(nameof(ProcessedCanvasHeight));
-        //    }
-        //}
+        public double _processedCanvasHeight;
+        public double ProcessedCanvasHeight
+        {
+            get => _processedCanvasHeight;
+            set
+            {
+                _processedCanvasHeight = value;
+                NotifyPropertyChanged(nameof(ProcessedCanvasHeight));
+            }
+        }
         #endregion
     }
 }

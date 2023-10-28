@@ -16,7 +16,7 @@ namespace Framework.Utilities
         public static Point MousePosition { get; set; }
         public static Point LastPosition { get; set; }
         public static PointCollection VectorOfMousePosition { get; set; }
-        public static PointCollection SplineToolVectorOfMousePosition { get; set; }
+        public static PointCollection SplineToolCurvePoints { get; set; }
 
         public static bool MagnifierOn { get; set; }
         public static bool RowColorLevelsOn { get; set; }
@@ -30,7 +30,7 @@ namespace Framework.Utilities
             MousePosition = new Point(0, 0);
             LastPosition = MousePosition;
             VectorOfMousePosition = new PointCollection();
-            SplineToolVectorOfMousePosition = new PointCollection();
+            SplineToolCurvePoints = new PointCollection();
         }
 
         public static void CloseWindow<TWindow>()
