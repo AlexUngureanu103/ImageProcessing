@@ -135,15 +135,9 @@ namespace Framework.ViewModel.Commands
         private void UpdateGrayValues(object parameters)
         {
             var lutValues = new Dictionary<double, double>();
-            var lutValues1 = new Dictionary<double, double>();
             try
             {
-                var curvePoints = GetCurvePointsAtSinglePixel();
-                lutValues = curvePoints
-                    .GroupBy(point => NormalizeValue(point.X, _splineToolVM.Graph.Width))
-                    .ToDictionary(group => group.Key, group => NormalizeValue(_splineToolVM.Graph.Height - group.Last().Y, _splineToolVM.Graph.Height));
-
-                lutValues1 = DataProvider.SplineToolCurvePoints
+                lutValues = DataProvider.SplineToolCurvePoints
                    .GroupBy(point => NormalizeValue(point.X, _splineToolVM.Graph.Width))
                    .ToDictionary(group => group.Key,
                    group => NormalizeValue(_splineToolVM.Graph.Height - group.Sum(point => point.Y) / group.Count(), _splineToolVM.Graph.Height));
@@ -157,12 +151,9 @@ namespace Framework.ViewModel.Commands
                     {
                         for (int x = 0; x < image.Width; x++)
                         {
-                            //byte grayValue = image.Data[y, x, 0];
-                            //byte lutRawValue = (byte)lutValues[grayValue];
-
-                            image.Data[y, x, 0] = (byte)lutValues1[DataProvider.ColorInitialImage.Data[y, x, 0]];
-                            image.Data[y, x, 1] = (byte)lutValues1[DataProvider.ColorInitialImage.Data[y, x, 1]];
-                            image.Data[y, x, 2] = (byte)lutValues1[DataProvider.ColorInitialImage.Data[y, x, 2]];
+                            image.Data[y, x, 0] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 0]];
+                            image.Data[y, x, 1] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 1]];
+                            image.Data[y, x, 2] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 2]];
                         }
                     }
                     _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
@@ -176,11 +167,9 @@ namespace Framework.ViewModel.Commands
                         for (int x = 0; x < image.Width; x++)
                         {
                             byte grayValue = DataProvider.GrayInitialImage.Data[y, x, 0];
-                            byte lutRawValue = (byte)lutValues1[grayValue];
+                            byte lutRawValue = (byte)lutValues[grayValue];
 
                             image.Data[y, x, 0] = lutRawValue;
-                            //image.Data[y, x, 1] = lutRawValue;
-                            //image.Data[y, x, 2] = lutValue;
                         }
                     }
                     _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
@@ -188,38 +177,12 @@ namespace Framework.ViewModel.Commands
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message + $"{lutValues1.Count}");
+                MessageBox.Show(e.Message + $"{lutValues.Count}");
             }
             finally
             {
                 //MessageBox.Show(lutValues.Count.ToString());
             }
-        }
-
-        private List<Point> GetCurvePointsAtSinglePixel()
-        {
-            List<Point> result = new List<Point>();
-            for (double x = 0; x <= _splineToolVM.ProcessedGraph.Width; x += 1)
-            {
-                Point point = GetCurvePointAtX(x);
-                result.Add(point);
-            }
-            return result;
-        }
-
-        private Point GetCurvePointAtX(double x)
-        {
-            List<Point> points = DataProvider.SplineToolCurvePoints.OrderBy(point => point.X).ToList();
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                if (points[i].X <= x && points[i + 1].X >= x)
-                {
-                    double t = (x - points[i].X) / (points[i + 1].X - points[i].X);
-                    double y = (1 - t) * points[i].Y + t * points[i + 1].Y;
-                    return new Point(x, y);
-                }
-            }
-            return new Point(x, 0);
         }
 
         private double NormalizeValue(double value, double size)
