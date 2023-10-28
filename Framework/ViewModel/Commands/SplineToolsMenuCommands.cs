@@ -71,18 +71,20 @@ namespace Framework.ViewModel.Commands
             points.Add(new Point(-points[1].X, points[1].Y));
             points = points.OrderBy(point => point.X).ToList();
 
-            List<Point> curve = GenerateCubicHermiteSplinePoints(points)
+            List<Point> firstGen = GenerateCubicHermiteSplinePoints(points, 0.01d);
+
+            List<Point> secondGen = GenerateCubicHermiteSplinePoints(firstGen, 0.3d)
                 .Select(point => new Point(point.X, _splineToolVM.Graph.Height - point.Y))
                 .Where(point => point.X >= 0 && point.X <= _splineToolVM.Graph.Width)
                 .Select(point => new Point(point.X, point.Y < 0 ? 0 : point.Y))
                 .ToList();
 
-            DataProvider.SplineToolCurvePoints = new System.Windows.Media.PointCollection(curve);
+            DataProvider.SplineToolCurvePoints = new System.Windows.Media.PointCollection(secondGen);
 
-            UiHelper.DrawSplineToolCurve(canvases[0] as Canvas, canvases[1] as Canvas, curve, ScaleValue, Brushes.Blue);
+            UiHelper.DrawSplineToolCurve(canvases[0] as Canvas, canvases[1] as Canvas, secondGen, ScaleValue, Brushes.Blue);
         }
 
-        public List<Point> GenerateCubicHermiteSplinePoints(List<Point> points)
+        public List<Point> GenerateCubicHermiteSplinePoints(List<Point> points, double tStep)
         {
             List<Point> result = new List<Point>();
             double s = 2 * 0.85d;
@@ -96,7 +98,7 @@ namespace Framework.ViewModel.Commands
                 Point dv1 = new Point((p2.X - p0.X) / s, (p2.Y - p0.Y) / s);
                 Point dv2 = new Point((p3.X - p1.X) / s, (p3.Y - p1.Y) / s);
 
-                for (double t = 0; t <= 1; t += 0.01f)
+                for (double t = 0; t <= 1; t += tStep)
                 {
                     double tPow2 = Math.Pow(t, 2);
                     double tPow3 = Math.Pow(t, 3);
@@ -133,12 +135,18 @@ namespace Framework.ViewModel.Commands
         private void UpdateGrayValues(object parameters)
         {
             var lutValues = new Dictionary<double, double>();
+            var lutValues1 = new Dictionary<double, double>();
             try
             {
                 var curvePoints = GetCurvePointsAtSinglePixel();
                 lutValues = curvePoints
                     .GroupBy(point => NormalizeValue(point.X, _splineToolVM.Graph.Width))
                     .ToDictionary(group => group.Key, group => NormalizeValue(_splineToolVM.Graph.Height - group.Last().Y, _splineToolVM.Graph.Height));
+
+                lutValues1 = DataProvider.SplineToolCurvePoints
+                   .GroupBy(point => NormalizeValue(point.X, _splineToolVM.Graph.Width))
+                   .ToDictionary(group => group.Key,
+                   group => NormalizeValue(_splineToolVM.Graph.Height - group.Sum(point => point.Y) / group.Count(), _splineToolVM.Graph.Height));
 
                 if (DataProvider.ColorInitialImage != null)
                 {
@@ -152,9 +160,9 @@ namespace Framework.ViewModel.Commands
                             //byte grayValue = image.Data[y, x, 0];
                             //byte lutRawValue = (byte)lutValues[grayValue];
 
-                            image.Data[y, x, 0] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 0]];
-                            image.Data[y, x, 1] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 1]];
-                            image.Data[y, x, 2] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 2]];
+                            image.Data[y, x, 0] = (byte)lutValues1[DataProvider.ColorInitialImage.Data[y, x, 0]];
+                            image.Data[y, x, 1] = (byte)lutValues1[DataProvider.ColorInitialImage.Data[y, x, 1]];
+                            image.Data[y, x, 2] = (byte)lutValues1[DataProvider.ColorInitialImage.Data[y, x, 2]];
                         }
                     }
                     _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
@@ -168,7 +176,7 @@ namespace Framework.ViewModel.Commands
                         for (int x = 0; x < image.Width; x++)
                         {
                             byte grayValue = DataProvider.GrayInitialImage.Data[y, x, 0];
-                            byte lutRawValue = (byte)lutValues[grayValue];
+                            byte lutRawValue = (byte)lutValues1[grayValue];
 
                             image.Data[y, x, 0] = lutRawValue;
                             //image.Data[y, x, 1] = lutRawValue;
@@ -180,7 +188,7 @@ namespace Framework.ViewModel.Commands
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message + $"{lutValues.Count}");
+                MessageBox.Show(e.Message + $"{lutValues1.Count}");
             }
             finally
             {
