@@ -1,9 +1,7 @@
-﻿using OxyPlot;
+﻿using Framework.Model;
+using OxyPlot;
 using OxyPlot.Series;
-
 using System.Windows.Media;
-
-using Framework.Model;
 
 namespace Framework.ViewModel
 {

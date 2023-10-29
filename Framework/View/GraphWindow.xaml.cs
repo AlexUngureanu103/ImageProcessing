@@ -1,7 +1,6 @@
-﻿using System.Windows;
+﻿using Framework.ViewModel;
+using System.Windows;
 using System.Windows.Media;
-
-using Framework.ViewModel;
 
 namespace Framework.View
 {

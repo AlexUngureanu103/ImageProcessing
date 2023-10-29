@@ -1,9 +1,8 @@
 ﻿using Emgu.CV;
+using Framework.Utilities;
+using Framework.ViewModel;
 using System;
 using System.Windows;
-
-using Framework.ViewModel;
-using static Framework.Utilities.DataProvider;
 
 namespace Framework.View
 {
@@ -15,7 +14,7 @@ namespace Framework.View
         {
             InitializeComponent();
 
-            SliderOn = true;
+            DataProvider.SliderOn = true;
 
             _sliderVM = new SliderVM(mainVM);
 
@@ -43,7 +42,7 @@ namespace Framework.View
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            SliderOn = false;
+            DataProvider.SliderOn = false;
         }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
-
-using Framework.Model;
 using Framework.Converters;
-using static Framework.Utilities.DataProvider;
+using Framework.Model;
+using Framework.Utilities;
 
 namespace Framework.ViewModel
 {
@@ -106,8 +105,8 @@ namespace Framework.ViewModel
 
         public void ModifyProcessedImage()
         {
-            GrayProcessedImage = null;
-            ColorProcessedImage = null;
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
 
             if (Image != null && Algorithm != null)
             {
@@ -115,13 +114,13 @@ namespace Framework.ViewModel
 
                 if (processedImage is Image<Gray, byte> grayImage)
                 {
-                    GrayProcessedImage = grayImage;
-                    _mainVM.ProcessedImage = ImageConverter.Convert(GrayProcessedImage);
+                    DataProvider.GrayProcessedImage = grayImage;
+                    _mainVM.ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
                 }
                 else if (processedImage is Image<Bgr, byte> colorImage)
                 {
-                    ColorProcessedImage = colorImage;
-                    _mainVM.ProcessedImage = ImageConverter.Convert(ColorProcessedImage);
+                    DataProvider.ColorProcessedImage = colorImage;
+                    _mainVM.ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
                 }
             }
         }

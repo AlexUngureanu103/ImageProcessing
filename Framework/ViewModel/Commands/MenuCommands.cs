@@ -10,10 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static Framework.Converters.ImageConverter;
-using static Framework.Utilities.DataProvider;
-using static Framework.Utilities.DrawingHelper;
-using static Framework.Utilities.FileHelper;
+using  Framework.Converters;
+using Framework.Utilities;
 
 namespace Framework.ViewModel
 {
@@ -62,11 +60,11 @@ namespace Framework.ViewModel
         {
             Clear(parameter);
 
-            string fileName = LoadFileDialog("Select a gray picture");
+            string fileName = FileHelper.LoadFileDialog("Select a gray picture");
             if (fileName != null)
             {
-                GrayInitialImage = new Image<Gray, byte>(fileName);
-                InitialImage = Convert(GrayInitialImage);
+                DataProvider.GrayInitialImage = new Image<Gray, byte>(fileName);
+                InitialImage = ImageConverter.Convert(DataProvider.GrayInitialImage);
             }
         }
         #endregion
@@ -87,11 +85,11 @@ namespace Framework.ViewModel
         {
             Clear(parameter);
 
-            string fileName = LoadFileDialog("Select a color picture");
+            string fileName = FileHelper.LoadFileDialog("Select a color picture");
             if (fileName != null)
             {
-                ColorInitialImage = new Image<Bgr, byte>(fileName);
-                InitialImage = Convert(ColorInitialImage);
+                DataProvider.ColorInitialImage = new Image<Bgr, byte>(fileName);
+                InitialImage = ImageConverter.Convert(DataProvider.ColorInitialImage);
             }
         }
         #endregion
@@ -110,19 +108,19 @@ namespace Framework.ViewModel
 
         private void SaveProcessedImage(object parameter)
         {
-            if (GrayProcessedImage == null && ColorProcessedImage == null)
+            if (DataProvider.GrayProcessedImage == null && DataProvider.ColorProcessedImage == null)
             {
                 MessageBox.Show("If you want to save your processed image, " +
                     "please load and process an image first!");
                 return;
             }
 
-            string imagePath = SaveFileDialog("image.jpg");
+            string imagePath = FileHelper.SaveFileDialog("image.jpg");
             if (imagePath != null)
             {
-                GrayProcessedImage?.Bitmap.Save(imagePath, GetJpegCodec("image/jpeg"), GetEncoderParameter(Encoder.Quality, 100));
-                ColorProcessedImage?.Bitmap.Save(imagePath, GetJpegCodec("image/jpeg"), GetEncoderParameter(Encoder.Quality, 100));
-                OpenImage(imagePath);
+                DataProvider.GrayProcessedImage?.Bitmap.Save(imagePath, FileHelper.GetJpegCodec("image/jpeg"), FileHelper.GetEncoderParameter(Encoder.Quality, 100));
+                DataProvider.ColorProcessedImage?.Bitmap.Save(imagePath, FileHelper.GetJpegCodec("image/jpeg"), FileHelper.GetEncoderParameter(Encoder.Quality, 100));
+                FileHelper.OpenImage(imagePath);
             }
         }
         #endregion
@@ -141,38 +139,38 @@ namespace Framework.ViewModel
 
         private void SaveImages(object parameter)
         {
-            if (GrayInitialImage == null && ColorInitialImage == null)
+            if (DataProvider.GrayInitialImage == null && DataProvider.ColorInitialImage == null)
             {
                 MessageBox.Show("If you want to save both images, " +
                     "please load and process an image first!");
                 return;
             }
 
-            if (GrayProcessedImage == null && ColorProcessedImage == null)
+            if (DataProvider.GrayProcessedImage == null && DataProvider.ColorProcessedImage == null)
             {
                 MessageBox.Show("If you want to save both images, " +
                     "please process your image first!");
                 return;
             }
 
-            string imagePath = SaveFileDialog("image.jpg");
+            string imagePath = FileHelper.SaveFileDialog("image.jpg");
             if (imagePath != null)
             {
                 IImage processedImage = null;
-                if (GrayInitialImage != null && GrayProcessedImage != null)
-                    processedImage = Utils.Combine(GrayInitialImage, GrayProcessedImage);
+                if (DataProvider.GrayInitialImage != null && DataProvider.GrayProcessedImage != null)
+                    processedImage = Utils.Combine(DataProvider.GrayInitialImage, DataProvider.GrayProcessedImage);
 
-                if (GrayInitialImage != null && ColorProcessedImage != null)
-                    processedImage = Utils.Combine(GrayInitialImage, ColorProcessedImage);
+                if (DataProvider.GrayInitialImage != null && DataProvider.ColorProcessedImage != null)
+                    processedImage = Utils.Combine(DataProvider.GrayInitialImage, DataProvider.ColorProcessedImage);
 
-                if (ColorInitialImage != null && GrayProcessedImage != null)
-                    processedImage = Utils.Combine(ColorInitialImage, GrayProcessedImage);
+                if (DataProvider.ColorInitialImage != null && DataProvider.GrayProcessedImage != null)
+                    processedImage = Utils.Combine(DataProvider.ColorInitialImage, DataProvider.GrayProcessedImage);
 
-                if (ColorInitialImage != null && ColorProcessedImage != null)
-                    processedImage = Utils.Combine(ColorInitialImage, ColorProcessedImage);
+                if (DataProvider.ColorInitialImage != null && DataProvider.ColorProcessedImage != null)
+                    processedImage = Utils.Combine(DataProvider.ColorInitialImage, DataProvider.ColorProcessedImage);
 
-                processedImage?.Bitmap.Save(imagePath, GetJpegCodec("image/jpeg"), GetEncoderParameter(Encoder.Quality, 100));
-                OpenImage(imagePath);
+                processedImage?.Bitmap.Save(imagePath, FileHelper.GetJpegCodec("image/jpeg"), FileHelper.GetEncoderParameter(Encoder.Quality, 100));
+                FileHelper.OpenImage(imagePath);
             }
         }
         #endregion
@@ -191,7 +189,7 @@ namespace Framework.ViewModel
 
         private void Exit(object parameter)
         {
-            CloseWindows();
+            DataProvider.CloseWindows();
             System.Environment.Exit(0);
         }
         #endregion
@@ -214,7 +212,7 @@ namespace Framework.ViewModel
 
         private void RemoveInitialDrawnShapes(object parameter)
         {
-            RemoveUiElements(parameter as Canvas);
+            DrawingHelper.RemoveUiElements(parameter as Canvas);
         }
         #endregion
 
@@ -232,7 +230,7 @@ namespace Framework.ViewModel
 
         private void RemoveProcessedDrawnShapes(object parameter)
         {
-            RemoveUiElements(parameter as Canvas);
+            DrawingHelper.RemoveUiElements(parameter as Canvas);
         }
         #endregion
 
@@ -251,8 +249,8 @@ namespace Framework.ViewModel
         private void RemoveDrawnShapes(object parameter)
         {
             var canvases = (object[])parameter;
-            RemoveUiElements(canvases[0] as Canvas);
-            RemoveUiElements(canvases[1] as Canvas);
+            DrawingHelper.RemoveUiElements(canvases[0] as Canvas);
+            DrawingHelper.RemoveUiElements(canvases[1] as Canvas);
         }
         #endregion
 
@@ -270,10 +268,10 @@ namespace Framework.ViewModel
 
         private void ClearInitialCanvas(object parameter)
         {
-            RemoveUiElements(parameter as Canvas);
+            DrawingHelper.RemoveUiElements(parameter as Canvas);
 
-            GrayInitialImage = null;
-            ColorInitialImage = null;
+            DataProvider.GrayInitialImage = null;
+            DataProvider.ColorInitialImage = null;
             InitialImage = null;
         }
         #endregion
@@ -292,10 +290,10 @@ namespace Framework.ViewModel
 
         private void ClearProcessedCanvas(object parameter)
         {
-            RemoveUiElements(parameter as Canvas);
+            DrawingHelper.RemoveUiElements(parameter as Canvas);
 
-            GrayProcessedImage = null;
-            ColorProcessedImage = null;
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
             ProcessedImage = null;
         }
         #endregion
@@ -314,7 +312,7 @@ namespace Framework.ViewModel
 
         private void Clear(object parameter)
         {
-            CloseWindows();
+            DataProvider.CloseWindows();
 
             ScaleValue = 1;
 
@@ -342,8 +340,8 @@ namespace Framework.ViewModel
 
         private void Magnifier(object parameter)
         {
-            if (MagnifierOn == true) return;
-            if (VectorOfMousePosition.Count == 0)
+            if (DataProvider.MagnifierOn == true) return;
+            if (DataProvider.VectorOfMousePosition.Count == 0)
             {
                 MessageBox.Show("Please select an area first.");
                 return;
@@ -370,8 +368,8 @@ namespace Framework.ViewModel
 
         private void DisplayLevelsOnRow(object parameter)
         {
-            if (RowColorLevelsOn == true) return;
-            if (VectorOfMousePosition.Count == 0)
+            if (DataProvider.RowColorLevelsOn == true) return;
+            if (DataProvider.VectorOfMousePosition.Count == 0)
             {
                 MessageBox.Show("Please select an area first.");
                 return;
@@ -396,8 +394,8 @@ namespace Framework.ViewModel
 
         private void DisplayLevelsOnColumn(object parameter)
         {
-            if (ColumnColorLevelsOn == true) return;
-            if (VectorOfMousePosition.Count == 0)
+            if (DataProvider.ColumnColorLevelsOn == true) return;
+            if (DataProvider.VectorOfMousePosition.Count == 0)
             {
                 MessageBox.Show("Please select an area first.");
                 return;
@@ -426,7 +424,7 @@ namespace Framework.ViewModel
 
         private void HistogramInitialImage(object parameter)
         {
-            if (InitialHistogramOn == true) return;
+            if (DataProvider.InitialHistogramOn == true) return;
             if (InitialImage == null)
             {
                 MessageBox.Show("Please add an image !");
@@ -435,11 +433,11 @@ namespace Framework.ViewModel
 
             HistogramWindow window = null;
 
-            if (ColorInitialImage != null)
+            if (DataProvider.ColorInitialImage != null)
             {
                 window = new HistogramWindow(_mainVM, ImageType.InitialColor);
             }
-            else if (GrayInitialImage != null)
+            else if (DataProvider.GrayInitialImage != null)
             {
                 window = new HistogramWindow(_mainVM, ImageType.InitialGray);
             }
@@ -462,7 +460,7 @@ namespace Framework.ViewModel
 
         private void HistogramProcessedImage(object parameter)
         {
-            if (ProcessedHistogramOn == true) return;
+            if (DataProvider.ProcessedHistogramOn == true) return;
             if (ProcessedImage == null)
             {
                 MessageBox.Show("Please process an image !");
@@ -471,11 +469,11 @@ namespace Framework.ViewModel
 
             HistogramWindow window = null;
 
-            if (ColorProcessedImage != null)
+            if (DataProvider.ColorProcessedImage != null)
             {
                 window = new HistogramWindow(_mainVM, ImageType.ProcessedColor);
             }
-            else if (GrayProcessedImage != null)
+            else if (DataProvider.GrayProcessedImage != null)
             {
                 window = new HistogramWindow(_mainVM, ImageType.ProcessedGray);
             }
@@ -509,15 +507,15 @@ namespace Framework.ViewModel
 
             ClearProcessedCanvas(parameter);
 
-            if (ColorInitialImage != null)
+            if (DataProvider.ColorInitialImage != null)
             {
-                ColorProcessedImage = Tools.Copy(ColorInitialImage);
-                ProcessedImage = Convert(ColorProcessedImage);
+                DataProvider.ColorProcessedImage = Tools.Copy(DataProvider.ColorInitialImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
-            else if (GrayInitialImage != null)
+            else if (DataProvider.GrayInitialImage != null)
             {
-                GrayProcessedImage = Tools.Copy(GrayInitialImage);
-                ProcessedImage = Convert(GrayProcessedImage);
+                DataProvider.GrayProcessedImage = Tools.Copy(DataProvider.GrayInitialImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
         #endregion
@@ -544,15 +542,15 @@ namespace Framework.ViewModel
 
             ClearProcessedCanvas(parameter);
 
-            if (GrayInitialImage != null)
+            if (DataProvider.GrayInitialImage != null)
             {
-                GrayProcessedImage = Tools.Invert(GrayInitialImage);
-                ProcessedImage = Convert(GrayProcessedImage);
+                DataProvider.GrayProcessedImage = Tools.Invert(DataProvider.GrayInitialImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
-            else if (ColorInitialImage != null)
+            else if (DataProvider.ColorInitialImage != null)
             {
-                ColorProcessedImage = Tools.Invert(ColorInitialImage);
-                ProcessedImage = Convert(ColorProcessedImage);
+                DataProvider.ColorProcessedImage = Tools.Invert(DataProvider.ColorInitialImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
         #endregion
@@ -579,10 +577,10 @@ namespace Framework.ViewModel
 
             ClearProcessedCanvas(parameter);
 
-            if (ColorInitialImage != null)
+            if (DataProvider.ColorInitialImage != null)
             {
-                GrayProcessedImage = Tools.Convert(ColorInitialImage);
-                ProcessedImage = Convert(GrayProcessedImage);
+                DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else
             {
@@ -661,16 +659,16 @@ namespace Framework.ViewModel
             if (values != null)
             {
                 byte threshhold = (byte)(values[0] + 0.5);
-                if (GrayInitialImage != null)
+                if (DataProvider.GrayInitialImage != null)
                 {
-                    GrayProcessedImage = Tools.Thresholding(GrayInitialImage, threshhold);
-                    ProcessedImage = Convert(GrayProcessedImage);
+                    DataProvider.GrayProcessedImage = Tools.Thresholding(DataProvider.GrayInitialImage, threshhold);
+                    ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
                 }
-                else if (ColorInitialImage != null)
+                else if (DataProvider.ColorInitialImage != null)
                 {
-                    GrayProcessedImage = Tools.Convert(ColorInitialImage);
-                    GrayProcessedImage = Tools.Thresholding(GrayProcessedImage, threshhold);
-                    ProcessedImage = Convert(GrayProcessedImage);
+                    DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
+                    DataProvider.GrayProcessedImage = Tools.Thresholding(DataProvider.GrayProcessedImage, threshhold);
+                    ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
                 }
             }
         }
@@ -703,16 +701,16 @@ namespace Framework.ViewModel
 
             ClearProcessedCanvas(parameter);
 
-            if (GrayInitialImage != null)
+            if (DataProvider.GrayInitialImage != null)
             {
-                GrayProcessedImage = Tools.TriangleThresholding(GrayInitialImage);
-                ProcessedImage = Convert(GrayProcessedImage);
+                DataProvider.GrayProcessedImage = Tools.TriangleThresholding(DataProvider.GrayInitialImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
-            else if (ColorInitialImage != null)
+            else if (DataProvider.ColorInitialImage != null)
             {
-                GrayProcessedImage = Tools.Convert(ColorInitialImage);
-                GrayProcessedImage = Tools.TriangleThresholding(GrayProcessedImage);
-                ProcessedImage = Convert(GrayProcessedImage);
+                DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
+                DataProvider.GrayProcessedImage = Tools.TriangleThresholding(DataProvider.GrayProcessedImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
 
@@ -747,28 +745,28 @@ namespace Framework.ViewModel
             ClearProcessedCanvas(canvases[1]);
             RemoveInitialDrawnShapes(canvases[0]);
 
-            if (VectorOfMousePosition.Count >= 2)
+            if (DataProvider.VectorOfMousePosition.Count >= 2)
             {
-                Point firstPoint = VectorOfMousePosition.Last(c => c != LastPosition);
-                Point secondPoint = LastPosition;
+                Point firstPoint = DataProvider.VectorOfMousePosition.Last(c => c != DataProvider.LastPosition);
+                Point secondPoint = DataProvider.LastPosition;
 
                 if (firstPoint.X.Equals(secondPoint.X) || firstPoint.Y.Equals(secondPoint.Y))
                 {
                     MessageBox.Show("Points must be different", "Warning");
                     return;
                 }
-                if (GrayInitialImage != null)
+                if (DataProvider.GrayInitialImage != null)
                 {
-                    ColorProcessedImage = Tools.Convert(GrayInitialImage);
-                    ColorProcessedImage = Tools.Crop(ColorProcessedImage, firstPoint, secondPoint);
-                    ProcessedImage = Convert(ColorProcessedImage);
+                    DataProvider.ColorProcessedImage = Tools.Convert(DataProvider.GrayInitialImage);
+                    DataProvider.ColorProcessedImage = Tools.Crop(DataProvider.ColorProcessedImage, firstPoint, secondPoint);
+                    ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
 
                     DrawSelectedZone(canvases[0]);
                 }
-                else if (ColorInitialImage != null)
+                else if (DataProvider.ColorInitialImage != null)
                 {
-                    ColorProcessedImage = Tools.Crop(ColorInitialImage, firstPoint, secondPoint);
-                    ProcessedImage = Convert(ColorProcessedImage);
+                    DataProvider.ColorProcessedImage = Tools.Crop(DataProvider.ColorInitialImage, firstPoint, secondPoint);
+                    ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
 
                     DrawSelectedZone(canvases[0]);
                 }
@@ -776,7 +774,7 @@ namespace Framework.ViewModel
                 Bgr avegare;
                 MCvScalar standardDeviation;
 
-                ColorProcessedImage.AvgSdv(out avegare, out standardDeviation);
+                DataProvider.ColorProcessedImage.AvgSdv(out avegare, out standardDeviation);
 
                 MessageBox.Show($"Valoarea medie of selected Zone: B:{avegare.Blue}, G:{avegare.Green}, R:{avegare.Red}\r\nAbaterea medie patratica: B:{standardDeviation.V0 * standardDeviation.V0}, G:{standardDeviation.V1 * standardDeviation.V1}, R:{standardDeviation.V2 * standardDeviation.V2}");
             }
@@ -790,9 +788,9 @@ namespace Framework.ViewModel
 
         private void DrawSelectedZone(object canvas)
         {
-            var topLeftPoint = Tools.GetTopLeftPoint(VectorOfMousePosition.Last(c => c != LastPosition), LastPosition);
-            var bottomRightPoint = Tools.GetBottomRightPoint(VectorOfMousePosition.Last(c => c != LastPosition), LastPosition);
-            DrawRectangle(canvas as Canvas, topLeftPoint, bottomRightPoint, 1, Brushes.Red, ScaleValue);
+            var topLeftPoint = Tools.GetTopLeftPoint(DataProvider.VectorOfMousePosition.Last(c => c != DataProvider.LastPosition), DataProvider.LastPosition);
+            var bottomRightPoint = Tools.GetBottomRightPoint(DataProvider.VectorOfMousePosition.Last(c => c != DataProvider.LastPosition), DataProvider.LastPosition);
+            DrawingHelper.DrawRectangle(canvas as Canvas, topLeftPoint, bottomRightPoint, 1, Brushes.Red, ScaleValue);
         }
 
         #endregion
@@ -822,17 +820,17 @@ namespace Framework.ViewModel
 
             ClearProcessedCanvas(parameter);
 
-            if (GrayInitialImage != null)
+            if (DataProvider.GrayInitialImage != null)
             {
-                ColorProcessedImage = Tools.Convert(GrayInitialImage);
-                ColorProcessedImage = Tools.Mirror(ColorProcessedImage);
-                ProcessedImage = Convert(ColorProcessedImage);
+                DataProvider.ColorProcessedImage = Tools.Convert(DataProvider.GrayInitialImage);
+                DataProvider.ColorProcessedImage = Tools.Mirror(DataProvider.ColorProcessedImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
 
             }
-            else if (ColorInitialImage != null)
+            else if (DataProvider.ColorInitialImage != null)
             {
-                ColorProcessedImage = Tools.Mirror(ColorInitialImage);
-                ProcessedImage = Convert(ColorProcessedImage);
+                DataProvider.ColorProcessedImage = Tools.Mirror(DataProvider.ColorInitialImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
 
@@ -864,17 +862,17 @@ namespace Framework.ViewModel
 
             ClearProcessedCanvas(parameter);
 
-            if (GrayInitialImage != null)
+            if (DataProvider.GrayInitialImage != null)
             {
-                ColorProcessedImage = Tools.Convert(GrayInitialImage);
-                ColorProcessedImage = Tools.RotateImage(ColorProcessedImage, 90);
-                ProcessedImage = Convert(ColorProcessedImage);
+                DataProvider.ColorProcessedImage = Tools.Convert(DataProvider.GrayInitialImage);
+                DataProvider.ColorProcessedImage = Tools.RotateImage(DataProvider.ColorProcessedImage, 90);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
 
             }
-            else if (ColorInitialImage != null)
+            else if (DataProvider.ColorInitialImage != null)
             {
-                ColorProcessedImage = Tools.RotateImage(ColorInitialImage, 90);
-                ProcessedImage = Convert(ColorProcessedImage);
+                DataProvider.ColorProcessedImage = Tools.RotateImage(DataProvider.ColorInitialImage, 90);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
         #endregion
@@ -903,17 +901,17 @@ namespace Framework.ViewModel
 
             ClearProcessedCanvas(parameter);
 
-            if (GrayInitialImage != null)
+            if (DataProvider.GrayInitialImage != null)
             {
-                ColorProcessedImage = Tools.Convert(GrayInitialImage);
-                ColorProcessedImage = Tools.RotateImage(ColorProcessedImage, -90);
-                ProcessedImage = Convert(ColorProcessedImage);
+                DataProvider.ColorProcessedImage = Tools.Convert(DataProvider.GrayInitialImage);
+                DataProvider.ColorProcessedImage = Tools.RotateImage(DataProvider.ColorProcessedImage, -90);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
 
             }
-            else if (ColorInitialImage != null)
+            else if (DataProvider.ColorInitialImage != null)
             {
-                ColorProcessedImage = Tools.RotateImage(ColorInitialImage, -90);
-                ProcessedImage = Convert(ColorProcessedImage);
+                DataProvider.ColorProcessedImage = Tools.RotateImage(DataProvider.ColorInitialImage, -90);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
         #endregion
@@ -955,15 +953,15 @@ namespace Framework.ViewModel
 
             ClearInitialCanvas(canvases[0] as Canvas);
 
-            if (GrayProcessedImage != null)
+            if (DataProvider.GrayProcessedImage != null)
             {
-                GrayInitialImage = GrayProcessedImage;
-                InitialImage = Convert(GrayInitialImage);
+                DataProvider.GrayInitialImage = DataProvider.GrayProcessedImage;
+                InitialImage = ImageConverter.Convert(DataProvider.GrayInitialImage);
             }
-            else if (ColorProcessedImage != null)
+            else if (DataProvider.ColorProcessedImage != null)
             {
-                ColorInitialImage = ColorProcessedImage;
-                InitialImage = Convert(ColorInitialImage);
+                DataProvider.ColorInitialImage = DataProvider.ColorProcessedImage;
+                InitialImage = ImageConverter.Convert(DataProvider.ColorInitialImage);
             }
 
             ClearProcessedCanvas(canvases[1] as Canvas);

@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using System.Windows;
-
+﻿using Framework.Utilities;
 using Framework.ViewModel;
-using static Framework.Utilities.DataProvider;
+using System.Linq;
+using System.Windows;
 
 namespace Framework.View
 {
@@ -22,7 +21,7 @@ namespace Framework.View
             Application.Current.Windows.OfType<MainWindow>().First().Update();
             Update();
 
-            if (ColorInitialImage != null || ColorProcessedImage != null)
+            if (DataProvider.ColorInitialImage != null || DataProvider.ColorProcessedImage != null)
             {
                 checkBoxBlue.Visibility = Visibility.Visible;
                 checkBoxGreen.Visibility = Visibility.Visible;
@@ -34,15 +33,15 @@ namespace Framework.View
 
         public void Update()
         {
-            if (LastPoint != LastPosition)
+            if (LastPoint != DataProvider.LastPosition)
             {
-                _colorLevelsVM.XPos = "X: " + ((int)LastPosition.X).ToString();
-                _colorLevelsVM.YPos = "Y: " + ((int)LastPosition.Y).ToString();
+                _colorLevelsVM.XPos = "X: " + ((int)DataProvider.LastPosition.X).ToString();
+                _colorLevelsVM.YPos = "Y: " + ((int)DataProvider.LastPosition.Y).ToString();
 
                 DisplayGray();
                 DisplayColor();
 
-                LastPoint = LastPosition;
+                LastPoint = DataProvider.LastPosition;
             }
 
             bool showBlue = (bool)checkBoxBlue.IsChecked;
@@ -56,25 +55,25 @@ namespace Framework.View
 
         private void DisplayGray()
         {
-            if (GrayInitialImage != null)
-                originalImageView.Model = _colorLevelsVM.PlotImage(GrayInitialImage);
-            if (GrayProcessedImage != null)
-                processedImageView.Model = _colorLevelsVM.PlotImage(GrayProcessedImage);
+            if (DataProvider.GrayInitialImage != null)
+                originalImageView.Model = _colorLevelsVM.PlotImage(DataProvider.GrayInitialImage);
+            if (DataProvider.GrayProcessedImage != null)
+                processedImageView.Model = _colorLevelsVM.PlotImage(DataProvider.GrayProcessedImage);
         }
 
         private void DisplayColor()
         {
-            if (ColorInitialImage != null)
-                originalImageView.Model = _colorLevelsVM.PlotImage(ColorInitialImage);
-            if (ColorProcessedImage != null)
-                processedImageView.Model = _colorLevelsVM.PlotImage(ColorProcessedImage);
+            if (DataProvider.ColorInitialImage != null)
+                originalImageView.Model = _colorLevelsVM.PlotImage(DataProvider.ColorInitialImage);
+            if (DataProvider.ColorProcessedImage != null)
+                processedImageView.Model = _colorLevelsVM.PlotImage(DataProvider.ColorProcessedImage);
         }
 
         private void SetVisibility(int indexSeries, bool isVisible)
         {
             if (originalImageView.Model != null)
             {
-                if (ColorInitialImage != null || (GrayInitialImage != null && indexSeries == 0))
+                if (DataProvider.ColorInitialImage != null || (DataProvider.GrayInitialImage != null && indexSeries == 0))
                     originalImageView.Model.Series[indexSeries].IsVisible = isVisible;
 
                 originalImageView.Model.InvalidatePlot(true);
@@ -82,7 +81,7 @@ namespace Framework.View
 
             if (processedImageView.Model != null)
             {
-                if (ColorProcessedImage != null || (GrayProcessedImage != null && indexSeries == 0))
+                if (DataProvider.ColorProcessedImage != null || (DataProvider.GrayProcessedImage != null && indexSeries == 0))
                     processedImageView.Model.Series[indexSeries].IsVisible = isVisible;
 
                 processedImageView.Model.InvalidatePlot(true);
@@ -114,11 +113,11 @@ namespace Framework.View
             switch (_cLevelsType)
             {
                 case CLevelsType.Row:
-                    RowColorLevelsOn = false;
+                    DataProvider.RowColorLevelsOn = false;
                     break;
 
                 case CLevelsType.Column:
-                    ColumnColorLevelsOn = false;
+                    DataProvider.ColumnColorLevelsOn = false;
                     break;
             }
 

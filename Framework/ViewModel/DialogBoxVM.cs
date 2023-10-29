@@ -1,10 +1,9 @@
-﻿using System.Windows.Input;
+﻿using Framework.Model;
+using Framework.Utilities;
+using Framework.View;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
-using Framework.View;
-using Framework.Model;
-using Framework.Utilities;
+using System.Windows.Input;
 
 namespace Framework.ViewModel
 {

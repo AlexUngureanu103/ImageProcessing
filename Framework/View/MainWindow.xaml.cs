@@ -1,16 +1,12 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
-
+using Framework.Model;
+using Framework.Utilities;
+using Framework.ViewModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Controls;
-
-using Framework.Model;
-using Framework.ViewModel;
-using static Framework.Utilities.DataProvider;
-using static Framework.Utilities.UiHelper;
-using static Framework.Utilities.DrawingHelper;
+using System.Windows.Input;
 
 namespace Framework.View
 {
@@ -32,8 +28,8 @@ namespace Framework.View
         {
             double scaleValue = sliderZoom.Value;
 
-            RemoveUiElements(canvasOriginalImage, canvasProcessedImage);
-            DrawUiElements(canvasOriginalImage, canvasProcessedImage, scaleValue);
+            UiHelper.RemoveUiElements(canvasOriginalImage, canvasProcessedImage);
+            UiHelper.DrawUiElements(canvasOriginalImage, canvasProcessedImage, scaleValue);
         }
 
         private void InitializeThemeMode()
@@ -70,41 +66,41 @@ namespace Framework.View
             if (sender == initialImage)
             {
                 var position = e.GetPosition(initialImage);
-                SetUiValues(GrayInitialImage, ColorInitialImage, (int)position.X, (int)position.Y);
+                SetUiValues(DataProvider.GrayInitialImage, DataProvider.ColorInitialImage, (int)position.X, (int)position.Y);
             }
             else if (sender == processedImage)
             {
                 var position = e.GetPosition(processedImage);
-                SetUiValues(GrayProcessedImage, ColorProcessedImage, (int)position.X, (int)position.Y);
+                SetUiValues(DataProvider.GrayProcessedImage, DataProvider.ColorProcessedImage, (int)position.X, (int)position.Y);
             }
         }
 
         private void ImageMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender == initialImage)
-                MousePosition = e.GetPosition(initialImage);
+                DataProvider.MousePosition = e.GetPosition(initialImage);
             else if (sender == processedImage)
-                MousePosition = e.GetPosition(processedImage);
+                DataProvider.MousePosition = e.GetPosition(processedImage);
 
-            if (LastPosition != MousePosition)
+            if (DataProvider.LastPosition != DataProvider.MousePosition)
             {
-                VectorOfMousePosition.Add(MousePosition);
-                LastPosition = MousePosition;
+                DataProvider.VectorOfMousePosition.Add(DataProvider.MousePosition);
+                DataProvider.LastPosition = DataProvider.MousePosition;
             }
         }
 
         private void ImageMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            VectorOfMousePosition.Clear();
+            DataProvider.VectorOfMousePosition.Clear();
         }
 
         private void CanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Update();
 
-            if (MagnifierOn == true)
+            if (DataProvider.MagnifierOn == true)
                 Application.Current.Windows.OfType<MagnifierWindow>().First().Update();
-            if (RowColorLevelsOn == true || ColumnColorLevelsOn == true)
+            if (DataProvider.RowColorLevelsOn == true || DataProvider.ColumnColorLevelsOn == true)
                 Application.Current.Windows.OfType<ColorLevelsWindow>().All(window => { window.Update(); return true; });
         }
 
@@ -112,8 +108,8 @@ namespace Framework.View
         {
             double scaleValue = sliderZoom.Value;
 
-            UpdateShapesProperties(canvasOriginalImage, scaleValue);
-            UpdateShapesProperties(canvasProcessedImage, scaleValue);
+            DrawingHelper.UpdateShapesProperties(canvasOriginalImage, scaleValue);
+            DrawingHelper.UpdateShapesProperties(canvasProcessedImage, scaleValue);
 
             if (_mainVM != null)
             {
@@ -141,7 +137,7 @@ namespace Framework.View
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            CloseWindows();
+            DataProvider.CloseWindows();
         }
 
         private void ThemeModeSelector(object sender, RoutedEventArgs e)
