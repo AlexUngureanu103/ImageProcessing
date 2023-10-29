@@ -46,8 +46,8 @@
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
                 <MenuItem.CommandParameter>
                     <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
-                        <Binding ElementName="canvasOriginalImage"/>
-                        <Binding ElementName="canvasProcessedImage"/>
+                        <Binding ElementName="splineToolCanvasOriginalImage"/>
+                        <Binding ElementName="splineToolCanvasProcessedImage"/>
                     </MultiBinding>
                 </MenuItem.CommandParameter>
             </MenuItem>
@@ -58,8 +58,8 @@
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
                 <MenuItem.CommandParameter>
                     <MultiBinding Converter="{StaticResource arrayMultiValueConverter}">
-                        <Binding ElementName="canvasOriginalImage"/>
-                        <Binding ElementName="canvasProcessedImage"/>
+                        <Binding ElementName="splineToolCanvasOriginalImage"/>
+                        <Binding ElementName="splineToolCanvasProcessedImage"/>
                     </MultiBinding>
                 </MenuItem.CommandParameter>
             </MenuItem>
@@ -86,7 +86,7 @@
                           HorizontalScrollBarVisibility="Auto" 
                           VerticalScrollBarVisibility="Auto" 
                           ScrollChanged="ScrollChanged">
-                <Canvas x:Name="canvasOriginalImage"
+                <Canvas x:Name="splineToolCanvasOriginalImage"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Width="{Binding Path=OriginalCanvasWidth}"
@@ -99,8 +99,8 @@
                            MouseRightButtonDown="ImageMouseRightButtonDown"
                            Source="{Binding Path=Graph}">
                         <Image.LayoutTransform>
-                            <ScaleTransform ScaleX="{Binding ElementName=sliderZoom, Path=Value}" 
-                                            ScaleY="{Binding ElementName=sliderZoom, Path=Value}"/>
+                            <ScaleTransform ScaleX="{Binding ElementName=splinetoolsliderZoom, Path=Value}" 
+                                            ScaleY="{Binding ElementName=splinetoolsliderZoom, Path=Value}"/>
                         </Image.LayoutTransform>
                     </Image>
                 </Canvas>
@@ -121,7 +121,7 @@
                           HorizontalScrollBarVisibility="Auto" 
                           VerticalScrollBarVisibility="Auto" 
                           ScrollChanged="ScrollChanged">
-                <Canvas x:Name="canvasProcessedImage"
+                <Canvas x:Name="splineToolCanvasProcessedImage"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Width="{Binding Path=ProcessedCanvasWidth}"
@@ -134,8 +134,8 @@
                            MouseRightButtonDown="ImageMouseRightButtonDown"
                            Source="{Binding Path=ProcessedGraph}">
                         <Image.LayoutTransform>
-                            <ScaleTransform ScaleX="{Binding ElementName=sliderZoom, Path=Value}" 
-                                            ScaleY="{Binding ElementName=sliderZoom, Path=Value}"/>
+                            <ScaleTransform ScaleX="{Binding ElementName=splinetoolsliderZoom, Path=Value}" 
+                                            ScaleY="{Binding ElementName=splinetoolsliderZoom, Path=Value}"/>
                         </Image.LayoutTransform>
                     </Image>
                 </Canvas>
@@ -156,10 +156,10 @@
                     HorizontalAlignment="Left"
                     Height="35"
                     Width="80"/>
-            <Slider x:Name="sliderZoom"
+            <Slider x:Name="splinetoolsliderZoom"
                     Orientation="Horizontal"
                     Foreground="{Binding Path=Theme.TextForeground}"
-                    Value="{Binding Path=ScaleValue}"
+                    Value="{Binding Path=SplineToolScaleValue}"
                     Minimum="0.1"
                     Maximum="10.00"
                     SmallChange="0.05"
@@ -167,11 +167,11 @@
                     TickFrequency="0.1"
                     TickPlacement="BottomRight"
                     Cursor="Hand"
-                    ValueChanged="SliderZoom_ValueChanged"
+                    ValueChanged="SplineToolSliderZoom_ValueChanged"
                     Margin="100,0,100,0"
                     Height="30"
                     Width="auto"/>
-            <TextBlock Text="{Binding Path=Value, ElementName=sliderZoom, StringFormat=N2}" 
+            <TextBlock Text="{Binding Path=Value, ElementName=splinetoolsliderZoom, StringFormat=N2}" 
                        Foreground="{Binding Path=Theme.TextForeground}"
                        FontSize="15"
                        TextAlignment="Center"

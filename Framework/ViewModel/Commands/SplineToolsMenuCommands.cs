@@ -1,4 +1,5 @@
-﻿using Emgu.CV;
+﻿using Algorithms.Sections;
+using Emgu.CV;
 using Emgu.CV.Structure;
 using Framework.Converters;
 using Framework.Utilities;
@@ -29,8 +30,8 @@ namespace Framework.ViewModel.Commands
 
         private double ScaleValue
         {
-            get => _splineToolVM.ScaleValue;
-            set => _splineToolVM.ScaleValue = value;
+            get => _splineToolVM.SplineToolScaleValue;
+            set => _splineToolVM.SplineToolScaleValue = value;
         }
 
         #region HermitCurve
@@ -56,65 +57,11 @@ namespace Framework.ViewModel.Commands
 
             var canvases = (object[])parameters;
 
-            var controlPoints = new List<Point>
-            {
-                new Point(0, _splineToolVM.Graph.Height)
-            };
-            for (int i = Math.Max(DataProvider.VectorOfMousePosition.Count - 5, 0); i < DataProvider.VectorOfMousePosition.Count; i++)
-            {
-                controlPoints.Add(DataProvider.VectorOfMousePosition[i]);
-            }
-            controlPoints.Add(new Point(_splineToolVM.Graph.Width, 0));
+            List<Point> curvePoints = PointwiseOperations.GetSplineHermitCurvePoints(DataProvider.VectorOfMousePosition.ToList(), _splineToolVM.Graph.Width, _splineToolVM.Graph.Height);
 
-            var points = controlPoints.OrderBy(point => point.X).Select(point => new Point(point.X, _splineToolVM.Graph.Height - point.Y)).ToList();
-            points.Add(new Point(points[points.Count - 1].X - (points[points.Count - 2].X - points[points.Count - 1].X), points[points.Count - 2].Y));
-            points.Add(new Point(-points[1].X, points[1].Y));
-            points = points.OrderBy(point => point.X).ToList();
+            DataProvider.SplineToolCurvePoints = new System.Windows.Media.PointCollection(curvePoints);
 
-            List<Point> firstGen = GenerateCubicHermiteSplinePoints(points, 0.01d);
-
-            List<Point> secondGen = GenerateCubicHermiteSplinePoints(firstGen, 0.3d)
-                .Select(point => new Point(point.X, _splineToolVM.Graph.Height - point.Y))
-                .Where(point => point.X >= 0 && point.X <= _splineToolVM.Graph.Width)
-                .Select(point => new Point(point.X, point.Y < 0 ? 0 : point.Y))
-                .ToList();
-
-            DataProvider.SplineToolCurvePoints = new System.Windows.Media.PointCollection(secondGen);
-
-            UiHelper.DrawSplineToolCurve(canvases[0] as Canvas, canvases[1] as Canvas, secondGen, ScaleValue, Brushes.Blue);
-        }
-
-        public List<Point> GenerateCubicHermiteSplinePoints(List<Point> points, double tStep)
-        {
-            List<Point> result = new List<Point>();
-            double s = 2 * 0.85d;
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                Point p0 = i == 0 ? points[i] : points[i - 1];
-                Point p1 = points[i];
-                Point p2 = points[i + 1];
-                Point p3 = i == points.Count - 2 ? points[i + 1] : points[i + 2];
-
-                Point dv1 = new Point((p2.X - p0.X) / s, (p2.Y - p0.Y) / s);
-                Point dv2 = new Point((p3.X - p1.X) / s, (p3.Y - p1.Y) / s);
-
-                for (double t = 0; t <= 1; t += tStep)
-                {
-                    double tPow2 = Math.Pow(t, 2);
-                    double tPow3 = Math.Pow(t, 3);
-                    double h00 = 2 * tPow3 - 3 * tPow2 + 1;
-                    double h01 = -2 * tPow3 + 3 * tPow2;
-                    double h10 = tPow3 - 2 * tPow2 + t;
-                    double h11 = tPow3 - tPow2;
-
-                    double x = h00 * p1.X + h01 * p2.X + h10 * dv1.X + h11 * dv2.X;
-                    double y = h00 * p1.Y + h01 * p2.Y + h10 * dv1.Y + h11 * dv2.Y;
-
-                    result.Add(new Point(x, y));
-                }
-            }
-
-            return result;
+            UiHelper.DrawSplineToolCurve(canvases[0] as Canvas, canvases[1] as Canvas, curvePoints, ScaleValue, Brushes.Blue);
         }
 
         #endregion
@@ -134,13 +81,18 @@ namespace Framework.ViewModel.Commands
 
         private void UpdateGrayValues(object parameter)
         {
+            if (DataProvider.SplineToolCurvePoints.Count == 0)
+            {
+                MessageBox.Show("Please draw a curve first.");
+                return;
+            }
             var lutValues = new Dictionary<double, double>();
             try
             {
                 lutValues = DataProvider.SplineToolCurvePoints
-                   .GroupBy(point => NormalizeValue(point.X, _splineToolVM.Graph.Width))
+                   .GroupBy(point => PointwiseOperations.NormalizeValue(point.X, _splineToolVM.Graph.Width))
                    .ToDictionary(group => group.Key,
-                   group => NormalizeValue(_splineToolVM.Graph.Height - group.Sum(point => point.Y) / group.Count(), _splineToolVM.Graph.Height));
+                   group => PointwiseOperations.NormalizeValue(_splineToolVM.Graph.Height - group.Sum(point => point.Y) / group.Count(), _splineToolVM.Graph.Height));
 
                 if (DataProvider.ColorInitialImage != null)
                 {
@@ -196,12 +148,6 @@ namespace Framework.ViewModel.Commands
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
             _splineToolVM.MainVM.ProcessedImage = null;
-        }
-
-        private double NormalizeValue(double value, double size)
-        {
-            var normalizedValue = value / size * 255;
-            return Math.Max(0, Math.Min(255, Math.Round(normalizedValue)));
         }
 
         #endregion

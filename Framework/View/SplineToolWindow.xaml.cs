@@ -31,8 +31,8 @@ namespace Framework.View
         public void Update()
         {
 
-            UiHelper.RemoveUiElements(canvasOriginalImage, canvasProcessedImage);
-            UiHelper.DrawUiElements(canvasOriginalImage, canvasProcessedImage, _splinetoolVM.ScaleValue);
+            UiHelper.RemoveUiElements(splineToolCanvasOriginalImage, splineToolCanvasProcessedImage);
+            UiHelper.DrawUiElements(splineToolCanvasOriginalImage, splineToolCanvasProcessedImage, _splinetoolVM.SplineToolScaleValue);
         }
 
         private void SetUiValues(int x, int y)
@@ -51,7 +51,7 @@ namespace Framework.View
             else if (sender == ProcessedGraph)
             {
                 var position = e.GetPosition(ProcessedGraph);
-                SetUiValues((int)(position.X / _splinetoolVM.ScaleValue), (int)(position.Y / _splinetoolVM.ScaleValue));
+                SetUiValues((int)(position.X / _splinetoolVM.SplineToolScaleValue), (int)(position.Y / _splinetoolVM.SplineToolScaleValue));
             }
         }
 
@@ -65,7 +65,7 @@ namespace Framework.View
                     DataProvider.VectorOfMousePosition.Add(DataProvider.MousePosition);
 
                     DataProvider.LastPosition = DataProvider.MousePosition;
-                    UiHelper.DrawSplineToolGraphUI(canvasOriginalImage, _splinetoolVM.ScaleValue, DataProvider.VectorOfMousePosition);
+                    UiHelper.DrawSplineToolGraphUI(splineToolCanvasOriginalImage, _splinetoolVM.SplineToolScaleValue, DataProvider.VectorOfMousePosition);
                 }
             }
             else if (sender == ProcessedGraph)
@@ -81,7 +81,7 @@ namespace Framework.View
             if (sender == MyGraph)
             {
                 DataProvider.VectorOfMousePosition.Clear();
-                DrawingHelper.RemoveUiElements(canvasOriginalImage);
+                DrawingHelper.RemoveUiElements(splineToolCanvasOriginalImage);
             }
         }
 
@@ -95,12 +95,12 @@ namespace Framework.View
                 Application.Current.Windows.OfType<ColorLevelsWindow>().All(window => { window.Update(); return true; });
         }
 
-        private void SliderZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SplineToolSliderZoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double scaleValue = sliderZoom.Value;
+            double scaleValue = splinetoolsliderZoom.Value;
 
-            DrawingHelper.UpdateShapesProperties(canvasOriginalImage, scaleValue);
-            DrawingHelper.UpdateShapesProperties(canvasProcessedImage, scaleValue);
+            DrawingHelper.UpdateShapesProperties(splineToolCanvasOriginalImage, scaleValue);
+            DrawingHelper.UpdateShapesProperties(splineToolCanvasProcessedImage, scaleValue);
 
             if (_splinetoolVM != null)
             {
