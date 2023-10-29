@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using  Framework.Converters;
 using Framework.Utilities;
+using Algorithms.Sections;
 
 namespace Framework.ViewModel
 {
@@ -703,13 +704,13 @@ namespace Framework.ViewModel
 
             if (DataProvider.GrayInitialImage != null)
             {
-                DataProvider.GrayProcessedImage = Tools.TriangleThresholding(DataProvider.GrayInitialImage);
+                DataProvider.GrayProcessedImage = Thresholding.TriangleThresholding(DataProvider.GrayInitialImage);
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
                 DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
-                DataProvider.GrayProcessedImage = Tools.TriangleThresholding(DataProvider.GrayProcessedImage);
+                DataProvider.GrayProcessedImage = Thresholding.TriangleThresholding(DataProvider.GrayProcessedImage);
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
