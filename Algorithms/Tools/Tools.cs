@@ -1,7 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -78,17 +77,10 @@ namespace Algorithms.Tools
         public static Image<Gray, byte> TriangleThresholding(Image<Gray, byte> image)
         {
             var img = image.Clone();
-
             var histogram = GrayHistogram(img);
-            TriangleThreshold_V2(histogram);
-
-            int threshold = TriangleThreshold(histogram);
-
-            int threshold2 = TriangleMethod(img);
-
-            int threshold3 = TriangleThreshold_V3(histogram);
-
-            img = img.ThresholdBinary(new Gray(threshold3), new Gray(255));
+            int threshold = TriangleThreshold_V3(histogram);
+            MessageBox.Show(threshold.ToString());
+            img = img.ThresholdBinary(new Gray(threshold), new Gray(255));
 
             return img;
         }
@@ -101,78 +93,33 @@ namespace Algorithms.Tools
                 for (int x = 0; x < grayImage.Size.Width; ++x)
                     histogram[grayImage.Data[y, x, 0]] += 1;
 
-            //for (int i = 0; i < 256; ++i)
-            //    histogram[i] /= grayImage.Size.Height * grayImage.Size.Width;
-
             return histogram;
         }
 
         private static int TriangleThreshold_V3(double[] histogram)
         {
-            int min = 0;
+            int minStart = 0;
             int max = 0;
-            int min2 = 0;
+            int minEnd = 0;
             int dmax = 0;
 
-            for (int i = 0; i < histogram.Length; i++)
-            {
-                if (histogram[i] > 0)
-                {
-                    min = i;
-                    break;
-                }
-            }
-            if (min > 0)
-            {
-                min--;
-            }
-
-            for (int i = histogram.Length - 1; i > 0; i--)
-            {
-                if (histogram[i] > 0)
-                {
-                    min2 = i;
-                    break;
-                }
-            }
-            if(min2 <histogram.Length - 1)
-            {
-                min2++;
-            }
-
-            for (int i = 0; i < histogram.Length; i++)
-            {
-                if (histogram[i]> dmax)
-                {
-                    max = i;
-                    dmax = (int)histogram[i];
-                }
-            }
+            minStart = GetMinFromStartOrEnd(histogram, minStart, true);
+            minEnd = GetMinFromStartOrEnd(histogram, minEnd, false);
+            GetMax(histogram, ref max, ref dmax);
 
             bool inverted = false;
-            if((max-min)< (min2-max))
+            if ((max - minStart) < (minEnd - max))
             {
                 inverted = true;
-                int left = 0;
-                int right = histogram.Length - 1;
+                InvertHistogram(histogram);
 
-                while (left < right)
-                {
-                    double temp = histogram[left];
-                    histogram[left] = histogram[right];
-                    histogram[right] = temp;
-
-                    left++;
-                    right--;
-                }
-
-                min = histogram.Length - 1 - min2;
+                minStart = histogram.Length - 1 - minEnd;
                 max = histogram.Length - 1 - max;
             }
 
-            if( min == max)
+            if (minStart == max)
             {
-                return min;
+                return minStart;
             }
 
             double nx;
@@ -180,243 +127,102 @@ namespace Algorithms.Tools
             double d;
 
             nx = histogram[max];
-            ny = min - max;
+            ny = minStart - max;
             d = Math.Sqrt(nx * nx + ny * ny);
             nx /= d;
             ny /= d;
-            d = nx * min + ny * histogram[min];
+            d = nx * minStart + ny * histogram[minStart];
 
-            int split = min;
-            double splitDistance = 0;
-            for (int i = min +1; i <= max; i++)
-            {
-                double newDistance = nx * i + ny * histogram[i] - d;
-                if(newDistance > splitDistance)
-                {
-                    split = i;
-                    splitDistance = newDistance;
-                }
-            }
-            split--;
+            int split = FindSplitPoint(histogram, minStart, max, nx, ny, d);
 
-            if(inverted)
+            if (inverted)
             {
-                int left = 0;
-                int right = histogram.Length - 1;
-                while(left < right)
-                {
-                    double temp = histogram[left];
-                    histogram[left] = histogram[right];
-                    histogram[right] = temp;
-                    left++;
-                    right--;
-                }
+                InvertHistogram(histogram);
                 split = histogram.Length - 1 - split;
             }
 
             return split;
         }
 
-        private static void TriangleThreshold_V2(double[] histogram)
+        private static int FindSplitPoint(double[] histogram, int minStart, int max, double nx, double ny, double d)
         {
-            var histogramMax = double.MinValue;
-            var histogramMin = double.MaxValue;
-
-            var histogramMaxPos = new List<int>();
-            var histogramMinPos = new List<int>();
-
-            for (int i = 0; i < histogram.Length; ++i)
+            int split = minStart;
+            double splitDistance = 0;
+            for (int i = minStart + 1; i <= max; i++)
             {
-                //if (histogram[i] == 0)
-                //{
-                //    continue;
-                //}
-                if (histogram[i] == histogramMax)
+                double newDistance = nx * i + ny * histogram[i] - d;
+                if (newDistance > splitDistance)
                 {
-                    histogramMaxPos.Add(i);
-                }
-                else if (histogram[i] > histogramMax)
-                {
-                    histogramMax = histogram[i];
-                    histogramMaxPos.Clear();
-                    histogramMaxPos.Add(i);
-                }
-                if (histogram[i] == histogramMin)
-                {
-                    histogramMinPos.Add(i);
-                }
-                else if (histogram[i] < histogramMin)
-                {
-                    histogramMin = histogram[i];
-                    histogramMinPos.Clear();
-                    histogramMinPos.Add(i);
-                }
-            }
-
-            int min_idx = -1;
-            int max_idx = -1;
-            int bin_dist = -1;
-
-            foreach (var i in histogramMinPos)
-            {
-                foreach (var j in histogramMaxPos)
-                {
-                    int dist_tmp = i - j;
-                    if (Math.Abs(dist_tmp) > bin_dist)
-                    {
-                        min_idx = i;
-                        max_idx = j;
-                        bin_dist = Math.Abs(dist_tmp);
-                    }
-                }
-            }
-
-            int start_idx;
-            int stop_idx;
-
-            if (min_idx < max_idx)
-            {
-                start_idx = min_idx + 1; // add one because we don't need to check the endpoint bin
-                stop_idx = max_idx;
-            }
-            else
-            {
-                start_idx = max_idx + 1;
-                stop_idx = min_idx;
-            }
-
-            double h = -1;
-            int split = 0;
-            histogramMax -= histogramMin;
-            for (int i = start_idx; i < stop_idx; i++)
-            {
-                double h_tmp = (Math.Abs(min_idx - i) / bin_dist) - ((histogram[i] - histogramMin) / histogramMax);
-                if (h_tmp > h)
-                {
-                    h = h_tmp;
                     split = i;
+                    splitDistance = newDistance;
                 }
             }
-
-            MessageBox.Show($"h: {h}, split: {split}");
+            split--;
+            return split;
         }
 
-        private static int TriangleThreshold(double[] histogram)
+        private static void InvertHistogram(double[] histogram)
         {
-            int threshold = 0;
-            double minEntropy = double.MaxValue;
+            int left = 0;
+            int right = histogram.Length - 1;
 
+            while (left < right)
+            {
+                (histogram[right], histogram[left]) = (histogram[left], histogram[right]);
+                left++;
+                right--;
+            }
+        }
+
+        private static void GetMax(double[] histogram, ref int max, ref int dmax)
+        {
             for (int i = 0; i < histogram.Length; i++)
             {
-                double w1 = 0;
-                double w2 = 0;
-                double u1 = 0;
-                double u2 = 0;
-
-                for (int j = 0; j <= i; j++)
+                if (histogram[i] > dmax)
                 {
-                    w1 += histogram[j];
-                    u1 += j * histogram[j];
-                }
-
-                for (int j = i + 1; j < histogram.Length; j++)
-                {
-                    w2 += histogram[j];
-                    u2 += j * histogram[j];
-                }
-
-                if (w1 == 0 || w2 == 0)
-                {
-                    continue;
-                }
-
-                u1 /= w1;
-                u2 /= w2;
-
-                double entropy = w1 * Math.Log(w1) + w2 * Math.Log(w2);
-
-                if (entropy < minEntropy)
-                {
-                    minEntropy = entropy;
-                    threshold = i;
+                    max = i;
+                    dmax = (int)histogram[i];
                 }
             }
-
-            return threshold;
         }
 
-        private static double PointToLineDistance(double x0, double y0, double x1, double y1, double x2, double y2)
+        private static int GetMinFromStartOrEnd(double[] histogram, int min, bool isFromStart)
         {
-            double numerator = Math.Abs(((x2 - x1) * (y1 - y0)) - ((x1 - x0) * (y2 - y1)));
-            double denominator = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
-            return numerator / denominator;
-        }
-
-        public static int TriangleMethod(Image<Gray, byte> grayImage)
-        {
-            double[] histogram = GrayHistogram(grayImage);
-            double histogramMax = double.MinValue;
-            double histogramMin = double.MaxValue;
-
-            int histogramMaxPos = 0;
-            int histogramMinPos = 0;
-
-            for (int i = 0; i < histogram.Length; ++i)
+            if (isFromStart)
             {
-                //if (histogram[i] == 0)
-                //{
-                //    continue;
-                //}
-                if (histogram[i] > histogramMax)
+                for (int i = 0; i < histogram.Length; i++)
                 {
-                    histogramMax = histogram[i];
-                    histogramMaxPos = i;
+                    if (histogram[i] > 0)
+                    {
+                        min = i;
+                        break;
+                    }
                 }
-                if (histogram[i] < histogramMin)
+                if (min > 0)
                 {
-                    histogramMin = histogram[i];
-                    histogramMinPos = i;
+                    min--;
                 }
-            }
 
-            for (int i = 0; i < histogram.Length; ++i)
-                if (histogram[i] == histogramMin && Math.Abs(i - histogramMaxPos) > Math.Abs(histogramMinPos - histogramMaxPos))
-                    histogramMinPos = i;
-
-            double xMax, yMax, xMin, yMin, xCrt, yCrt, distMax = -1;
-            int result = 0;
-            yMax = 1;
-            yMin = 0;
-
-            if (histogramMaxPos < histogramMinPos)
-            {
-                xMax = 0;
-                xMin = 1;
+                return min;
             }
             else
             {
-                xMax = 1;
-                xMin = 0;
-            }
-
-            for (int i = System.Math.Min(histogramMaxPos, histogramMinPos) + 1; i < System.Math.Max(histogramMaxPos, histogramMinPos); ++i)
-            {
-                double num1 = i - System.Math.Min(histogramMaxPos, histogramMinPos);
-                double num2 = System.Math.Abs(histogramMaxPos - histogramMinPos);
-
-                xCrt = num1 / num2;
-                yCrt = histogram[i];
-                double distance = PointToLineDistance(xCrt, yCrt, xMax, yMax, xMin, yMin);
-                if (distance > distMax)
+                for (int i = histogram.Length - 1; i > 0; i--)
                 {
-                    distMax = distance;
-                    result = i;
+                    if (histogram[i] > 0)
+                    {
+                        min = i;
+                        break;
+                    }
                 }
+                if (min < histogram.Length - 1)
+                {
+                    min++;
+                }
+
+                return min;
             }
-
-            return result;
         }
-
 
         #endregion
 
