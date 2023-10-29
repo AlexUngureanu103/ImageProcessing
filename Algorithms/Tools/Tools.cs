@@ -1,6 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -76,12 +77,23 @@ namespace Algorithms.Tools
 
         public static Image<Gray, byte> TriangleThresholding(Image<Gray, byte> image)
         {
+            //double[] testHistogram = {
+            //      0,      0,     4,    14,    15,    10,    24,    31,    57,    48,
+            //      50,     62,    71,   106,    99,   113,   121,   156,   161,   189,
+            //      171,    163,   199,   179,   203,   171,   201,   175,   172,   162,
+            //      156,    143,   148,   132,   149,   145,   137,   148,   137,   109,
+            //      117,    121,   111,   106,    94,   123,   122,   118,   135,   111,
+            //      127,    129,   120,   138,   162,   156,   151,   162,   229,   225,
+            //      276,    336,   437,   493,   631,   756,   905,  1053,  1176,  1449,
+            //      1471,   1837,  2252,  2465,  3783, 11056, 16892,   284};
+
+
             var img = image.Clone();
             var histogram = GrayHistogram(img);
             int threshold = TriangleThreshold_V3(histogram);
-            MessageBox.Show(threshold.ToString());
             img = img.ThresholdBinary(new Gray(threshold), new Gray(255));
 
+            //MessageBox.Show(threshold.ToString());
             return img;
         }
 
