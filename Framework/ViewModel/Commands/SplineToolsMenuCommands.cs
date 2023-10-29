@@ -132,7 +132,7 @@ namespace Framework.ViewModel.Commands
             }
         }
 
-        private void UpdateGrayValues(object parameters)
+        private void UpdateGrayValues(object parameter)
         {
             var lutValues = new Dictionary<double, double>();
             try
@@ -156,6 +156,8 @@ namespace Framework.ViewModel.Commands
                             image.Data[y, x, 2] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 2]];
                         }
                     }
+                    ClearProcessedImage();
+
                     DataProvider.ColorProcessedImage = image;
                     _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
                 }
@@ -173,6 +175,8 @@ namespace Framework.ViewModel.Commands
                             image.Data[y, x, 0] = lutRawValue;
                         }
                     }
+                    ClearProcessedImage();
+
                     DataProvider.GrayProcessedImage = image;
                     _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
                 }
@@ -185,6 +189,13 @@ namespace Framework.ViewModel.Commands
             {
                 //MessageBox.Show(lutValues.Count.ToString());
             }
+        }
+
+        private void ClearProcessedImage()
+        {
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+            _splineToolVM.MainVM.ProcessedImage = null;
         }
 
         private double NormalizeValue(double value, double size)
