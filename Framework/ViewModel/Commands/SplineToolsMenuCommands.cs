@@ -156,6 +156,7 @@ namespace Framework.ViewModel.Commands
                             image.Data[y, x, 2] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 2]];
                         }
                     }
+                    DataProvider.ColorProcessedImage = image;
                     _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
                 }
                 else if (DataProvider.GrayInitialImage != null)
@@ -172,6 +173,7 @@ namespace Framework.ViewModel.Commands
                             image.Data[y, x, 0] = lutRawValue;
                         }
                     }
+                    DataProvider.GrayProcessedImage = image;
                     _splineToolVM.MainVM.ProcessedImage = ImageConverter.Convert(image);
                 }
             }
