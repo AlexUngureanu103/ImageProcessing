@@ -1,17 +1,15 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
-
-using System.Linq;
+using Framework.Utilities;
 using System.Drawing;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using Point = System.Windows.Point;
-using Color = System.Drawing.Color;
 using Brushes = System.Drawing.Brushes;
+using Color = System.Drawing.Color;
 using FontFamily = System.Drawing.FontFamily;
-
-using static Framework.Utilities.DataProvider;
 using ImageConverter = Framework.Converters.ImageConverter;
+using Point = System.Windows.Point;
 
 namespace Framework.View
 {
@@ -23,7 +21,7 @@ namespace Framework.View
         {
             InitializeComponent();
 
-            MagnifierOn = true;
+            DataProvider.MagnifierOn = true;
 
             Application.Current.Windows.OfType<MainWindow>().First().Update();
             Update();
@@ -31,34 +29,34 @@ namespace Framework.View
 
         public void Update()
         {
-            if (LastPoint != LastPosition)
+            if (LastPoint != DataProvider.LastPosition)
             {
                 DisplayGray();
                 DisplayColor();
 
-                LastPoint = LastPosition;
+                LastPoint = DataProvider.LastPosition;
             }
         }
 
         private void DisplayColor()
         {
-            if (ColorInitialImage != null)
-                imageBoxOriginal.Source = GetImage(ColorInitialImage, (int)imageBoxOriginal.Width, (int)imageBoxOriginal.Height);
-            if (ColorProcessedImage != null)
-                imageBoxProcessed.Source = GetImage(ColorProcessedImage, (int)imageBoxOriginal.Width, (int)imageBoxOriginal.Height);
+            if (DataProvider.ColorInitialImage != null)
+                imageBoxOriginal.Source = GetImage(DataProvider.ColorInitialImage, (int)imageBoxOriginal.Width, (int)imageBoxOriginal.Height);
+            if (DataProvider.ColorProcessedImage != null)
+                imageBoxProcessed.Source = GetImage(DataProvider.ColorProcessedImage, (int)imageBoxOriginal.Width, (int)imageBoxOriginal.Height);
         }
 
         private void DisplayGray()
         {
-            if (GrayInitialImage != null)
-                imageBoxOriginal.Source = GetImage(GrayInitialImage, (int)imageBoxOriginal.Width, (int)imageBoxOriginal.Height);
-            if (GrayProcessedImage != null)
-                imageBoxProcessed.Source = GetImage(GrayProcessedImage, (int)imageBoxOriginal.Width, (int)imageBoxOriginal.Height);
+            if (DataProvider.GrayInitialImage != null)
+                imageBoxOriginal.Source = GetImage(DataProvider.GrayInitialImage, (int)imageBoxOriginal.Width, (int)imageBoxOriginal.Height);
+            if (DataProvider.GrayProcessedImage != null)
+                imageBoxProcessed.Source = GetImage(DataProvider.GrayProcessedImage, (int)imageBoxOriginal.Width, (int)imageBoxOriginal.Height);
         }
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            MagnifierOn = false;
+            DataProvider.MagnifierOn = false;
             Application.Current.Windows.OfType<MainWindow>().First().Update();
         }
 
@@ -77,15 +75,15 @@ namespace Framework.View
                 int j = 0;
                 for (int y = -4; y <= 4; ++y)
                 {
-                    if (LastPosition.Y + y >= 0 && LastPosition.X + x >= 0 &&
-                        LastPosition.Y + y < image.Height && LastPosition.X + x < image.Width)
+                    if (DataProvider.LastPosition.Y + y >= 0 && DataProvider.LastPosition.X + x >= 0 &&
+                        DataProvider.LastPosition.Y + y < image.Height && DataProvider.LastPosition.X + x < image.Width)
                     {
-                        int blueColor = image.Data[(int)LastPosition.Y + y,
-                            (int)LastPosition.X + x, 0];
-                        int greenColor = image.Data[(int)LastPosition.Y + y,
-                            (int)LastPosition.X + x, 1];
-                        int redColor = image.Data[(int)LastPosition.Y + y,
-                            (int)LastPosition.X + x, 2];
+                        int blueColor = image.Data[(int)DataProvider.LastPosition.Y + y,
+                            (int)DataProvider.LastPosition.X + x, 0];
+                        int greenColor = image.Data[(int)DataProvider.LastPosition.Y + y,
+                            (int)DataProvider.LastPosition.X + x, 1];
+                        int redColor = image.Data[(int)DataProvider.LastPosition.Y + y,
+                            (int)DataProvider.LastPosition.X + x, 2];
 
                         string text = redColor + "\n" + greenColor + "\n" + blueColor;
                         Font font = new Font(new FontFamily("Arial"), 7, System.Drawing.FontStyle.Bold, GraphicsUnit.Point);
@@ -124,11 +122,11 @@ namespace Framework.View
                 int j = 0;
                 for (int y = -4; y <= 4; ++y)
                 {
-                    if (LastPosition.Y + y >= 0 && LastPosition.X + x >= 0 &&
-                        LastPosition.Y + y < image.Height && LastPosition.X + x < image.Width)
+                    if (DataProvider.LastPosition.Y + y >= 0 && DataProvider.LastPosition.X + x >= 0 &&
+                        DataProvider.LastPosition.Y + y < image.Height && DataProvider.LastPosition.X + x < image.Width)
                     {
-                        int grayColor = image.Data[(int)LastPosition.Y + y,
-                            (int)LastPosition.X + x, 0];
+                        int grayColor = image.Data[(int)DataProvider.LastPosition.Y + y,
+                            (int)DataProvider.LastPosition.X + x, 0];
 
                         string text = "\n" + grayColor + "\n";
                         Font font = new Font(new FontFamily("Arial"), 7, System.Drawing.FontStyle.Bold, GraphicsUnit.Point);

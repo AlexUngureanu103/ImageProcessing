@@ -1,14 +1,11 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
-
-using System.Collections.Generic;
-
+using Framework.Utilities;
 using OxyPlot;
 using OxyPlot.Axes;
+using System.Collections.Generic;
 using LinearAxis = OxyPlot.Axes.LinearAxis;
 using LineSeries = OxyPlot.Series.LineSeries;
-
-using static Framework.Utilities.DataProvider;
 
 namespace Framework.ViewModel
 {
@@ -56,10 +53,10 @@ namespace Framework.ViewModel
         {
             List<int> values = new List<int>();
 
-            if (LastPosition.Y < image.Height)
+            if (DataProvider.LastPosition.Y < image.Height)
             {
                 for (int x = 0; x < image.Width; x++)
-                    values.Add(image.Data[(int)LastPosition.Y, x, channel]);
+                    values.Add(image.Data[(int)DataProvider.LastPosition.Y, x, channel]);
             }
 
             LineSeries series = CreateSeries(values, color);

@@ -54,7 +54,7 @@ namespace Framework.Utilities
             DrawSplineToolUIInteractivePoints(canvas, scaleValue, vectorOfMousePosition);
         }
 
-        public static void DrawSplineToolCurve(Canvas initialCanvas,Canvas processedCanvas, List<Point> points, double scaleValue, Brush brushes)
+        public static void DrawSplineToolCurve(Canvas initialCanvas, Canvas processedCanvas, List<Point> points, double scaleValue, Brush brushes)
         {
             RemoveProcessedSplineToolCurve(processedCanvas);
 

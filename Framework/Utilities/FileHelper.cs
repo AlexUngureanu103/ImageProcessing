@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Framework.Utilities

@@ -1,7 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
-
-using static System.Math;
+using System;
 
 namespace Algorithms.Utilities
 {
@@ -24,8 +23,8 @@ namespace Algorithms.Utilities
             Image<Bgr, byte> img1 = (leftImage is Image<Gray, byte> grayImg1) ? grayImg1.Convert<Bgr, byte>() : leftImage as Image<Bgr, byte>;
             Image<Bgr, byte> img2 = (rightImage is Image<Gray, byte> grayImg2) ? grayImg2.Convert<Bgr, byte>() : rightImage as Image<Bgr, byte>;
 
-            int maxHeight = Max(img1.Height, img2.Height);
-            int maxWidth = Max(img1.Width, img2.Width);
+            int maxHeight = Math.Max(img1.Height, img2.Height);
+            int maxWidth = Math.Max(img1.Width, img2.Width);
 
             Image<Bgr, byte> result = new Image<Bgr, byte>(2 * maxWidth + borderWidth, maxHeight);
 

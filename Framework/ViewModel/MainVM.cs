@@ -1,9 +1,6 @@
-﻿using System.Windows.Input;
+﻿using Framework.Model;
+using System.Windows.Input;
 using System.Windows.Media;
-using Emgu.CV;
-using Emgu.CV.Structure;
-using Framework.Model;
-using static Framework.Converters.ImageConverter;
 
 
 namespace Framework.ViewModel

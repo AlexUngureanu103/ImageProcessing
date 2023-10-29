@@ -1,7 +1,6 @@
-﻿using System.Windows;
-
+﻿using Framework.Utilities;
 using Framework.ViewModel;
-using static Framework.Utilities.DataProvider;
+using System.Windows;
 
 namespace Framework.View
 {
@@ -39,19 +38,19 @@ namespace Framework.View
             switch (_imageType)
             {
                 case ImageType.InitialGray:
-                    InitialHistogramOn = false;
+                    DataProvider.InitialHistogramOn = false;
                     break;
 
                 case ImageType.InitialColor:
-                    InitialHistogramOn = false;
+                    DataProvider.InitialHistogramOn = false;
                     break;
 
                 case ImageType.ProcessedGray:
-                    ProcessedHistogramOn = false;
+                    DataProvider.ProcessedHistogramOn = false;
                     break;
 
                 case ImageType.ProcessedColor:
-                    ProcessedHistogramOn = false;
+                    DataProvider.ProcessedHistogramOn = false;
                     break;
             }
         }

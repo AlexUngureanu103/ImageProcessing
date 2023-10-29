@@ -1,12 +1,9 @@
 ﻿using Emgu.CV;
-
-using System.Collections.Generic;
-
-using OxyPlot;
-using LineSeries = OxyPlot.Series.LineSeries;
-
 using Framework.Model;
-using static Framework.Utilities.DataProvider;
+using Framework.Utilities;
+using OxyPlot;
+using System.Collections.Generic;
+using LineSeries = OxyPlot.Series.LineSeries;
 
 namespace Framework.ViewModel
 {
@@ -23,11 +20,11 @@ namespace Framework.ViewModel
             switch (type)
             {
                 case CLevelsType.Row:
-                    RowColorLevelsOn = true;
+                    DataProvider.RowColorLevelsOn = true;
                     return new RowColorLevelsVM();
 
                 case CLevelsType.Column:
-                    ColumnColorLevelsOn = true;
+                    DataProvider.ColumnColorLevelsOn = true;
                     return new ColumnColorLevelsVM();
             }
 

@@ -22,7 +22,7 @@ namespace Framework.ViewModel
             ProcessedCanvasHeight = 600;
             ProcessedCanvasWidth = 800;
 
-            ScaleValue = 1;
+            SplineToolScaleValue = 1;
 
             Image<Bgr, byte> image = new Image<Bgr, byte>(800, 600, new Bgr(255, 255, 255));
 
@@ -73,13 +73,13 @@ namespace Framework.ViewModel
         }
 
         private double _scaleValue;
-        public double ScaleValue
+        public double SplineToolScaleValue
         {
             get => _scaleValue;
             set
             {
                 _scaleValue = value;
-                NotifyPropertyChanged(nameof(ScaleValue));
+                NotifyPropertyChanged(nameof(SplineToolScaleValue));
             }
         }
 
@@ -98,8 +98,8 @@ namespace Framework.ViewModel
 
                 if (_initialGraph != null)
                 {
-                    OriginalCanvasWidth = Graph.Width * ScaleValue;
-                    OriginalCanvasHeight = Graph.Height * ScaleValue;
+                    OriginalCanvasWidth = Graph.Width * SplineToolScaleValue;
+                    OriginalCanvasHeight = Graph.Height * SplineToolScaleValue;
                 }
                 else
                 {
@@ -123,8 +123,8 @@ namespace Framework.ViewModel
                 _processedGraph = value;
                 if (_processedGraph != null)
                 {
-                    ProcessedCanvasWidth = ProcessedGraph.Width * ScaleValue;
-                    ProcessedCanvasHeight = ProcessedGraph.Height * ScaleValue;
+                    ProcessedCanvasWidth = ProcessedGraph.Width * SplineToolScaleValue;
+                    ProcessedCanvasHeight = ProcessedGraph.Height * SplineToolScaleValue;
                 }
                 else
                 {
@@ -171,7 +171,7 @@ namespace Framework.ViewModel
 
         public void ResetZoom(object parameter)
         {
-            ScaleValue = 1;
+            SplineToolScaleValue = 1;
         }
         #endregion
 

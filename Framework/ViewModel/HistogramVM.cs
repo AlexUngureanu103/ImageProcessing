@@ -1,20 +1,14 @@
-﻿using Emgu.CV;
+﻿using Algorithms.Utilities;
+using Emgu.CV;
 using Emgu.CV.Structure;
-
+using Framework.Model;
+using Framework.Utilities;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-
-using System.Windows.Media;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
-using Framework.Model;
-
-using static Framework.Utilities.DataProvider;
-
-using static Algorithms.Utilities.Utils;
-
+using System.Windows.Media;
 namespace Framework.ViewModel
 {
     public enum ImageType
@@ -85,34 +79,34 @@ namespace Framework.ViewModel
             switch (type)
             {
                 case ImageType.InitialGray:
-                    InitialHistogramOn = true;
+                    DataProvider.InitialHistogramOn = true;
                     Title = "Grayscale - Initial Image Histogram";
 
-                    InitHelper(GrayInitialImage, ref histograms, ref colors);
+                    InitHelper(DataProvider.GrayInitialImage, ref histograms, ref colors);
 
                     break;
 
                 case ImageType.InitialColor:
-                    InitialHistogramOn = true;
+                    DataProvider.InitialHistogramOn = true;
                     Title = "Color - Initial Image Histogram";
 
-                    InitHelper(ColorInitialImage, ref histograms, ref colors);
+                    InitHelper(DataProvider.ColorInitialImage, ref histograms, ref colors);
 
                     break;
 
                 case ImageType.ProcessedGray:
-                    ProcessedHistogramOn = true;
+                    DataProvider.ProcessedHistogramOn = true;
                     Title = "Grayscale - Processed Image Histogram";
 
-                    InitHelper(GrayProcessedImage, ref histograms, ref colors);
+                    InitHelper(DataProvider.GrayProcessedImage, ref histograms, ref colors);
 
                     break;
 
                 case ImageType.ProcessedColor:
-                    ProcessedHistogramOn = true;
+                    DataProvider.ProcessedHistogramOn = true;
                     Title = "Color - Processed Image Histogram";
 
-                    InitHelper(ColorProcessedImage, ref histograms, ref colors);
+                    InitHelper(DataProvider.ColorProcessedImage, ref histograms, ref colors);
 
                     break;
             }
@@ -120,15 +114,15 @@ namespace Framework.ViewModel
 
         private void InitHelper(Image<Gray, byte> image, ref List<int[]> histograms, ref List<string> colors)
         {
-            histograms.Add(ComputeHistogram(image));
+            histograms.Add(Utils.ComputeHistogram(image));
             colors.Add(Brushes.Black.ToString());
         }
 
         private void InitHelper(Image<Bgr, byte> image, ref List<int[]> histograms, ref List<string> colors)
         {
-            histograms.Add(ComputeHistogram(image, channel: 0));
-            histograms.Add(ComputeHistogram(image, channel: 1));
-            histograms.Add(ComputeHistogram(image, channel: 2));
+            histograms.Add(Utils.ComputeHistogram(image, channel: 0));
+            histograms.Add(Utils.ComputeHistogram(image, channel: 1));
+            histograms.Add(Utils.ComputeHistogram(image, channel: 2));
 
             colors.Add(Brushes.Blue.ToString());
             colors.Add(Brushes.Green.ToString());

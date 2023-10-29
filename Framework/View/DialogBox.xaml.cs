@@ -1,7 +1,6 @@
-﻿using System.Windows;
+﻿using Framework.ViewModel;
 using System.Collections.Generic;
-
-using Framework.ViewModel;
+using System.Windows;
 
 namespace Framework.View
 {
