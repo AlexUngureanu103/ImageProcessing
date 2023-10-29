@@ -86,28 +86,13 @@ namespace Framework.ViewModel.Commands
                 MessageBox.Show("Please draw a curve first.");
                 return;
             }
-            var lutValues = new Dictionary<double, double>();
             try
             {
-                lutValues = DataProvider.SplineToolCurvePoints
-                   .GroupBy(point => PointwiseOperations.NormalizeValue(point.X, _splineToolVM.Graph.Width))
-                   .ToDictionary(group => group.Key,
-                   group => PointwiseOperations.NormalizeValue(_splineToolVM.Graph.Height - group.Sum(point => point.Y) / group.Count(), _splineToolVM.Graph.Height));
+                var lutValues = PointwiseOperations.GetLUTValues(DataProvider.SplineToolCurvePoints.ToList(), _splineToolVM.Graph.Width, _splineToolVM.Graph.Height);
 
                 if (DataProvider.ColorInitialImage != null)
                 {
-                    var image = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Size);
-
-
-                    for (int y = 0; y < image.Height; y++)
-                    {
-                        for (int x = 0; x < image.Width; x++)
-                        {
-                            image.Data[y, x, 0] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 0]];
-                            image.Data[y, x, 1] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 1]];
-                            image.Data[y, x, 2] = (byte)lutValues[DataProvider.ColorInitialImage.Data[y, x, 2]];
-                        }
-                    }
+                    var image = PointwiseOperations.UpdateGrayValues(DataProvider.ColorInitialImage, lutValues);
                     ClearProcessedImage();
 
                     DataProvider.ColorProcessedImage = image;
@@ -115,18 +100,7 @@ namespace Framework.ViewModel.Commands
                 }
                 else if (DataProvider.GrayInitialImage != null)
                 {
-                    var image = new Image<Gray, byte>(DataProvider.GrayInitialImage.Size);
-
-                    for (int y = 0; y < image.Height; y++)
-                    {
-                        for (int x = 0; x < image.Width; x++)
-                        {
-                            byte grayValue = DataProvider.GrayInitialImage.Data[y, x, 0];
-                            byte lutRawValue = (byte)lutValues[grayValue];
-
-                            image.Data[y, x, 0] = lutRawValue;
-                        }
-                    }
+                    var image = PointwiseOperations.UpdateGrayValues(DataProvider.GrayInitialImage, lutValues);
                     ClearProcessedImage();
 
                     DataProvider.GrayProcessedImage = image;
@@ -135,7 +109,7 @@ namespace Framework.ViewModel.Commands
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message + $"{lutValues.Count}");
+                MessageBox.Show(e.Message);
             }
             finally
             {

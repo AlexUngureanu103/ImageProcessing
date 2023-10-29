@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -34,6 +36,56 @@ namespace Algorithms.Sections
             return secondGen;
         }
 
+        public static double NormalizeValue(double value, double size)
+        {
+            var normalizedValue = value / size * 255;
+            return Math.Max(0, Math.Min(255, Math.Round(normalizedValue)));
+        }
+
+        public static Image<Gray, byte> UpdateGrayValues(Image<Gray, byte> initialImage, Dictionary<double, double> LUT)
+        {
+            var image = new Image<Gray, byte>(initialImage.Size);
+
+
+            for (int y = 0; y < image.Height; y++)
+            {
+                for (int x = 0; x < image.Width; x++)
+                {
+                    image.Data[y, x, 0] = (byte)LUT[initialImage.Data[y, x, 0]];
+                }
+            }
+
+            return image;
+        }
+
+        public static Image<Bgr, byte> UpdateGrayValues(Image<Bgr, byte> initialImage, Dictionary<double, double> LUT)
+        {
+            var image = new Image<Bgr, byte>(initialImage.Size);
+
+
+            for (int y = 0; y < image.Height; y++)
+            {
+                for (int x = 0; x < image.Width; x++)
+                {
+                    image.Data[y, x, 0] = (byte)LUT[initialImage.Data[y, x, 0]];
+                    image.Data[y, x, 1] = (byte)LUT[initialImage.Data[y, x, 1]];
+                    image.Data[y, x, 2] = (byte)LUT[initialImage.Data[y, x, 2]];
+                }
+            }
+
+            return image;
+        }
+
+        public static Dictionary<double, double> GetLUTValues(List<Point> curvePoints, double imageWidth, double imageHeight)
+        {
+            var lutValues = curvePoints
+                .GroupBy(point => NormalizeValue(point.X, imageWidth))
+                .ToDictionary(group => group.Key,
+                    group => NormalizeValue(imageHeight - group.Sum(point => point.Y) / group.Count(), imageHeight));
+
+            return lutValues;
+        }
+
         private static List<Point> GenerateCubicHermiteSplinePoints(List<Point> points, double tStep)
         {
             List<Point> result = new List<Point>();
@@ -67,10 +119,5 @@ namespace Algorithms.Sections
             return result;
         }
 
-        public static double NormalizeValue(double value, double size)
-        {
-            var normalizedValue = value / size * 255;
-            return Math.Max(0, Math.Min(255, Math.Round(normalizedValue)));
-        }
     }
 }
