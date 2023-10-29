@@ -622,6 +622,7 @@ namespace Framework.ViewModel
 
         #region Thresholding
 
+        #region Basic Thresholding
         private ICommand _thresholdingCommand;
         public ICommand ThresholdingCommand
         {
@@ -673,6 +674,49 @@ namespace Framework.ViewModel
                 }
             }
         }
+
+        #endregion
+
+        #region Triangle Thresholding
+
+        private ICommand _triangleThresholdingCommand;
+        public ICommand TriangleThresholdingCommand
+        {
+            get
+            {
+                if (_triangleThresholdingCommand == null)
+                {
+                    _triangleThresholdingCommand = new RelayCommand(TriangleThresholdingImage);
+                }
+                return _triangleThresholdingCommand;
+            }
+        }
+
+        private void TriangleThresholdingImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+
+            ClearProcessedCanvas(parameter);
+
+            if (GrayInitialImage != null)
+            {
+                GrayProcessedImage = Tools.TriangleThresholding(GrayInitialImage);
+                ProcessedImage = Convert(GrayProcessedImage);
+            }
+            else if (ColorInitialImage != null)
+            {
+                GrayProcessedImage = Tools.Convert(ColorInitialImage);
+                GrayProcessedImage = Tools.TriangleThresholding(GrayProcessedImage);
+                ProcessedImage = Convert(GrayProcessedImage);
+            }
+        }
+
+        #endregion
 
         #endregion
 

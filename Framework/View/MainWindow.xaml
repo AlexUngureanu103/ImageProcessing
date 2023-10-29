@@ -201,10 +201,17 @@
             </MenuItem>
 
             <MenuItem Header="Thresholding"
-                      Command="{Binding Path=MenuCommands.ThresholdingCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
+
+                <MenuItem Header="Basic Thresholding"
+                      Command="{Binding Path=MenuCommands.ThresholdingCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
+                
+                <MenuItem Header="Triangle Binarization"
+                      Command="{Binding Path=MenuCommands.TriangleThresholdingCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
             </MenuItem>
 
