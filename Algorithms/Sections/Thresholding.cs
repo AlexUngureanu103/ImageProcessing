@@ -22,7 +22,7 @@ namespace Algorithms.Sections
             var img = image.Clone();
             var histogram = GrayHistogram(img);
             int threshold = TriangleThreshold(histogram);
-            img = img.ThresholdBinary(new Gray(threshold), new Gray(255));
+            img = Algorithms.Tools.Tools.Thresholding(img, threshold);
 
             //MessageBox.Show(threshold.ToString());
             return img;
