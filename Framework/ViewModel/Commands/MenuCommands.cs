@@ -940,17 +940,30 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image !");
                 return;
             }
-
+            MessageBoxResult result = MessageBox.Show("Choose filter size:\n Yes - 3x3\n No - 5x5\n Cancel - 7x7", "Filter size", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel, MessageBoxOptions.DefaultDesktopOnly);
+            int filterSize = 3;
+            if (result == MessageBoxResult.Yes)
+            {
+                filterSize = 3;
+            }
+            else if (result == MessageBoxResult.No)
+            {
+                filterSize = 5;
+            }
+            else if (result == MessageBoxResult.Cancel)
+            {
+                filterSize = 7;
+            }
             if (DataProvider.GrayInitialImage != null)
             {
                 DataProvider.GrayProcessedImage = new Image<Gray, byte>(DataProvider.GrayInitialImage.Bitmap);
-                CvInvoke.MedianBlur(DataProvider.GrayInitialImage, DataProvider.GrayProcessedImage, 7);
+                DataProvider.GrayProcessedImage = Filters.FiltrulMedianVectorial(DataProvider.GrayInitialImage, filterSize);
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
                 DataProvider.ColorProcessedImage = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Bitmap);
-                CvInvoke.MedianBlur(DataProvider.ColorInitialImage, DataProvider.ColorProcessedImage, 7);
+                DataProvider.ColorProcessedImage = Filters.FiltrulMedianVectorial(DataProvider.ColorInitialImage, filterSize);
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
