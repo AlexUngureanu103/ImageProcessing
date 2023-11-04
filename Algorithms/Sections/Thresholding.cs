@@ -1,6 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
-using System;
+using System.Windows.Forms;
 
 namespace Algorithms.Sections
 {
@@ -44,11 +44,10 @@ namespace Algorithms.Sections
             int minStart = 0;
             int max = 0;
             int minEnd = 0;
-            int dmax = 0;
 
             minStart = GetMinFromStartOrEnd(histogram, minStart, true);
             minEnd = GetMinFromStartOrEnd(histogram, minEnd, false);
-            GetMax(histogram, ref max, ref dmax);
+            GetMax(histogram, ref max);
 
             bool inverted = false;
             if ((max - minStart) < (minEnd - max))
@@ -65,35 +64,13 @@ namespace Algorithms.Sections
                 return minStart;
             }
 
-            double nx;
-            double ny;
-            double d;
-
-            nx = histogram[max];
-            ny = minStart - max;
-            d = Math.Sqrt(nx * nx + ny * ny);
-            nx /= d;
-            ny /= d;
-            d = nx * minStart + ny * histogram[minStart];
-
-            int split = FindSplitPoint(histogram, minStart, max, nx, ny, d);
-
-            if (inverted)
-            {
-                InvertHistogram(histogram);
-                split = histogram.Length - 1 - split;
-            }
-
-            return split;
-        }
-
-        private static int FindSplitPoint(double[] histogram, int minStart, int max, double nx, double ny, double d)
-        {
             int split = minStart;
+            double x_step = 1.0 / (max - minStart);
             double splitDistance = 0;
-            for (int i = minStart + 1; i <= max; i++)
+            for (int i = minStart + 1, step = 1; i <= max; i++, step++)
             {
-                double newDistance = nx * i + ny * histogram[i] - d;
+                double height = x_step * step;
+                double newDistance = height - (histogram[i] / histogram[max]);
                 if (newDistance > splitDistance)
                 {
                     split = i;
@@ -101,6 +78,13 @@ namespace Algorithms.Sections
                 }
             }
             split--;
+
+            if (inverted)
+            {
+                split = histogram.Length - 1 - split;
+            }
+            MessageBox.Show("split: " + split.ToString());
+
             return split;
         }
 
@@ -117,14 +101,15 @@ namespace Algorithms.Sections
             }
         }
 
-        private static void GetMax(double[] histogram, ref int max, ref int dmax)
+        private static void GetMax(double[] histogram, ref int max)
         {
+            double dmax = 0;
             for (int i = 0; i < histogram.Length; i++)
             {
                 if (histogram[i] > dmax)
                 {
                     max = i;
-                    dmax = (int)histogram[i];
+                    dmax = histogram[i];
                 }
             }
         }
