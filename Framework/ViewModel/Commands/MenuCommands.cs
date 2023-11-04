@@ -1,7 +1,10 @@
-﻿using Algorithms.Tools;
+﻿using Algorithms.Sections;
+using Algorithms.Tools;
 using Algorithms.Utilities;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using Framework.Converters;
+using Framework.Utilities;
 using Framework.View;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -10,9 +13,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using  Framework.Converters;
-using Framework.Utilities;
-using Algorithms.Sections;
 
 namespace Framework.ViewModel
 {
@@ -919,6 +919,42 @@ namespace Framework.ViewModel
         #endregion
 
         #region Filters
+
+        private ICommand _filtrulMedianVectorialCommand;
+        public ICommand FiltrulMedianVectorialCommand
+        {
+            get
+            {
+                if (_filtrulMedianVectorialCommand == null)
+                {
+                    _filtrulMedianVectorialCommand = new RelayCommand(FiltrulMedianVectorial);
+                }
+                return _filtrulMedianVectorialCommand;
+            }
+        }
+
+        private void FiltrulMedianVectorial(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                DataProvider.GrayProcessedImage = new Image<Gray, byte>(DataProvider.GrayInitialImage.Bitmap);
+                CvInvoke.MedianBlur(DataProvider.GrayInitialImage, DataProvider.GrayProcessedImage, 7);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                DataProvider.ColorProcessedImage = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Bitmap);
+                CvInvoke.MedianBlur(DataProvider.ColorInitialImage, DataProvider.ColorProcessedImage, 7);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+        }
+
         #endregion
 
         #region Morphological operations
