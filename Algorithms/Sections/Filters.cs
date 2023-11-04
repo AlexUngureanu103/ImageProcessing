@@ -2,6 +2,7 @@
 using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Algorithms.Sections
 {
@@ -41,36 +42,61 @@ namespace Algorithms.Sections
 
         private static byte[] GetByteMedianValue(Image<Gray, byte> image, int x, int y, int filterSize)
         {
-            var list = new List<byte>();
+            var listBgr = new List<byte[]>(filterSize*filterSize);
             for (int xNew = Math.Max(0, y - filterSize / 2); xNew <= Math.Min(image.Height - 1, y + filterSize / 2); xNew++)
             {
                 for (int yNew = Math.Max(0, x - filterSize / 2); yNew <= Math.Min(image.Width - 1, x + filterSize / 2); yNew++)
                 {
-                    list.Add(image.Data[xNew, yNew, 0]);
+                    listBgr.Add(new byte[] { image.Data[xNew, yNew, 0], image.Data[xNew, yNew, 0], image.Data[xNew, yNew, 0] });
                 }
             }
-            list.Sort();
-            return new byte[] { list[list.Count / 2] };
+
+            var matrix = new List<List<double>>(filterSize);
+            for (int i = 0; i < listBgr.Count; i++)
+            {
+                matrix.Add(new List<double>(filterSize));
+                for (int j = 0; j < listBgr.Count; j++)
+                {
+                    matrix[i].Add(GetDistance(listBgr[i], listBgr[j]));
+                }
+            }
+
+            var sumList = matrix.Select(row => row.Sum()).ToList();
+            var minIndex = sumList.IndexOf(sumList.Min());
+
+            return listBgr[minIndex];
         }
 
         private static byte[] GetByteMedianValue(Image<Bgr, byte> image, int x, int y, int filterSize)
         {
-            var listB = new List<byte>();
-            var listG = new List<byte>();
-            var listR = new List<byte>();
+            var listBgr = new List<byte[]>(filterSize*filterSize);
             for (int xNew = Math.Max(0, y - filterSize / 2); xNew <= Math.Min(image.Height - 1, y + filterSize / 2); xNew++)
             {
                 for (int yNew = Math.Max(0, x - filterSize / 2); yNew <= Math.Min(image.Width - 1, x + filterSize / 2); yNew++)
                 {
-                    listB.Add(image.Data[xNew, yNew, 0]);
-                    listG.Add(image.Data[xNew, yNew, 1]);
-                    listR.Add(image.Data[xNew, yNew, 2]);
+                    listBgr.Add(new byte[] { image.Data[xNew, yNew, 0], image.Data[xNew, yNew, 1], image.Data[xNew, yNew, 2] });
                 }
             }
-            listB.Sort();
-            listG.Sort();
-            listR.Sort();
-            return new byte[] { listB[listB.Count / 2], listG[listG.Count / 2], listR[listR.Count / 2] };
+
+            var matrix = new List<List<double>>(filterSize);
+            for (int i = 0; i < listBgr.Count; i++)
+            {
+                matrix.Add(new List<double>(filterSize));
+                for (int j = 0; j < listBgr.Count; j++)
+                {
+                    matrix[i].Add(GetDistance(listBgr[i], listBgr[j]));
+                }
+            }
+
+            var sumList  = matrix.Select(row => row.Sum()).ToList();
+            var minIndex = sumList.IndexOf(sumList.Min());
+
+            return listBgr[minIndex];
+        }
+
+        private static double GetDistance(byte[] bgr1, byte[] bgr2)
+        {
+            return Math.Sqrt(Math.Pow(bgr1[0] - bgr2[0], 2) + Math.Pow(bgr1[1] - bgr2[1], 2) + Math.Pow(bgr1[2] - bgr2[2], 2));
         }
     }
 }

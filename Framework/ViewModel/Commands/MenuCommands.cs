@@ -940,30 +940,28 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image !");
                 return;
             }
-            MessageBoxResult result = MessageBox.Show("Choose filter size:\n Yes - 3x3\n No - 5x5\n Cancel - 7x7", "Filter size", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel, MessageBoxOptions.DefaultDesktopOnly);
-            int filterSize = 3;
+            MessageBoxResult result = MessageBox.Show("Choose filter size:\n Yes - 3x3\n No - 5x5", "Filter size", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Cancel, MessageBoxOptions.DefaultDesktopOnly);
+            int filterSize = 0;
+
             if (result == MessageBoxResult.Yes)
             {
-                filterSize = 3;
+                filterSize = 1;
             }
             else if (result == MessageBoxResult.No)
             {
-                filterSize = 5;
+                filterSize = 2;
             }
-            else if (result == MessageBoxResult.Cancel)
-            {
-                filterSize = 7;
-            }
+
             if (DataProvider.GrayInitialImage != null)
             {
                 DataProvider.GrayProcessedImage = new Image<Gray, byte>(DataProvider.GrayInitialImage.Bitmap);
-                DataProvider.GrayProcessedImage = Filters.FiltrulMedianVectorial(DataProvider.GrayInitialImage, filterSize);
+                DataProvider.GrayProcessedImage = Filters.FiltrulMedianVectorial(DataProvider.GrayInitialImage, 2 * filterSize + 1);
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
                 DataProvider.ColorProcessedImage = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Bitmap);
-                DataProvider.ColorProcessedImage = Filters.FiltrulMedianVectorial(DataProvider.ColorInitialImage, filterSize);
+                DataProvider.ColorProcessedImage = Filters.FiltrulMedianVectorial(DataProvider.ColorInitialImage, 2 * filterSize + 1);
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
