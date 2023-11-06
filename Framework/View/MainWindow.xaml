@@ -226,6 +226,12 @@
                           Foreground="#1E1E1E">
 
                 </MenuItem>
+
+                <MenuItem Header="Filtrul median vectorial"
+                          Foreground="#1E1E1E"
+                          Command="{Binding Path=MenuCommands.FiltrulMedianVectorialCommand}"
+                          CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+                
             </MenuItem>
 
             <MenuItem Header="Morphological operations"

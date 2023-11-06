@@ -1,7 +1,10 @@
-﻿using Algorithms.Tools;
+﻿using Algorithms.Sections;
+using Algorithms.Tools;
 using Algorithms.Utilities;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using Framework.Converters;
+using Framework.Utilities;
 using Framework.View;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -10,9 +13,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using  Framework.Converters;
-using Framework.Utilities;
-using Algorithms.Sections;
 
 namespace Framework.ViewModel
 {
@@ -919,6 +919,53 @@ namespace Framework.ViewModel
         #endregion
 
         #region Filters
+
+        private ICommand _filtrulMedianVectorialCommand;
+        public ICommand FiltrulMedianVectorialCommand
+        {
+            get
+            {
+                if (_filtrulMedianVectorialCommand == null)
+                {
+                    _filtrulMedianVectorialCommand = new RelayCommand(FiltrulMedianVectorial);
+                }
+                return _filtrulMedianVectorialCommand;
+            }
+        }
+
+        private void FiltrulMedianVectorial(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+            MessageBoxResult result = MessageBox.Show("Choose filter size:\n Yes - 3x3\n No - 5x5", "Filter size", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Cancel, MessageBoxOptions.DefaultDesktopOnly);
+            int filterSize = 0;
+
+            if (result == MessageBoxResult.Yes)
+            {
+                filterSize = 1;
+            }
+            else if (result == MessageBoxResult.No)
+            {
+                filterSize = 2;
+            }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                DataProvider.GrayProcessedImage = new Image<Gray, byte>(DataProvider.GrayInitialImage.Bitmap);
+                DataProvider.GrayProcessedImage = Filters.FiltrulMedianVectorial(DataProvider.GrayInitialImage, 2 * filterSize + 1);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                DataProvider.ColorProcessedImage = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Bitmap);
+                DataProvider.ColorProcessedImage = Filters.FiltrulMedianVectorial(DataProvider.ColorInitialImage, 2 * filterSize + 1);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+        }
+
         #endregion
 
         #region Morphological operations
