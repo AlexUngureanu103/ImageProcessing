@@ -3,6 +3,7 @@ using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Algorithms.Sections
 {
@@ -12,7 +13,7 @@ namespace Algorithms.Sections
         {
             var img = new Image<Bgr, byte>(image.Size);
 
-            for (int y = 0; y < img.Height; y++)
+            Parallel.For(0, img.Height, y =>
             {
                 for (int x = 0; x < img.Width; x++)
                 {
@@ -20,7 +21,7 @@ namespace Algorithms.Sections
                     img.Data[y, x, 1] = GetByteMedianValue(image, x, y, filterSize)[1];
                     img.Data[y, x, 2] = GetByteMedianValue(image, x, y, filterSize)[2];
                 }
-            }
+            });
 
             return img;
         }
@@ -42,7 +43,7 @@ namespace Algorithms.Sections
 
         private static byte[] GetByteMedianValue(Image<Gray, byte> image, int x, int y, int filterSize)
         {
-            var listBgr = new List<byte[]>(filterSize*filterSize);
+            var listBgr = new List<byte[]>(filterSize * filterSize);
             for (int xNew = Math.Max(0, y - filterSize / 2); xNew <= Math.Min(image.Height - 1, y + filterSize / 2); xNew++)
             {
                 for (int yNew = Math.Max(0, x - filterSize / 2); yNew <= Math.Min(image.Width - 1, x + filterSize / 2); yNew++)
@@ -69,7 +70,7 @@ namespace Algorithms.Sections
 
         private static byte[] GetByteMedianValue(Image<Bgr, byte> image, int x, int y, int filterSize)
         {
-            var listBgr = new List<byte[]>(filterSize*filterSize);
+            var listBgr = new List<byte[]>(filterSize * filterSize);
             for (int xNew = Math.Max(0, y - filterSize / 2); xNew <= Math.Min(image.Height - 1, y + filterSize / 2); xNew++)
             {
                 for (int yNew = Math.Max(0, x - filterSize / 2); yNew <= Math.Min(image.Width - 1, x + filterSize / 2); yNew++)
@@ -88,7 +89,7 @@ namespace Algorithms.Sections
                 }
             }
 
-            var sumList  = matrix.Select(row => row.Sum()).ToList();
+            var sumList = matrix.Select(row => row.Sum()).ToList();
             var minIndex = sumList.IndexOf(sumList.Min());
 
             return listBgr[minIndex];
