@@ -22,7 +22,7 @@ namespace Algorithms.Sections
             var img = image.Clone();
             var histogram = GrayHistogram(img);
             int threshold = TriangleThreshold(histogram);
-            img = Algorithms.Tools.Tools.Thresholding(img, threshold);
+            img = Tools.Tools.Thresholding(img, threshold);
 
             //MessageBox.Show(threshold.ToString());
             return img;
@@ -103,13 +103,13 @@ namespace Algorithms.Sections
 
         private static void GetMax(double[] histogram, ref int max)
         {
-            double dmax = 0;
+            double maxValue = 0;
             for (int i = 0; i < histogram.Length; i++)
             {
-                if (histogram[i] > dmax)
+                if (histogram[i] > maxValue)
                 {
                     max = i;
-                    dmax = histogram[i];
+                    maxValue = histogram[i];
                 }
             }
         }
