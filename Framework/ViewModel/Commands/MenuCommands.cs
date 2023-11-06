@@ -940,7 +940,7 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image !");
                 return;
             }
-            MessageBoxResult result = MessageBox.Show("Choose filter size:\n Yes - 3x3\n No - 5x5", "Filter size", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Cancel, MessageBoxOptions.DefaultDesktopOnly);
+            MessageBoxResult result = MessageBox.Show("Choose filter size:\n Yes - 3x3\n No - 5x5", "Filter size", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.Cancel, MessageBoxOptions.DefaultDesktopOnly);
             int filterSize = 0;
 
             if (result == MessageBoxResult.Yes)
@@ -950,6 +950,10 @@ namespace Framework.ViewModel
             else if (result == MessageBoxResult.No)
             {
                 filterSize = 2;
+            }
+            else
+            {
+                return;
             }
 
             if (DataProvider.GrayInitialImage != null)
