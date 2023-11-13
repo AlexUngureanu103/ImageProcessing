@@ -3,6 +3,7 @@ using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Algorithms.Sections
@@ -17,9 +18,10 @@ namespace Algorithms.Sections
             {
                 for (int x = 0; x < img.Width; x++)
                 {
-                    img.Data[y, x, 0] = GetByteMedianValue(image, x, y, filterSize)[0];
-                    img.Data[y, x, 1] = GetByteMedianValue(image, x, y, filterSize)[1];
-                    img.Data[y, x, 2] = GetByteMedianValue(image, x, y, filterSize)[2];
+                    var bgr = GetByteMedianValue(image, x, y, filterSize);
+                    img.Data[y, x, 0] = bgr[0];
+                    img.Data[y, x, 1] = bgr[1];
+                    img.Data[y, x, 2] = bgr[2];
                 }
             });
 
