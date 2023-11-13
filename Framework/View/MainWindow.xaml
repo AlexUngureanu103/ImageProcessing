@@ -231,6 +231,11 @@
                           Foreground="#1E1E1E"
                           Command="{Binding Path=MenuCommands.FiltrulMedianVectorialCommand}"
                           CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
+                <MenuItem Header="Canny RGB"
+                          Foreground="#1E1E1E"
+                          Command="{Binding Path=MenuCommands.CannyRGBCommand}"
+                          CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
                 
             </MenuItem>
 

@@ -920,6 +920,8 @@ namespace Framework.ViewModel
 
         #region Filters
 
+        #region Median vectorial filter
+
         private ICommand _filtrulMedianVectorialCommand;
         public ICommand FiltrulMedianVectorialCommand
         {
@@ -969,6 +971,34 @@ namespace Framework.ViewModel
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
+
+        #endregion
+
+        #region CannyRGB
+
+        private ICommand _cannyRGBCommand;
+        public ICommand CannyRGBCommand
+        {
+            get
+            {
+                if (_cannyRGBCommand == null)
+                {
+                    _cannyRGBCommand = new RelayCommand(CannyRGB);
+                }
+                return _cannyRGBCommand;
+            }
+        }
+
+        private void CannyRGB(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image !");
+                return;
+            }
+        }
+
+        #endregion
 
         #endregion
 
