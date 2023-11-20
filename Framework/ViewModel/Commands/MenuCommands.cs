@@ -974,6 +974,109 @@ namespace Framework.ViewModel
 
         #endregion
 
+        #region Gradient magnitude image
+
+        private ICommand _gradientMagnitudeImageCommand;
+        public ICommand GradientMagnitudeImageCommand
+        {
+            get
+            {
+                if (_gradientMagnitudeImageCommand == null)
+                {
+                    _gradientMagnitudeImageCommand = new RelayCommand(GradientMagnitudeImage);
+                }
+                return _gradientMagnitudeImageCommand;
+            }
+        }
+
+        private void GradientMagnitudeImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image GradientMagnitudeImage!");
+                return;
+            }
+        }
+
+        #endregion
+
+        #region Angle Image
+
+        private ICommand _angleImageCommand;
+        public ICommand AngleImageCommand
+        {
+            get
+            {
+                if (_angleImageCommand == null)
+                {
+                    _angleImageCommand = new RelayCommand(AngleImage);
+                }
+                return _angleImageCommand;
+            }
+        }
+
+        private void AngleImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image AngleImage!");
+                return;
+            }
+        }
+
+        #endregion
+
+        #region NonmaximumSuppression
+
+        private ICommand _nonmaximumSuppressionCommand;
+        public ICommand NonmaximumSuppressionCommand
+        {
+            get
+            {
+                if (_nonmaximumSuppressionCommand == null)
+                {
+                    _nonmaximumSuppressionCommand = new RelayCommand(NonmaximumSuppression);
+                }
+                return _nonmaximumSuppressionCommand;
+            }
+        }
+
+        private void NonmaximumSuppression(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image NonmaximumSuppression!");
+                return;
+            }
+        }
+
+        #endregion
+
+        #region HysteresisThresholding
+
+        private ICommand _hysteresisThresholdingCommand;
+        public ICommand HysteresisThresholdingCommand
+        {
+            get
+            {
+                if (_hysteresisThresholdingCommand == null)
+                {
+                    _hysteresisThresholdingCommand = new RelayCommand(HysteresisThresholding);
+                }
+                return _hysteresisThresholdingCommand;
+            }
+        }
+
+        private void HysteresisThresholding(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image HysteresisThresholding!");
+                return;
+            }
+        }
+        #endregion
+
         #region CannyRGB
 
         private ICommand _cannyRGBCommand;
@@ -993,7 +1096,7 @@ namespace Framework.ViewModel
         {
             if (InitialImage == null)
             {
-                MessageBox.Show("Please add an image !");
+                MessageBox.Show("Please add an image  CannyRGB!");
                 return;
             }
         }
