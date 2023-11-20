@@ -996,6 +996,17 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image GradientMagnitudeImage!");
                 return;
             }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayInitialImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
         }
 
         #endregion
@@ -1021,6 +1032,15 @@ namespace Framework.ViewModel
             {
                 MessageBox.Show("Please add an image AngleImage!");
                 return;
+            }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+
             }
         }
 
@@ -1048,6 +1068,15 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image NonmaximumSuppression!");
                 return;
             }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+
+            }
         }
 
         #endregion
@@ -1074,6 +1103,15 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image HysteresisThresholding!");
                 return;
             }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+
+            }
         }
         #endregion
 
@@ -1098,6 +1136,15 @@ namespace Framework.ViewModel
             {
                 MessageBox.Show("Please add an image  CannyRGB!");
                 return;
+            }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+
             }
         }
 
