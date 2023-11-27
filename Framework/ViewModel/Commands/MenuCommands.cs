@@ -1104,13 +1104,27 @@ namespace Framework.ViewModel
                 return;
             }
 
+            var dialogBox = new DialogBox(_mainVM, new List<string> { "T1", "T2" });
+
+            dialogBox.ShowDialog();
+            var values = dialogBox.GetValues();
+            if (values[0] > values[1])
+            {
+                MessageBox.Show("T1 must be smaller than T2");
+                return;
+            }
+
+
             if (DataProvider.GrayInitialImage != null)
             {
-
+                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(DataProvider.GrayInitialImage, (byte)values[0], (byte)values[1]);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-
+                DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
+                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(DataProvider.GrayProcessedImage, (byte)values[0], (byte)values[1]);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
         #endregion
