@@ -221,43 +221,49 @@
                 <MenuItem Header="Low-pass"
                           Foreground="#1E1E1E">
 
-                </MenuItem>
-                <MenuItem Header="High-pass"
-                          Foreground="#1E1E1E">
-
-                </MenuItem>
-
-                <MenuItem Header="Filtrul median vectorial"
+                    <MenuItem Header="Filtrul median vectorial"
                           Foreground="#1E1E1E"
                           Command="{Binding Path=MenuCommands.FiltrulMedianVectorialCommand}"
                           CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                <MenuItem Header="Canny RGB"
+                    <MenuItem Header="Gauss Filter"
+                          Foreground="#1E1E1E"
+                          Command="{Binding Path=MenuCommands.GaussFilterCommand}"
+                          CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
+                </MenuItem>
+                <MenuItem Header="High-pass"
                           Foreground="#1E1E1E">
-                    <MenuItem Header="Gradient magnitude image"
+
+
+                    <MenuItem Header="Canny RGB"
+                          Foreground="#1E1E1E">
+                        <MenuItem Header="Gradient magnitude image"
                               Foreground="#1E1E1E"
                               Command="{Binding Path=MenuCommands.GradientMagnitudeImageCommand}"
                               CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                    <MenuItem Header="Angle image"
+                        <MenuItem Header="Angle image"
                               Foreground="#1E1E1E"
                                 Command="{Binding Path=MenuCommands.AngleImageCommand}"
                                 CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                    <MenuItem Header="Non-maximum suppression"
+                        <MenuItem Header="Non-maximum suppression"
                                 Foreground="#1E1E1E"
                                 Command="{Binding Path=MenuCommands.NonmaximumSuppressionCommand}"
                                 CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                    <MenuItem Header="Hysteresis thresholding"
+                        <MenuItem Header="Hysteresis thresholding"
                                 Foreground="#1E1E1E"
                                 Command="{Binding Path=MenuCommands.HysteresisThresholdingCommand}"
                                 CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                    <MenuItem Header="Canny RGB"
+                        <MenuItem Header="Canny RGB"
                                 Foreground="#1E1E1E"
                                 Command="{Binding Path=MenuCommands.CannyRGBCommand}"
                                 CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+                    </MenuItem>
+                    
                 </MenuItem>
 
             </MenuItem>

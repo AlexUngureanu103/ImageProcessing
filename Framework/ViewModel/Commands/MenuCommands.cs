@@ -974,6 +974,33 @@ namespace Framework.ViewModel
 
         #endregion
 
+        #region Gauss filter
+
+        private ICommand _gaussFilterCommand;
+        public ICommand GaussFilterCommand
+        {
+            get
+            {
+                if (_gaussFilterCommand == null)
+                {
+                    _gaussFilterCommand = new RelayCommand(GaussFilter);
+                }
+                return _gaussFilterCommand;
+            }
+        }
+
+        private void GaussFilter(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image ! Gauss Filter");
+                return;
+            }
+
+        }
+
+        #endregion
+
         #region Gradient magnitude image
 
         private ICommand _gradientMagnitudeImageCommand;
