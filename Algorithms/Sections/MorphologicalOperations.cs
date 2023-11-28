@@ -10,7 +10,7 @@ namespace Algorithms.Sections
         public static Image<Gray, byte> ClosingGray(Image<Gray, byte> image, int kernelSize)
         {
             var img = DilationGray(image, kernelSize);
-            //          img = ErosionGray(img, kernelSize);
+            img = ErosionGray(img, kernelSize);
 
             return img;
         }
@@ -18,17 +18,18 @@ namespace Algorithms.Sections
         private static Image<Gray, byte> DilationGray(Image<Gray, byte> image, int kernelSize)
         {
             var img = new Image<Gray, byte>(image.Size);
+            int kernelOffset = (kernelSize - 1) / 2;
 
-            Parallel.For(0, img.Height, y =>
+            Parallel.For(kernelOffset, img.Height - kernelOffset, y =>
             {
-                for (int x = 0; x < img.Width; x++)
+                for (int x = kernelOffset; x < img.Width - kernelOffset; x++)
                 {
                     byte[] maxBgr = new byte[] { 0, 0, 0 };
-                    for (int t = Math.Max(0, y - kernelSize / 2); t <= Math.Min(image.Height - 1, y + kernelSize / 2); t++)
+                    for (int t = -kernelOffset; t < kernelOffset; t++)
                     {
-                        for (int s = Math.Max(0, x - kernelSize / 2); s <= Math.Min(image.Width - 1, x + kernelSize / 2); s++)
+                        for (int s = -kernelOffset; s < kernelOffset; s++)
                         {
-                            var aux = image.Data[Math.Max(0, x - s), Math.Max(0, y - t), 0] + image.Data[s, t, 0];
+                            var aux = image.Data[Math.Max(0, y + s), Math.Max(0, x + t), 0];
 
                             if (aux > maxBgr[0])
                             {
@@ -36,7 +37,7 @@ namespace Algorithms.Sections
                             }
                         }
                     }
-                    img.Data[x, y, 0] = maxBgr[0];
+                    img.Data[y, x, 0] = maxBgr[0];
                 }
             });
 
@@ -46,25 +47,26 @@ namespace Algorithms.Sections
         private static Image<Gray, byte> ErosionGray(Image<Gray, byte> image, int kernelSize)
         {
             var img = new Image<Gray, byte>(image.Size);
+            int kernelOffset = (kernelSize - 1) / 2;
 
-            Parallel.For(0, img.Height, y =>
+            Parallel.For(kernelOffset, img.Height - kernelOffset, y =>
             {
-                for (int x = 0; x < img.Width; x++)
+                for (int x = kernelOffset; x < img.Width - kernelOffset; x++)
                 {
-                    byte[] maxBgr = new byte[] { 0, 0, 0 };
-                    for (int t = Math.Max(0, y - kernelSize / 2); t <= Math.Min(image.Height - 1, y + kernelSize / 2); t++)
+                    byte[] minBgr = new byte[] { 255, 255, 255 };
+                    for (int t = -kernelOffset; t < kernelOffset; t++)
                     {
-                        for (int s = Math.Max(0, x - kernelSize / 2); s <= Math.Min(image.Width - 1, x + kernelSize / 2); s++)
+                        for (int s = -kernelOffset; s < kernelOffset; s++)
                         {
-                            var aux = image.Data[Math.Max(0, x - s), Math.Max(0, y - t), 0] - image.Data[s, t, 0];
+                            var aux = image.Data[Math.Max(0, y + s), Math.Max(0, x + t), 0];
 
-                            if (aux > maxBgr[0])
+                            if (aux < minBgr[0])
                             {
-                                maxBgr[0] = (byte)aux;
+                                minBgr[0] = (byte)aux;
                             }
                         }
                     }
-                    img.Data[x, y, 0] = maxBgr[0];
+                    img.Data[y, x, 0] = minBgr[0];
                 }
             });
 
