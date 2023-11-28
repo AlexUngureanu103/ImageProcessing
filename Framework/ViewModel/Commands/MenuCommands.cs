@@ -996,7 +996,7 @@ namespace Framework.ViewModel
                 return;
             }
 
-            if(DataProvider.GrayInitialImage == null)
+            if (DataProvider.GrayInitialImage == null)
             {
                 MessageBox.Show("Please add a gray image ! Closing Gray.");
                 return;
@@ -1005,8 +1005,17 @@ namespace Framework.ViewModel
             var dialogBox = new DialogBox(_mainVM, new List<string> { "Kernel size" });
             dialogBox.ShowDialog();
 
-            var values = dialogBox.GetValues();
-            DataProvider.GrayProcessedImage = MorphologicalOperations.ClosingGray(DataProvider.GrayInitialImage, (int)values[0]);
+            var value = dialogBox.GetValues()[0];
+            if (value < 3)
+            {
+                value = 3;
+            }
+            if (value % 2 == 0)
+            {
+                value += 1;
+            }
+
+            DataProvider.GrayProcessedImage = MorphologicalOperations.ClosingGray(DataProvider.GrayInitialImage, (int)value);
             ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
         }
 

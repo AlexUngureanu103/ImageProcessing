@@ -1,6 +1,5 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
-using System;
 using System.Threading.Tasks;
 
 namespace Algorithms.Sections
@@ -20,24 +19,35 @@ namespace Algorithms.Sections
             var img = new Image<Gray, byte>(image.Size);
             int kernelOffset = (kernelSize - 1) / 2;
 
+            var structuringElement = new byte[kernelSize, kernelSize];
+            if (kernelSize == 3)
+            {
+                structuringElement = new byte[3, 3]
+                {
+                    { 0, 0, 0 },
+                    { 0, 0, 0 },
+                    { 0, 0, 0 }
+                };
+            }
+
             Parallel.For(kernelOffset, img.Height - kernelOffset, y =>
             {
                 for (int x = kernelOffset; x < img.Width - kernelOffset; x++)
                 {
-                    byte[] maxBgr = new byte[] { 0, 0, 0 };
+                    int maxBgr = 0;
                     for (int t = -kernelOffset; t < kernelOffset; t++)
                     {
                         for (int s = -kernelOffset; s < kernelOffset; s++)
                         {
-                            var aux = image.Data[Math.Max(0, y + s), Math.Max(0, x + t), 0];
+                            int aux = image.Data[y - t, x - s, 0] + structuringElement[s + kernelOffset, t + kernelOffset];
 
-                            if (aux > maxBgr[0])
+                            if (aux > maxBgr)
                             {
-                                maxBgr[0] = (byte)aux;
+                                maxBgr = aux;
                             }
                         }
                     }
-                    img.Data[y, x, 0] = maxBgr[0];
+                    img.Data[y, x, 0] = (byte)maxBgr;
                 }
             });
 
@@ -49,24 +59,35 @@ namespace Algorithms.Sections
             var img = new Image<Gray, byte>(image.Size);
             int kernelOffset = (kernelSize - 1) / 2;
 
+            var structuringElement = new byte[kernelSize, kernelSize];
+            if (kernelSize == 3)
+            {
+                structuringElement = new byte[3, 3]
+                {
+                    { 0, 0, 0 },
+                    { 0, 0, 0 },
+                    { 0, 0, 0 }
+                };
+            }
+
             Parallel.For(kernelOffset, img.Height - kernelOffset, y =>
             {
                 for (int x = kernelOffset; x < img.Width - kernelOffset; x++)
                 {
-                    byte[] minBgr = new byte[] { 255, 255, 255 };
+                    int minBgr = 255;
                     for (int t = -kernelOffset; t < kernelOffset; t++)
                     {
                         for (int s = -kernelOffset; s < kernelOffset; s++)
                         {
-                            var aux = image.Data[Math.Max(0, y + s), Math.Max(0, x + t), 0];
+                            int aux = image.Data[y - t, x - s, 0] - structuringElement[s + kernelOffset, t + kernelOffset];
 
-                            if (aux < minBgr[0])
+                            if (aux < minBgr)
                             {
-                                minBgr[0] = (byte)aux;
+                                minBgr = aux;
                             }
                         }
                     }
-                    img.Data[y, x, 0] = minBgr[0];
+                    img.Data[y, x, 0] = (byte)minBgr;
                 }
             });
 
