@@ -997,6 +997,16 @@ namespace Framework.ViewModel
                 return;
             }
 
+            if (DataProvider.GrayInitialImage != null)
+            {
+                DataProvider.GrayProcessedImage = DataProvider.GrayInitialImage.SmoothGaussian(7,7,1,1);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(7, 7, 1, 1);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
         }
 
         #endregion
@@ -1026,12 +1036,15 @@ namespace Framework.ViewModel
 
             if (DataProvider.GrayInitialImage != null)
             {
-                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5);
-                ProcessedImage = ImageConverter.Convert(DataProvider.GrayInitialImage);
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(7, 7, 1, 1);
+                DataProvider.GrayProcessedImage = Filters.Sobel(img);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5);
+                MessageBox.Show("Please convert image to grayscale first!");
+                return;
+                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(7, 7, 1, 1);
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }

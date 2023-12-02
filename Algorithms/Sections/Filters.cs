@@ -3,13 +3,56 @@ using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Algorithms.Sections
 {
     public class Filters
     {
+        public static Image<Gray, byte> Sobel(Image<Gray, byte> image)
+        {
+            var img = new Image<Gray, byte>(image.Size);
+
+
+
+            int[,] sx = new int[3, 3] {
+                { -1, 0, 1 },
+                { -2, 0, 2 },
+                { -1, 0, 1 } };
+
+            int[,] sy = new int[3, 3] {
+                { -1, -2, -1 },
+                { 0, 0, 0 },
+                { 1, 2, 1 } };
+
+
+            for (int y = 1; y < image.Height - 1; y++)
+            {
+                for (int x = 1; x < image.Width - 1; x++)
+                {
+                    var fxValue = 0;
+                    var fyValue = 0;
+
+                    for (int i = -1; i <= 1; i++)
+                    {
+                        for (int j = -1; j <= 1; j++)
+                        {
+                            byte grayValue = image.Data[y + i, x + j, 0];
+
+                            fxValue += grayValue * sx[i + 1, j + 1];
+                            fyValue += grayValue * sy[i + 1, j + 1];
+                        }
+                    }
+
+                    var gradient = Math.Round(Math.Min(255, Math.Sqrt(fxValue * fxValue + fyValue * fyValue)));
+                    img.Data[y, x, 0] = (byte)gradient;
+                }
+            }
+            return img;
+        }
+
+        #region Filtrul median vectorial
+
         public static Image<Bgr, byte> FiltrulMedianVectorial(Image<Bgr, byte> image, int filterSize)
         {
             var img = new Image<Bgr, byte>(image.Size);
@@ -101,5 +144,7 @@ namespace Algorithms.Sections
         {
             return Math.Sqrt(Math.Pow(bgr1[0] - bgr2[0], 2) + Math.Pow(bgr1[1] - bgr2[1], 2) + Math.Pow(bgr1[2] - bgr2[2], 2));
         }
+
+        #endregion
     }
 }
