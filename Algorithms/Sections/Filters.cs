@@ -9,10 +9,10 @@ namespace Algorithms.Sections
 {
     public class Filters
     {
-        public static Image<Gray, byte> Sobel(Image<Gray, byte> image)
+        public static (Image<Gray, byte>, Image<Bgr, byte>) Sobel(Image<Gray, byte> image)
         {
             var img = new Image<Gray, byte>(image.Size);
-
+            var angleImg = new Image<Bgr, byte>(image.Size);
 
 
             int[,] sx = new int[3, 3] {
@@ -45,10 +45,68 @@ namespace Algorithms.Sections
                     }
 
                     var gradient = Math.Round(Math.Min(255, Math.Sqrt(fxValue * fxValue + fyValue * fyValue)));
+                    if (gradient >= 20)
+                    {
+                        if (fxValue == 0)
+                        {
+                            angleImg.Data[y, x, 0] = 0;
+                            angleImg.Data[y, x, 1] = 0;
+                            angleImg.Data[y, x, 2] = 255;
+                        }
+                        else
+                        {
+                            var direction = Math.Atan(fyValue / fxValue);
+                            var angle = MapDirection(direction);
+
+                            angleImg.Data[y, x, 0] = angle[0];
+                            angleImg.Data[y, x, 1] = angle[1];
+                            angleImg.Data[y, x, 2] = angle[2];
+                        }
+                    }
+                    else
+                    {
+                        angleImg.Data[y, x, 0] = 0;
+                        angleImg.Data[y, x, 1] = 0;
+                        angleImg.Data[y, x, 2] = 0;
+                    }
+
                     img.Data[y, x, 0] = (byte)gradient;
                 }
             }
-            return img;
+            return (img, angleImg);
+        }
+
+        private static byte[] MapDirection(double direction)
+        {
+            var bytes = new byte[3];
+            if (direction > Math.PI / 2)
+            {
+                direction -= Math.PI;
+            }
+            else if (direction < -Math.PI / 2)
+            {
+                direction += Math.PI;
+            }
+
+            if ((direction >= -Math.PI / 2 && direction <= -Math.PI * 3 / 8) ||
+                (direction <= Math.PI / 2 && direction >= Math.PI * 3 / 8))
+            {
+                bytes = new byte[] { 0, 0, 255 };
+            }
+            else if (direction >= -Math.PI * 3 / 8 && direction <= -Math.PI / 8)
+            {
+                bytes = new byte[] { 0, 255, 255 };
+            }
+            else if (direction >= -Math.PI / 8 && direction <= Math.PI / 8)
+            {
+                bytes = new byte[] { 0, 255, 0 };
+            }
+            else if (direction >= Math.PI / 8 && direction <= Math.PI * 3 / 8)
+            {
+                bytes = new byte[] { 255, 0, 0 };
+            }
+
+            return bytes;
         }
 
         #region Filtrul median vectorial

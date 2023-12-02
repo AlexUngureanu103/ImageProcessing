@@ -999,12 +999,12 @@ namespace Framework.ViewModel
 
             if (DataProvider.GrayInitialImage != null)
             {
-                DataProvider.GrayProcessedImage = DataProvider.GrayInitialImage.SmoothGaussian(7,7,1,1);
+                DataProvider.GrayProcessedImage = DataProvider.GrayInitialImage.SmoothGaussian(5,5,1,1);
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(7, 7, 1, 1);
+                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
@@ -1036,15 +1036,18 @@ namespace Framework.ViewModel
 
             if (DataProvider.GrayInitialImage != null)
             {
-                var img = DataProvider.GrayInitialImage.SmoothGaussian(7, 7, 1, 1);
-                DataProvider.GrayProcessedImage = Filters.Sobel(img);
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var imgs = Filters.Sobel(img);
+
+                DataProvider.GrayProcessedImage = imgs.Item1;
+                
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
                 MessageBox.Show("Please convert image to grayscale first!");
                 return;
-                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(7, 7, 1, 1);
+                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
@@ -1070,17 +1073,25 @@ namespace Framework.ViewModel
         {
             if (InitialImage == null)
             {
-                MessageBox.Show("Please add an image AngleImage!");
+                MessageBox.Show("Please add an image Angle Image!");
                 return;
             }
 
             if (DataProvider.GrayInitialImage != null)
             {
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var imgs = Filters.Sobel(img);
 
+                DataProvider.ColorProcessedImage = imgs.Item2;
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-
+                MessageBox.Show("Please convert image to grayscale first!");
+                return;
+                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
 
