@@ -1039,10 +1039,14 @@ namespace Framework.ViewModel
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
 
-            var dialogBox = new DialogBox(_mainVM, new List<string> { "T1" });
+            //var dialogBox = new DialogBox(_mainVM, new List<string> { "T1" });
 
-            dialogBox.ShowDialog();
-            var values = dialogBox.GetValues();
+            //dialogBox.ShowDialog();
+            //var values = dialogBox.GetValues();
+
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
 
             if (DataProvider.GrayInitialImage != null)
             {

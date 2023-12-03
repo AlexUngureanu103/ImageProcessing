@@ -64,6 +64,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ArrrayMultiValueConverter.cs" />
     <Compile Include="Model\DialogBoxParameter.cs" />
+    <Compile Include="Model\SliderDialogBoxParameter.cs" />
     <Compile Include="Model\ThemeModes\CobaltBlueTheme.cs" />
     <Compile Include="Model\ThemeModes\LavenderVioletTheme.cs" />
     <Compile Include="Model\ThemeModes\PalePinkTheme.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="ViewModel\DialogBoxVM.cs" />
     <Compile Include="ViewModel\GraphVM.cs" />
     <Compile Include="ViewModel\MainVM.cs" />
+    <Compile Include="ViewModel\SliderDialogBoxVM.cs" />
     <Compile Include="ViewModel\SliderVM.cs" />
     <Compile Include="ViewModel\SplineToolVM.cs" />
     <Compile Include="View\DialogBox.xaml.cs">
@@ -102,6 +104,9 @@
     </Compile>
     <Compile Include="View\ColorLevelsWindow.xaml.cs">
       <DependentUpon>ColorLevelsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SliderDialogBox.xaml.cs">
+      <DependentUpon>SliderDialogBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SliderWindow.xaml.cs">
       <DependentUpon>SliderWindow.xaml</DependentUpon>
@@ -138,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ColorLevelsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SliderDialogBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
