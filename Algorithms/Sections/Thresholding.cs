@@ -6,35 +6,35 @@ namespace Algorithms.Sections
 {
     public class Thresholding
     {
-        public static Image<Gray, byte> HysteresisThresholding(Image<Gray, byte> image, int t1, int t2)
+        public static Image<Gray, byte> HysteresisThresholding(Image<Gray, byte> image, int tMin, int tMax)
         {
             var img = new Image<Gray, byte>(image.Size);
 
             for (int y = 0; y < image.Size.Height; y++)
                 for (int x = 0; x < image.Size.Width; x++)
                 {
-                    if (image.Data[y, x, 0] <= t1)
+                    if (image.Data[y, x, 0] <= tMin)
+                    {
+                        img.Data[y, x, 0] = 0;
+                    }
+                    else if (image.Data[y, x, 0] > tMax)
                     {
                         img.Data[y, x, 0] = 255;
                     }
-                    else if (image.Data[y, x, 0] > t2)
+                    else if (ExploreNeighbours(image, x, y, tMax))
                     {
-                        img.Data[y, x, 0] = 0;
-                    }
-                    else if (ExploreNeighbours(image, x, y, t2))
-                    {
-                        img.Data[y, x, 0] = 0;
+                        img.Data[y, x, 0] = 255;
                     }
                     else
                     {
-                        img.Data[y, x, 0] = 255;
+                        img.Data[y, x, 0] = 0;
                     }
                 }
 
             return img;
         }
 
-        public static bool ExploreNeighbours(Image<Gray, byte> image, int x, int y, int t2)
+        public static bool ExploreNeighbours(Image<Gray, byte> image, int x, int y, int tMax)
         {
             for (int i = -1; i <= 1; i++)
                 for (int j = -1; j <= 1; j++)
@@ -43,7 +43,7 @@ namespace Algorithms.Sections
                     {
                         continue;
                     }
-                    else if (image.Data[y + i, x + j, 0] > t2)
+                    else if (image.Data[y + i, x + j, 0] > tMax)
                     {
                         return true;
                     }

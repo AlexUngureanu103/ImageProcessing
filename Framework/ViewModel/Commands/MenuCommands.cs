@@ -997,6 +997,9 @@ namespace Framework.ViewModel
                 return;
             }
 
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
             if (DataProvider.GrayInitialImage != null)
             {
                 DataProvider.GrayProcessedImage = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
@@ -1033,11 +1036,18 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image GradientMagnitudeImage!");
                 return;
             }
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var dialogBox = new DialogBox(_mainVM, new List<string> { "T1" });
+
+            dialogBox.ShowDialog();
+            var values = dialogBox.GetValues();
 
             if (DataProvider.GrayInitialImage != null)
             {
                 var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                var imgs = Filters.Sobel(img);
+                var imgs = Filters.Sobel(img, (byte)values[0]);
 
                 DataProvider.GrayProcessedImage = imgs.Item1;
 
@@ -1077,10 +1087,18 @@ namespace Framework.ViewModel
                 return;
             }
 
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var dialogBox = new DialogBox(_mainVM, new List<string> { "T1" });
+
+            dialogBox.ShowDialog();
+            var values = dialogBox.GetValues();
+
             if (DataProvider.GrayInitialImage != null)
             {
                 var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                var imgs = Filters.Sobel(img);
+                var imgs = Filters.Sobel(img, (byte)values[0]);
 
                 DataProvider.ColorProcessedImage = imgs.Item2;
 
@@ -1120,12 +1138,30 @@ namespace Framework.ViewModel
                 return;
             }
 
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var dialogBox = new DialogBox(_mainVM, new List<string> { "T1" });
+
+            dialogBox.ShowDialog();
+            var values = dialogBox.GetValues();
+
             if (DataProvider.GrayInitialImage != null)
             {
                 var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                var imgs = Filters.Sobel(img);
+                var imgs = Filters.Sobel(img, (byte)values[0]);
 
-                DataProvider.GrayProcessedImage = Filters.NonMaximaSupression(imgs.Item1, imgs.Item2);
+                var firstImg = imgs.Item1;
+                var secondImg = Filters.NonMaximaSupression(firstImg, imgs.Item2);
+                //var cnt = 0;
+                //while (!firstImg.Equals(secondImg))
+                //{
+                //    cnt++;
+                //    imgs = Filters.Sobel(secondImg);
+                //    firstImg = imgs.Item1;
+                //    secondImg = Filters.NonMaximaSupression(firstImg, imgs.Item2);
+                //}
+                DataProvider.GrayProcessedImage = secondImg;
 
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
@@ -1163,6 +1199,9 @@ namespace Framework.ViewModel
                 return;
             }
 
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
             var dialogBox = new DialogBox(_mainVM, new List<string> { "T1", "T2" });
 
             dialogBox.ShowDialog();
@@ -1176,11 +1215,28 @@ namespace Framework.ViewModel
 
             if (DataProvider.GrayInitialImage != null)
             {
-                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(DataProvider.GrayInitialImage, (byte)values[0], (byte)values[1]);
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var imgs = Filters.Sobel(img, (byte)values[0]);
+
+                var firstImg = imgs.Item1;
+                var secondImg = Filters.NonMaximaSupression(firstImg, imgs.Item2);
+                //var cnt = 0;
+                //while (!firstImg.Equals(secondImg))
+                //{
+                //    cnt++;
+                //    imgs = Filters.Sobel(secondImg);
+                //    firstImg = imgs.Item1;
+                //    secondImg = Filters.NonMaximaSupression(firstImg, imgs.Item2);
+                //}
+
+                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
+
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
+                return;
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
                 DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
                 DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(DataProvider.GrayProcessedImage, (byte)values[0], (byte)values[1]);
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
@@ -1210,6 +1266,9 @@ namespace Framework.ViewModel
                 MessageBox.Show("Please add an image  CannyRGB!");
                 return;
             }
+
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
 
             if (DataProvider.GrayInitialImage != null)
             {

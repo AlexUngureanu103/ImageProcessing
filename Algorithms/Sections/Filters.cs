@@ -9,7 +9,7 @@ namespace Algorithms.Sections
 {
     public class Filters
     {
-        public static (Image<Gray, byte>, Image<Bgr, byte>) Sobel(Image<Gray, byte> image)
+        public static (Image<Gray, byte>, Image<Bgr, byte>) Sobel(Image<Gray, byte> image , int tMin)
         {
             var img = new Image<Gray, byte>(image.Size);
             var angleImg = new Image<Bgr, byte>(image.Size);
@@ -45,7 +45,7 @@ namespace Algorithms.Sections
                     }
 
                     var gradient = Math.Round(Math.Min(255, Math.Sqrt(fxValue * fxValue + fyValue * fyValue)));
-                    if (gradient >= 20)
+                    if (gradient >= tMin)
                     {
                         if (fxValue == 0)
                         {
@@ -88,22 +88,26 @@ namespace Algorithms.Sections
                 direction += Math.PI;
             }
 
+            //RED
             if ((direction >= -Math.PI / 2 && direction <= -Math.PI * 3 / 8) ||
-                (direction <= Math.PI / 2 && direction >= Math.PI * 3 / 8))
+               (direction <= Math.PI / 2 && direction >= Math.PI * 3 / 8))
             {
                 bytes = new byte[] { 0, 0, 255 };
             }
-            else if (direction >= -Math.PI * 3 / 8 && direction <= -Math.PI / 8)
+            //BLUE
+            else if (direction >= Math.PI / 8 && direction <= Math.PI * 3 / 8)
             {
-                bytes = new byte[] { 0, 255, 255 };
+                bytes = new byte[] { 255, 0, 0 };
             }
+            //GREEN
             else if (direction >= -Math.PI / 8 && direction <= Math.PI / 8)
             {
                 bytes = new byte[] { 0, 255, 0 };
             }
-            else if (direction >= Math.PI / 8 && direction <= Math.PI * 3 / 8)
+            //YELLOW
+            else if (direction >= -Math.PI * 3 / 8 && direction <= -Math.PI / 8)
             {
-                bytes = new byte[] { 255, 0, 0 };
+                bytes = new byte[] { 0, 255, 255 };
             }
 
             return bytes;
@@ -113,18 +117,22 @@ namespace Algorithms.Sections
         {
             var img = new Image<Gray, byte>(gradientImage.Size);
 
-            for (int y = 1; y < img.Height - 1; y++)
+            for (int y = 2; y < img.Height - 2; y++)
             {
-                for (int x = 1; x < img.Width - 1; x++)
+                for (int x = 2; x < img.Width - 2; x++)
                 {
                     // d0 0 0 255
                     // d1 0 255 255
                     // d2 0 255 0
                     // d3 255 0 0
                     var angleBytes = (angleImage.Data[y, x, 0], angleImage.Data[y, x, 1], angleImage.Data[y, x, 2]);
+
                     if (angleBytes.Item1 == 0 && angleBytes.Item2 == 0 && angleBytes.Item3 == 255)
                     {
-                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 1, 0] && gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 1, 0])
+                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 2, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 1, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 1, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 2, 0])
                         {
                             img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
                         }
@@ -135,7 +143,10 @@ namespace Algorithms.Sections
                     }
                     else if (angleBytes.Item1 == 0 && angleBytes.Item2 == 255 && angleBytes.Item3 == 255)
                     {
-                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x + 1, 0] && gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x - 1, 0])
+                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x + 2, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x + 1, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x - 1, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x - 2, 0])
                         {
                             img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
                         }
@@ -146,7 +157,10 @@ namespace Algorithms.Sections
                     }
                     else if (angleBytes.Item1 == 0 && angleBytes.Item2 == 255 && angleBytes.Item3 == 0)
                     {
-                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x, 0] && gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x, 0])
+                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x, 0])
                         {
                             img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
                         }
@@ -157,7 +171,10 @@ namespace Algorithms.Sections
                     }
                     else if (angleBytes.Item1 == 255 && angleBytes.Item2 == 0 && angleBytes.Item3 == 0)
                     {
-                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x - 1, 0] && gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x + 1, 0])
+                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x - 2, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x - 1, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x + 1, 0] &&
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x + 2, 0])
                         {
                             img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
                         }
