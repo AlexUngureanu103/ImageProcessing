@@ -109,6 +109,73 @@ namespace Algorithms.Sections
             return bytes;
         }
 
+        public static Image<Gray, byte> NonMaximaSupression(Image<Gray, byte> gradientImage, Image<Bgr, byte> angleImage)
+        {
+            var img = new Image<Gray, byte>(gradientImage.Size);
+
+            for (int y = 1; y < img.Height - 1; y++)
+            {
+                for (int x = 1; x < img.Width - 1; x++)
+                {
+                    // d0 0 0 255
+                    // d1 0 255 255
+                    // d2 0 255 0
+                    // d3 255 0 0
+                    var angleBytes = (angleImage.Data[y, x, 0], angleImage.Data[y, x, 1], angleImage.Data[y, x, 2]);
+                    if (angleBytes.Item1 == 0 && angleBytes.Item2 == 0 && angleBytes.Item3 == 255)
+                    {
+                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 1, 0] && gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 1, 0])
+                        {
+                            img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
+                        }
+                        else
+                        {
+                            img.Data[y, x, 0] = 0;
+                        }
+                    }
+                    else if (angleBytes.Item1 == 0 && angleBytes.Item2 == 255 && angleBytes.Item3 == 255)
+                    {
+                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x + 1, 0] && gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x - 1, 0])
+                        {
+                            img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
+                        }
+                        else
+                        {
+                            img.Data[y, x, 0] = 0;
+                        }
+                    }
+                    else if (angleBytes.Item1 == 0 && angleBytes.Item2 == 255 && angleBytes.Item3 == 0)
+                    {
+                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x, 0] && gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x, 0])
+                        {
+                            img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
+                        }
+                        else
+                        {
+                            img.Data[y, x, 0] = 0;
+                        }
+                    }
+                    else if (angleBytes.Item1 == 255 && angleBytes.Item2 == 0 && angleBytes.Item3 == 0)
+                    {
+                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x - 1, 0] && gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x + 1, 0])
+                        {
+                            img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
+                        }
+                        else
+                        {
+                            img.Data[y, x, 0] = 0;
+                        }
+                    }
+                    else
+                    {
+                        img.Data[y, x, 0] = 0;
+                    }
+                }
+            }
+
+            return img;
+        }
+
         #region Filtrul median vectorial
 
         public static Image<Bgr, byte> FiltrulMedianVectorial(Image<Bgr, byte> image, int filterSize)
