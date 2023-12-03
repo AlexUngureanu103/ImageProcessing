@@ -1039,11 +1039,6 @@ namespace Framework.ViewModel
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
 
-            //var dialogBox = new DialogBox(_mainVM, new List<string> { "T1" });
-
-            //dialogBox.ShowDialog();
-            //var values = dialogBox.GetValues();
-
             var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1" });
             sliderDialogBox.ShowDialog();
             var values = sliderDialogBox.GetValues();
@@ -1094,10 +1089,9 @@ namespace Framework.ViewModel
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
 
-            var dialogBox = new DialogBox(_mainVM, new List<string> { "T1" });
-
-            dialogBox.ShowDialog();
-            var values = dialogBox.GetValues();
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
 
             if (DataProvider.GrayInitialImage != null)
             {
@@ -1145,10 +1139,9 @@ namespace Framework.ViewModel
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
 
-            var dialogBox = new DialogBox(_mainVM, new List<string> { "T1" });
-
-            dialogBox.ShowDialog();
-            var values = dialogBox.GetValues();
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
 
             if (DataProvider.GrayInitialImage != null)
             {
@@ -1206,16 +1199,14 @@ namespace Framework.ViewModel
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
 
-            var dialogBox = new DialogBox(_mainVM, new List<string> { "T1", "T2" });
-
-            dialogBox.ShowDialog();
-            var values = dialogBox.GetValues();
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1", "T2" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
             if (values[0] > values[1])
             {
                 MessageBox.Show("T1 must be smaller than T2");
                 return;
             }
-
 
             if (DataProvider.GrayInitialImage != null)
             {
@@ -1274,13 +1265,29 @@ namespace Framework.ViewModel
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
 
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1", "T2" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
+            if (values[0] > values[1])
+            {
+                MessageBox.Show("T1 must be smaller than T2");
+                return;
+            }
+
             if (DataProvider.GrayInitialImage != null)
             {
-
+                var image = new Image<Gray, byte>(DataProvider.GrayInitialImage.Bitmap);
+                CvInvoke.Canny(DataProvider.GrayInitialImage, image, values[0], values[1]);
+                DataProvider.GrayProcessedImage = image;
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-
+                return;
+                var image = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Bitmap);
+                CvInvoke.Canny(DataProvider.ColorInitialImage, image, values[0], values[1]);
+                DataProvider.ColorProcessedImage = image;
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
 

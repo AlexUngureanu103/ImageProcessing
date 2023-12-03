@@ -42,14 +42,24 @@
                                    Height="{Binding Path=Height}"
                                    Foreground="{Binding Path=Foreground}"/>
 
-                        <Slider Value="{Binding Path=SliderValue}"
-                                 Height="{Binding Path=Height}"
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <Slider 
+                                Grid.Column="0"
+                                Value="{Binding Path=SliderValue}"
+                                Height="{Binding Path=Height}"
                                 Minimum="{Binding Path=MinValue}"
-                                Maximum="{Binding Path=MaxValue}"
+                                Maximum="{Binding Path=MaxValue}"                                
                                 />
 
-                        <TextBlock Text="{Binding Path=SliderValue}"
-                                   Height="{Binding Path=Height}"/>
+                            <TextBox Grid.Column="2"
+                                Text="{Binding Path=SliderValue}"
+                                Height="{Binding Path=Height}"/>
+                        </Grid>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
