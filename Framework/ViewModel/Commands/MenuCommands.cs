@@ -1150,14 +1150,6 @@ namespace Framework.ViewModel
 
                 var firstImg = gradientImage;
                 var secondImg = Filters.NonMaximaSupression(firstImg, angleImage);
-                //var cnt = 0;
-                //while (!firstImg.Equals(secondImg))
-                //{
-                //    cnt++;
-                //    (gradientImage, angleImage) = Filters.Sobel(secondImg, (byte)values[0]);
-                //    firstImg = gradientImage;
-                //    secondImg = Filters.NonMaximaSupression(firstImg, angleImage);
-                //}
                 DataProvider.GrayProcessedImage = secondImg;
 
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
@@ -1215,14 +1207,6 @@ namespace Framework.ViewModel
 
                 var firstImg = gradientImage;
                 var secondImg = Filters.NonMaximaSupression(firstImg, angleImage);
-                //var cnt = 0;
-                //while (!firstImg.Equals(secondImg))
-                //{
-                //    cnt++;
-                //    imgs = Filters.Sobel(secondImg);
-                //    firstImg = imgs.Item1;
-                //    secondImg = Filters.NonMaximaSupression(firstImg, imgs.Item2);
-                //}
 
                 DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
 
@@ -1237,6 +1221,59 @@ namespace Framework.ViewModel
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
+        #endregion
+
+        #region CannyRGB EmguCV
+
+        private ICommand _cannyRGBEmguCVCommand;
+        public ICommand CannyRGBEmguCVCommand
+        {
+            get
+            {
+                if (_cannyRGBEmguCVCommand == null)
+                {
+                    _cannyRGBEmguCVCommand = new RelayCommand(CannyRGBEmguCV);
+                }
+                return _cannyRGBEmguCVCommand;
+            }
+        }
+
+        private void CannyRGBEmguCV(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image  CannyRGBEmguCV!");
+                return;
+            }
+
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1", "T2" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
+            if (values[0] > values[1])
+            {
+                MessageBox.Show("T1 must be smaller than T2");
+                return;
+            }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                var image = new Image<Gray, byte>(DataProvider.GrayInitialImage.Bitmap);
+                CvInvoke.Canny(DataProvider.GrayInitialImage, image, values[0], values[1]);
+                DataProvider.GrayProcessedImage = image;
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                var image = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Bitmap);
+                CvInvoke.Canny(DataProvider.ColorInitialImage, image, values[0], values[1]);
+                DataProvider.ColorProcessedImage = image;
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+        }
+
         #endregion
 
         #region CannyRGB
@@ -1262,6 +1299,7 @@ namespace Framework.ViewModel
                 return;
             }
 
+
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
 
@@ -1276,18 +1314,24 @@ namespace Framework.ViewModel
 
             if (DataProvider.GrayInitialImage != null)
             {
-                var image = new Image<Gray, byte>(DataProvider.GrayInitialImage.Bitmap);
-                CvInvoke.Canny(DataProvider.GrayInitialImage, image, values[0], values[1]);
-                DataProvider.GrayProcessedImage = image;
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (gradientImage, angleImage) = Filters.Sobel(img, (byte)values[0]);
+
+                var firstImg = gradientImage;
+                var secondImg = Filters.NonMaximaSupression(firstImg, angleImage);
+
+                var hysteresisImg = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
+
+                DataProvider.GrayProcessedImage = Tools.Thresholding(hysteresisImg, values[1]);
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
             else if (DataProvider.ColorInitialImage != null)
             {
                 return;
-                var image = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Bitmap);
-                CvInvoke.Canny(DataProvider.ColorInitialImage, image, values[0], values[1]);
-                DataProvider.ColorProcessedImage = image;
-                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
+                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(DataProvider.GrayProcessedImage, (byte)values[0], (byte)values[1]);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
 
