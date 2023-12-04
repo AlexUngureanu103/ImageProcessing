@@ -9,11 +9,11 @@ namespace Algorithms.Sections
 {
     public class Filters
     {
-        public static (Image<Gray, byte>, Image<Bgr, byte>) Sobel(Image<Gray, byte> image, int tMin)
+        public static (Image<Gray, byte>, Image<Bgr, byte>, double[,]) Sobel(Image<Gray, byte> image, int tMin)
         {
             var img = new Image<Gray, byte>(image.Size);
             var angleImg = new Image<Bgr, byte>(image.Size);
-
+            var gradients = new double[image.Height, image.Width];
 
             var sx = new int[3, 3] {
                 { -1, 0, 1 },
@@ -46,7 +46,8 @@ namespace Algorithms.Sections
                         }
                     }
 
-                    var gradient = Math.Round(Math.Min(255, Math.Sqrt(fxValue * fxValue + fyValue * fyValue)));
+                    var gradient = Math.Min(255, Math.Sqrt(fxValue * fxValue + fyValue * fyValue));
+                    gradients[y, x] = gradient;
                     if (gradient >= tMin)
                     {
                         if (fxValue == 0)
@@ -72,10 +73,10 @@ namespace Algorithms.Sections
                         angleImg.Data[y, x, 2] = 0;
                     }
 
-                    img.Data[y, x, 0] = (byte)gradient;
+                    img.Data[y, x, 0] = (byte)Math.Round(gradient);
                 }
             }
-            return (img, angleImg);
+            return (img, angleImg, gradients);
         }
 
         private static byte[] MapDirection(double direction)
@@ -115,13 +116,13 @@ namespace Algorithms.Sections
             return bytes;
         }
 
-        public static Image<Gray, byte> NonMaximaSupression(Image<Gray, byte> gradientImage, Image<Bgr, byte> angleImage)
+        public static Image<Gray, byte> NonMaximaSupression(double[,] gradients, Image<Bgr, byte> angleImage)
         {
-            //var img = new Image<Gray, byte>(gradientImage.Size);
+            var img = new Image<Gray, byte>(angleImage.Size);
 
-            for (int y = 2; y < gradientImage.Height - 2; y++)
+            for (int y = 2; y < angleImage.Height - 2; y++)
             {
-                for (int x = 2; x < gradientImage.Width - 2; x++)
+                for (int x = 2; x < angleImage.Width - 2; x++)
                 {
                     // d0 0 0 255
                     // d1 0 255 255
@@ -131,46 +132,61 @@ namespace Algorithms.Sections
 
                     if (blue == 0 && green == 255 && red == 0)
                     {
+                        var pos0 = (y, x - 2);
                         var pos1 = (y, x - 1);
                         var pos2 = (y, x + 1);
-                        var maxPosition = FindMaxNeighbour(gradientImage, pos1, (y, x), pos2);
+                        var pos3 = (y, x + 2);
+                        FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
                     }
                     else if (blue == 255 && green == 0 && red == 0)
                     {
+                        var pos0 = (y - 2, x + 2);
                         var pos1 = (y - 1, x + 1);
                         var pos2 = (y + 1, x - 1);
-                        var maxPosition = FindMaxNeighbour(gradientImage, pos1, (y, x), pos2);
+                        var pos3 = (y + 2, x - 2);
+                        FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
                     }
                     else if (blue == 0 && green == 0 && red == 255)
                     {
+                        var pos0 = (y - 2, x);
                         var pos1 = (y - 1, x);
                         var pos2 = (y + 1, x);
-                        var maxPosition = FindMaxNeighbour(gradientImage, pos1, (y, x), pos2);
+                        var pos3 = (y + 2, x);
+                        FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
                     }
                     else if (blue == 0 && green == 255 && red == 255)
                     {
+                        var pos0 = (y - 2, x - 2);
                         var pos1 = (y - 1, x - 1);
                         var pos2 = (y + 1, x + 1);
-                        var maxPosition = FindMaxNeighbour(gradientImage, pos1, (y, x), pos2);
+                        var pos3 = (y + 2, x + 2);
+                        FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
                     }
                     else
                     {
-                        gradientImage.Data[y, x, 0] = 0;
+                        gradients[y, x] = 0;
                     }
                 }
             }
+            for (int y = 0; y < angleImage.Height - 0; y++)
+            {
+                for (int x = 0; x < angleImage.Width - 0; x++)
+                {
+                    img.Data[y, x, 0] = (byte)Math.Round(gradients[y, x]);
+                }
+            }
 
-            return gradientImage;
+            return img;
         }
 
-        private static (int, int) FindMaxNeighbour(Image<Gray, byte> gradientImage, (int, int) pos1, (int, int) current, (int, int) pos2)
+        private static void FindMaxNeighbour(double[,] gradients, (int, int) pos1, (int, int) current, (int, int) pos2)
         {
             (int, int) maxPosition = current;
-            if (gradientImage.Data[pos1.Item1, pos1.Item2, 0] >= gradientImage.Data[maxPosition.Item1, maxPosition.Item2, 0])
+            if (gradients[pos1.Item1, pos1.Item2] >= gradients[maxPosition.Item1, maxPosition.Item2])
             {
                 maxPosition = pos1;
             }
-            if (gradientImage.Data[pos2.Item1, pos2.Item2, 0] >= gradientImage.Data[maxPosition.Item1, maxPosition.Item2, 0])
+            if (gradients[pos2.Item1, pos2.Item2] >= gradients[maxPosition.Item1, maxPosition.Item2])
             {
                 maxPosition = pos2;
             }
@@ -178,23 +194,86 @@ namespace Algorithms.Sections
             if (maxPosition == current)
             {
                 //gradientImage.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                gradientImage.Data[pos2.Item1, pos1.Item2, 0] = 0;
+                gradients[pos1.Item1, pos1.Item2] = 0;
+                gradients[pos2.Item1, pos1.Item2] = 0;
             }
             else if (maxPosition == pos1)
             {
-                gradientImage.Data[current.Item1, current.Item2, 0] = 0;
+                gradients[current.Item1, current.Item2] = 0;
                 //gradientImage.Data[pos1.Item1, pos1.Item2, 0] = gradientImage.Data[pos1.Item1, pos1.Item2, 0];
-                gradientImage.Data[pos2.Item1, pos2.Item2, 0] = 0;
+                gradients[pos2.Item1, pos2.Item2] = 0;
             }
             else
             {
-                gradientImage.Data[current.Item1, current.Item2, 0] = 0;
-                gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
+                gradients[current.Item1, current.Item2] = 0;
+                gradients[pos1.Item1, pos1.Item2] = 0;
                 //gradientImage.Data[pos2.Item1, pos2.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
             }
 
-            return maxPosition;
+            //return maxPosition;
+        }
+
+        private static void FindMaxNeighbour(double[,] gradients, (int, int) pos0, (int, int) pos1, (int, int) current, (int, int) pos2, (int, int) pos3)
+        {
+            (int, int) maxPosition = current;
+            if (gradients[pos0.Item1, pos0.Item2] >= gradients[maxPosition.Item1, maxPosition.Item2])
+            {
+                maxPosition = pos0;
+            }
+            if (gradients[pos1.Item1, pos1.Item2] >= gradients[maxPosition.Item1, maxPosition.Item2])
+            {
+                maxPosition = pos1;
+            }
+            if (gradients[pos2.Item1, pos2.Item2] >= gradients[maxPosition.Item1, maxPosition.Item2])
+            {
+                maxPosition = pos2;
+            }
+            if (gradients[pos3.Item1, pos3.Item2] >= gradients[maxPosition.Item1, maxPosition.Item2])
+            {
+                maxPosition = pos3;
+            }
+
+            if (maxPosition == current)
+            {
+                //gradientImage.Data[y, x, 0] = gradientImage.Data[y, x, 0];
+                gradients[pos0.Item1, pos0.Item2] = 0;
+                gradients[pos1.Item1, pos1.Item2] = 0;
+                gradients[pos2.Item1, pos2.Item2] = 0;
+                gradients[pos3.Item1, pos3.Item2] = 0;
+            }
+            else if (maxPosition == pos1)
+            {
+                gradients[current.Item1, current.Item2] = 0;
+                //gradientImage.Data[pos1.Item1, pos1.Item2, 0] = gradientImage.Data[pos1.Item1, pos1.Item2, 0];
+                gradients[pos0.Item1, pos0.Item2] = 0;
+                gradients[pos2.Item1, pos2.Item2] = 0;
+                gradients[pos3.Item1, pos3.Item2] = 0;
+            }
+            else if (maxPosition == pos0)
+            {
+                gradients[current.Item1, current.Item2] = 0;
+                gradients[pos1.Item1, pos1.Item2] = 0;
+                gradients[pos2.Item1, pos2.Item2] = 0;
+                gradients[pos3.Item1, pos3.Item2] = 0;
+                //gradientImage.Data[pos2.Item1, pos2.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
+            }
+            else if (maxPosition == pos2)
+            {
+                gradients[current.Item1, current.Item2] = 0;
+                //gradientImage.Data[pos1.Item1, pos1.Item2, 0] = gradientImage.Data[pos1.Item1, pos1.Item2, 0];
+                gradients[pos0.Item1, pos0.Item2] = 0;
+                gradients[pos1.Item1, pos1.Item2] = 0;
+                gradients[pos3.Item1, pos3.Item2] = 0;
+            }
+            else if (maxPosition == pos3)
+            {
+                gradients[current.Item1, current.Item2] = 0;
+                gradients[pos1.Item1, pos1.Item2] = 0;
+                gradients[pos2.Item1, pos2.Item2] = 0;
+                gradients[pos0.Item1, pos0.Item2] = 0;
+                //gradientImage.Data[pos2.Item1, pos2.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
+            }
+            //return maxPosition;
         }
 
         #region Filtrul median vectorial
