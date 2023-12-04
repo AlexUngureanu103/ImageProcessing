@@ -127,14 +127,14 @@ namespace Algorithms.Sections
                     // d1 0 255 255
                     // d2 0 255 0
                     // d3 255 0 0
-                    var angleBytes = (angleImage.Data[y, x, 0], angleImage.Data[y, x, 1], angleImage.Data[y, x, 2]);
+                    var (blue, green, red) = (angleImage.Data[y, x, 0], angleImage.Data[y, x, 1], angleImage.Data[y, x, 2]);
 
-                    if (angleBytes.Item1 == 0 && angleBytes.Item2 == 0 && angleBytes.Item3 == 255)
+                    if (blue == 0 && green == 255 && red == 0)
                     {
-                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 2, 0] &&
+                        if (/*gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 2, 0] &&*/
                             gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 1, 0] &&
-                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 1, 0] &&
-                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 2, 0])
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 1, 0] /*&&*/
+                            /*gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 2, 0]*/)
                         {
                             img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
                         }
@@ -143,12 +143,12 @@ namespace Algorithms.Sections
                             img.Data[y, x, 0] = 0;
                         }
                     }
-                    else if (angleBytes.Item1 == 0 && angleBytes.Item2 == 255 && angleBytes.Item3 == 255)
+                    else if (blue == 255 && green == 0 && red == 0)
                     {
-                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x + 2, 0] &&
+                        if (/*gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x + 2, 0] &&*/
                             gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x + 1, 0] &&
-                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x - 1, 0] &&
-                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x - 2, 0])
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x - 1, 0]/* &&*/
+                            /*gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x - 2, 0]*/)
                         {
                             img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
                         }
@@ -157,12 +157,12 @@ namespace Algorithms.Sections
                             img.Data[y, x, 0] = 0;
                         }
                     }
-                    else if (angleBytes.Item1 == 0 && angleBytes.Item2 == 255 && angleBytes.Item3 == 0)
+                    else if (blue == 0 && green == 0 && red == 255)
                     {
-                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x, 0] &&
+                        if (/*gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x, 0] &&*/
                             gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x, 0] &&
-                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x, 0] &&
-                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x, 0])
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x, 0] /*&&*/
+                            /*gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x, 0]*/)
                         {
                             img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
                         }
@@ -171,12 +171,12 @@ namespace Algorithms.Sections
                             img.Data[y, x, 0] = 0;
                         }
                     }
-                    else if (angleBytes.Item1 == 255 && angleBytes.Item2 == 0 && angleBytes.Item3 == 0)
+                    else if (blue == 0 && green == 255 && red == 255)
                     {
-                        if (gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x - 2, 0] &&
+                        if (/*gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x - 2, 0] &&*/
                             gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x - 1, 0] &&
-                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x + 1, 0] &&
-                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x + 2, 0])
+                            gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x + 1, 0] /*&&*/
+                            /*gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x + 2, 0]*/)
                         {
                             img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
                         }

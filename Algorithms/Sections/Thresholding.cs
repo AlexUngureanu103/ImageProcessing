@@ -27,7 +27,7 @@ namespace Algorithms.Sections
                     }
                     else
                     {
-                        img.Data[y, x, 0] = 0;
+                        img.Data[y, x, 0] = image.Data[y, x, 0];
                     }
                 }
 

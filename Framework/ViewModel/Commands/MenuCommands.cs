@@ -1046,9 +1046,9 @@ namespace Framework.ViewModel
             if (DataProvider.GrayInitialImage != null)
             {
                 var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                var imgs = Filters.Sobel(img, (byte)values[0]);
+                var (gradientImage, _) = Filters.Sobel(img, (byte)values[0]);
 
-                DataProvider.GrayProcessedImage = imgs.Item1;
+                DataProvider.GrayProcessedImage = gradientImage;
 
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
@@ -1096,9 +1096,9 @@ namespace Framework.ViewModel
             if (DataProvider.GrayInitialImage != null)
             {
                 var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                var imgs = Filters.Sobel(img, (byte)values[0]);
+                var (_, angleImage) = Filters.Sobel(img, (byte)values[0]);
 
-                DataProvider.ColorProcessedImage = imgs.Item2;
+                DataProvider.ColorProcessedImage = angleImage;
 
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
@@ -1146,17 +1146,17 @@ namespace Framework.ViewModel
             if (DataProvider.GrayInitialImage != null)
             {
                 var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                var imgs = Filters.Sobel(img, (byte)values[0]);
+                var (gradientImage, angleImage) = Filters.Sobel(img, (byte)values[0]);
 
-                var firstImg = imgs.Item1;
-                var secondImg = Filters.NonMaximaSupression(firstImg, imgs.Item2);
+                var firstImg = gradientImage;
+                var secondImg = Filters.NonMaximaSupression(firstImg, angleImage);
                 //var cnt = 0;
                 //while (!firstImg.Equals(secondImg))
                 //{
                 //    cnt++;
-                //    imgs = Filters.Sobel(secondImg);
-                //    firstImg = imgs.Item1;
-                //    secondImg = Filters.NonMaximaSupression(firstImg, imgs.Item2);
+                //    (gradientImage, angleImage) = Filters.Sobel(secondImg, (byte)values[0]);
+                //    firstImg = gradientImage;
+                //    secondImg = Filters.NonMaximaSupression(firstImg, angleImage);
                 //}
                 DataProvider.GrayProcessedImage = secondImg;
 
@@ -1211,10 +1211,10 @@ namespace Framework.ViewModel
             if (DataProvider.GrayInitialImage != null)
             {
                 var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                var imgs = Filters.Sobel(img, (byte)values[0]);
+                var (gradientImage, angleImage) = Filters.Sobel(img, (byte)values[0]);
 
-                var firstImg = imgs.Item1;
-                var secondImg = Filters.NonMaximaSupression(firstImg, imgs.Item2);
+                var firstImg = gradientImage;
+                var secondImg = Filters.NonMaximaSupression(firstImg, angleImage);
                 //var cnt = 0;
                 //while (!firstImg.Equals(secondImg))
                 //{
