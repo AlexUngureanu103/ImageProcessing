@@ -973,6 +973,52 @@ namespace Framework.ViewModel
         #endregion
 
         #region Morphological operations
+
+
+        private ICommand _closingGrayCommand;
+        public ICommand ClosingGrayCommand
+        {
+            get
+            {
+                if (_closingGrayCommand == null)
+                {
+                    _closingGrayCommand = new RelayCommand(ClosingGray);
+                }
+                return _closingGrayCommand;
+            }
+        }
+
+        private void ClosingGray(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image ! CLosing Gray.");
+                return;
+            }
+
+            if (DataProvider.GrayInitialImage == null)
+            {
+                MessageBox.Show("Please add a gray image ! Closing Gray.");
+                return;
+            }
+
+            var dialogBox = new DialogBox(_mainVM, new List<string> { "Kernel size" });
+            dialogBox.ShowDialog();
+
+            var value = dialogBox.GetValues()[0];
+            if (value < 3)
+            {
+                value = 3;
+            }
+            if (value % 2 == 0)
+            {
+                value += 1;
+            }
+
+            DataProvider.GrayProcessedImage = MorphologicalOperations.ClosingGray(DataProvider.GrayInitialImage, (int)value);
+            ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+        }
+
         #endregion
 
         #region Geometric transformations
