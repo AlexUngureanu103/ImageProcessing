@@ -9,26 +9,28 @@ namespace Algorithms.Sections
 {
     public class Filters
     {
-        public static (Image<Gray, byte>, Image<Bgr, byte>) Sobel(Image<Gray, byte> image , int tMin)
+        public static (Image<Gray, byte>, Image<Bgr, byte>) Sobel(Image<Gray, byte> image, int tMin)
         {
             var img = new Image<Gray, byte>(image.Size);
             var angleImg = new Image<Bgr, byte>(image.Size);
 
 
-            int[,] sx = new int[3, 3] {
+            var sx = new int[3, 3] {
                 { -1, 0, 1 },
                 { -2, 0, 2 },
                 { -1, 0, 1 } };
 
-            int[,] sy = new int[3, 3] {
+            var sy = new int[3, 3] {
                 { -1, -2, -1 },
                 { 0, 0, 0 },
                 { 1, 2, 1 } };
 
+            var kernelOffset = 1;
 
-            for (int y = 1; y < image.Height - 1; y++)
+
+            for (int y = kernelOffset; y < image.Height - kernelOffset; y++)
             {
-                for (int x = 1; x < image.Width - 1; x++)
+                for (int x = kernelOffset; x < image.Width - kernelOffset; x++)
                 {
                     var fxValue = 0;
                     var fyValue = 0;
