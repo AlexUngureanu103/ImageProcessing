@@ -34,7 +34,7 @@ namespace Algorithms.Sections
             {
                 for (int x = 0; x < img.Width - 0; x++)
                 {
-                    if (x == 0 || y == 0 || x == img.Width - 1 || y == img.Height - 1)
+                    if (x - kernelOffset <= 0 || y - kernelOffset <= 0 || x + kernelOffset >= img.Width - 1 || y + kernelOffset >= img.Height - 1)
                     {
                         img.Data[y, x, 0] = image.Data[y, x, 0];
                         continue;
@@ -79,7 +79,7 @@ namespace Algorithms.Sections
             {
                 for (int x = 0; x < img.Width - 0; x++)
                 {
-                    if (x == 0 || y == 0 || x == img.Width - 1 || y == img.Height - 1)
+                    if (x - kernelOffset <= 0 || y - kernelOffset <= 0 || x + kernelOffset >= img.Width - 1 || y + kernelOffset >= img.Height - 1)
                     {
                         img.Data[y, x, 0] = image.Data[y, x, 0];
                         continue;
