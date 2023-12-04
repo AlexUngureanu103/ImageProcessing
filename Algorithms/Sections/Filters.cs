@@ -131,150 +131,27 @@ namespace Algorithms.Sections
 
                     if (blue == 0 && green == 255 && red == 0)
                     {
-                        //if (/*gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 2, 0] &&*/
-                        //    gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x - 1, 0] &&
-                        //    gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 1, 0] /*&&*/
-                        //    /*gradientImage.Data[y, x, 0] >= gradientImage.Data[y, x + 2, 0]*/)
-                        //{
-                        //    img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                        //}
-                        //else
-                        //{
-                        //    img.Data[y, x, 0] = 0;
-                        //}
                         var pos1 = (y, x - 1);
                         var pos2 = (y, x + 1);
                         var maxPosition = FindMaxNeighbour(gradientImage, pos1, (y, x), pos2);
-
-                        if (maxPosition == (y, x))
-                        {
-                            //gradientImage.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                            gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                            gradientImage.Data[pos2.Item1, pos1.Item2, 0] = 0;
-                        }
-                        else if (maxPosition == pos1)
-                        {
-                            gradientImage.Data[y, x, 0] = 0;
-                            //gradientImage.Data[pos1.Item1, pos1.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
-                            gradientImage.Data[pos2.Item1, pos2.Item2, 0] = 0;
-                        }
-                        else
-                        {
-                            gradientImage.Data[y, x, 0] = 0;
-                            gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                            //gradientImage.Data[pos2.Item1, pos2.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
-                        }
                     }
                     else if (blue == 255 && green == 0 && red == 0)
                     {
-                        //if (/*gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x + 2, 0] &&*/
-                        //    gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x + 1, 0] &&
-                        //    gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x - 1, 0]/* &&*/
-                        //    /*gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x - 2, 0]*/)
-                        //{
-                        //    img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                        //}
-                        //else
-                        //{
-                        //    img.Data[y, x, 0] = 0;
-                        //}
-
                         var pos1 = (y - 1, x + 1);
                         var pos2 = (y + 1, x - 1);
                         var maxPosition = FindMaxNeighbour(gradientImage, pos1, (y, x), pos2);
-
-                        if (maxPosition == (y, x))
-                        {
-                            //gradientImage.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                            gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                            gradientImage.Data[pos2.Item1, pos1.Item2, 0] = 0;
-                        }
-                        else if (maxPosition == pos1)
-                        {
-                            gradientImage.Data[y, x, 0] = 0;
-                            //gradientImage.Data[pos1.Item1, pos1.Item2, 0] = gradientImage.Data[pos1.Item1, pos1.Item2, 0];
-                            gradientImage.Data[pos2.Item1, pos2.Item2, 0] = 0;
-                        }
-                        else
-                        {
-                            gradientImage.Data[y, x, 0] = 0;
-                            gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                            //gradientImage.Data[pos2.Item1, pos2.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
-                        }
                     }
                     else if (blue == 0 && green == 0 && red == 255)
                     {
-                        //if (/*gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x, 0] &&*/
-                        //    gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x, 0] &&
-                        //    gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x, 0] /*&&*/
-                        //    /*gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x, 0]*/)
-                        //{
-                        //    img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                        //}
-                        //else
-                        //{
-                        //    img.Data[y, x, 0] = 0;
-                        //}
-
                         var pos1 = (y - 1, x);
                         var pos2 = (y + 1, x);
                         var maxPosition = FindMaxNeighbour(gradientImage, pos1, (y, x), pos2);
-
-                        if (maxPosition == (y, x))
-                        {
-                            //gradientImage.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                            gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                            gradientImage.Data[pos2.Item1, pos1.Item2, 0] = 0;
-                        }
-                        else if (maxPosition == pos1)
-                        {
-                            gradientImage.Data[y, x, 0] = 0;
-                            //gradientImage.Data[pos1.Item1, pos1.Item2, 0] = gradientImage.Data[pos1.Item1, pos2.Item2, 0];
-                            gradientImage.Data[pos2.Item1, pos2.Item2, 0] = 0;
-                        }
-                        else
-                        {
-                            gradientImage.Data[y, x, 0] = 0;
-                            gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                            //gradientImage.Data[pos2.Item1, pos2.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
-                        }
                     }
                     else if (blue == 0 && green == 255 && red == 255)
                     {
-                        //if (/*gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 2, x - 2, 0] &&*/
-                        //    gradientImage.Data[y, x, 0] >= gradientImage.Data[y - 1, x - 1, 0] &&
-                        //    gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 1, x + 1, 0] /*&&*/
-                        //    /*gradientImage.Data[y, x, 0] >= gradientImage.Data[y + 2, x + 2, 0]*/)
-                        //{
-                        //    img.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                        //}
-                        //else
-                        //{
-                        //    img.Data[y, x, 0] = 0;
-                        //}
-
                         var pos1 = (y - 1, x - 1);
                         var pos2 = (y + 1, x + 1);
                         var maxPosition = FindMaxNeighbour(gradientImage, pos1, (y, x), pos2);
-
-                        if (maxPosition == (y, x))
-                        {
-                            //gradientImage.Data[y, x, 0] = gradientImage.Data[y, x, 0];
-                            gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                            gradientImage.Data[pos2.Item1, pos1.Item2, 0] = 0;
-                        }
-                        else if (maxPosition == pos1)
-                        {
-                            gradientImage.Data[y, x, 0] = 0;
-                            //gradientImage.Data[pos1.Item1, pos1.Item2, 0] = gradientImage.Data[pos1.Item1, pos1.Item2, 0];
-                            gradientImage.Data[pos2.Item1, pos2.Item2, 0] = 0;
-                        }
-                        else
-                        {
-                            gradientImage.Data[y, x, 0] = 0;
-                            gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
-                            //gradientImage.Data[pos2.Item1, pos2.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
-                        }
                     }
                     else
                     {
@@ -296,6 +173,25 @@ namespace Algorithms.Sections
             if (gradientImage.Data[pos2.Item1, pos2.Item2, 0] >= gradientImage.Data[maxPosition.Item1, maxPosition.Item2, 0])
             {
                 maxPosition = pos2;
+            }
+
+            if (maxPosition == current)
+            {
+                //gradientImage.Data[y, x, 0] = gradientImage.Data[y, x, 0];
+                gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
+                gradientImage.Data[pos2.Item1, pos1.Item2, 0] = 0;
+            }
+            else if (maxPosition == pos1)
+            {
+                gradientImage.Data[current.Item1, current.Item2, 0] = 0;
+                //gradientImage.Data[pos1.Item1, pos1.Item2, 0] = gradientImage.Data[pos1.Item1, pos1.Item2, 0];
+                gradientImage.Data[pos2.Item1, pos2.Item2, 0] = 0;
+            }
+            else
+            {
+                gradientImage.Data[current.Item1, current.Item2, 0] = 0;
+                gradientImage.Data[pos1.Item1, pos1.Item2, 0] = 0;
+                //gradientImage.Data[pos2.Item1, pos2.Item2, 0] = gradientImage.Data[pos2.Item1, pos2.Item2, 0];
             }
 
             return maxPosition;
