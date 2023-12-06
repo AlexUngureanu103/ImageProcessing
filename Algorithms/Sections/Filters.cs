@@ -119,48 +119,76 @@ namespace Algorithms.Sections
         public static Image<Gray, byte> NonMaximaSupression(double[,] gradients, Image<Bgr, byte> angleImage)
         {
             var img = new Image<Gray, byte>(angleImage.Size);
-
-            for (int y = 2; y < angleImage.Height - 2; y++)
+            var neighbours = 1;
+            for (int y = 0; y < angleImage.Height - 0; y++)
             {
-                for (int x = 2; x < angleImage.Width - 2; x++)
+                for (int x = 0; x < angleImage.Width - 0; x++)
                 {
-                    // d0 0 0 255
-                    // d1 0 255 255
-                    // d2 0 255 0
-                    // d3 255 0 0
                     var (blue, green, red) = (angleImage.Data[y, x, 0], angleImage.Data[y, x, 1], angleImage.Data[y, x, 2]);
 
+                    // d2 0 255 0
                     if (blue == 0 && green == 255 && red == 0)
                     {
-                        var pos0 = (y, x - 2);
-                        var pos1 = (y, x - 1);
-                        var pos2 = (y, x + 1);
-                        var pos3 = (y, x + 2);
-                        FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
+                        var pos0 = (y, Math.Max(0, x - 2));
+                        var pos1 = (y, Math.Max(0, x - 1));
+                        var pos2 = (y, Math.Min(angleImage.Width - 1, x + 1));
+                        var pos3 = (y, Math.Min(angleImage.Width - 1, x + 2));
+                        if (neighbours == 2)
+                        {
+                            FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
+                        }
+                        else
+                        {
+                            FindMaxNeighbour(gradients, pos1, (y, x), pos2);
+                        }
                     }
-                    else if (blue == 255 && green == 0 && red == 0)
-                    {
-                        var pos0 = (y - 2, x + 2);
-                        var pos1 = (y - 1, x + 1);
-                        var pos2 = (y + 1, x - 1);
-                        var pos3 = (y + 2, x - 2);
-                        FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
-                    }
+                    // d0 0 0 255
                     else if (blue == 0 && green == 0 && red == 255)
                     {
-                        var pos0 = (y - 2, x);
-                        var pos1 = (y - 1, x);
-                        var pos2 = (y + 1, x);
-                        var pos3 = (y + 2, x);
-                        FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
+                        var pos0 = (Math.Max(0, y - 2), x);
+                        var pos1 = (Math.Max(0, y - 1), x);
+                        var pos2 = (Math.Min(angleImage.Height - 1, y + 1), x);
+                        var pos3 = (Math.Min(angleImage.Height - 1, y + 2), x);
+                        if (neighbours == 2)
+                        {
+                            FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
+                        }
+                        else
+                        {
+                            FindMaxNeighbour(gradients, pos1, (y, x), pos2);
+                        }
                     }
+                    // d3 255 0 0
+                    else if (blue == 255 && green == 0 && red == 0)
+                    {
+                        var pos0 = (Math.Max(0, y - 2), Math.Max(0, x - 2));
+                        var pos1 = (Math.Max(0, y - 1), Math.Max(0, x - 1));
+                        var pos2 = (Math.Min(angleImage.Height - 1, y + 1), Math.Min(angleImage.Width - 1, x + 1));
+                        var pos3 = (Math.Min(angleImage.Height - 1, y + 2), Math.Min(angleImage.Width - 1, x + 2));
+                        if (neighbours == 2)
+                        {
+                            FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
+                        }
+                        else
+                        {
+                            FindMaxNeighbour(gradients, pos1, (y, x), pos2);
+                        }
+                    }
+                    // d1 0 255 255
                     else if (blue == 0 && green == 255 && red == 255)
                     {
-                        var pos0 = (y - 2, x - 2);
-                        var pos1 = (y - 1, x - 1);
-                        var pos2 = (y + 1, x + 1);
-                        var pos3 = (y + 2, x + 2);
-                        FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
+                        var pos0 = (Math.Max(0, y - 2), Math.Min(angleImage.Width - 1, x + 2));
+                        var pos1 = (Math.Max(0, y - 1), Math.Min(angleImage.Width - 1, x + 1));
+                        var pos2 = (Math.Min(angleImage.Height - 1, y + 1), Math.Max(0, x - 1));
+                        var pos3 = (Math.Min(angleImage.Height - 1, y + 2), Math.Max(0, x - 2));
+                        if (neighbours == 2)
+                        {
+                            FindMaxNeighbour(gradients, pos0, pos1, (y, x), pos2, pos3);
+                        }
+                        else
+                        {
+                            FindMaxNeighbour(gradients, pos1, (y, x), pos2);
+                        }
                     }
                     else
                     {
