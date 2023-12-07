@@ -1054,10 +1054,13 @@ namespace Framework.ViewModel
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-                MessageBox.Show("Please convert image to grayscale first!");
-                return;
-                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
-                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+
+                var (gradientImage, _, _) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                DataProvider.GrayInitialImage = gradientImage;
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayInitialImage);
             }
         }
 
@@ -1104,9 +1107,11 @@ namespace Framework.ViewModel
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-                MessageBox.Show("Please convert image to grayscale first!");
-                return;
-                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, _) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                DataProvider.ColorProcessedImage = angleImage;
+
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
@@ -1156,8 +1161,14 @@ namespace Framework.ViewModel
             else if (DataProvider.ColorInitialImage != null)
             {
                 MessageBox.Show("Please convert image to grayscale first!");
-                return;
-                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+                DataProvider.GrayProcessedImage = secondImg;
+
+
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
@@ -1212,10 +1223,13 @@ namespace Framework.ViewModel
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-                return;
-                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
-                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(DataProvider.GrayProcessedImage, (byte)values[0], (byte)values[1]);
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+
+                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
+
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
@@ -1324,10 +1338,15 @@ namespace Framework.ViewModel
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-                return;
-                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
-                DataProvider.GrayProcessedImage = Tools.Convert(DataProvider.ColorInitialImage);
-                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(DataProvider.GrayProcessedImage, (byte)values[0], (byte)values[1]);
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+
+                var hysteresisImg = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
+
+                DataProvider.GrayProcessedImage = Tools.Thresholding(hysteresisImg, values[1]);
+
                 ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
