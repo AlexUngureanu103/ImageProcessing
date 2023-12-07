@@ -79,11 +79,12 @@ namespace Algorithms.Sections
             return (img, angleImg, gradients);
         }
 
-        private static (Image<Gray, byte>, Image<Bgr, byte>, double[,]) Sobel(byte[,] imageData, int imgWidth, int imgHeight, int tMin)
+        public static (double[,], double[,], double[,]) SobelChannel(Image<Gray, byte> image, int tMin)
         {
-            var img = new Image<Gray, byte>(imgWidth, imgHeight);
-            var angleImg = new Image<Bgr, byte>(imgWidth, imgHeight);
-            var gradients = new double[imgWidth, imgHeight];
+            var gradients = new double[image.Height, image.Width];
+            var fxChannel = new double[image.Height, image.Width];
+            var fyChannel = new double[image.Height, image.Width];
+
 
             var sx = new int[3, 3] {
                 { -1, 0, 1 },
@@ -98,9 +99,9 @@ namespace Algorithms.Sections
             var kernelOffset = 1;
 
 
-            for (int y = kernelOffset; y < imgHeight - kernelOffset; y++)
+            for (int y = kernelOffset; y < image.Height - kernelOffset; y++)
             {
-                for (int x = kernelOffset; x < imgWidth - kernelOffset; x++)
+                for (int x = kernelOffset; x < image.Width - kernelOffset; x++)
                 {
                     var fxValue = 0;
                     var fyValue = 0;
@@ -109,45 +110,22 @@ namespace Algorithms.Sections
                     {
                         for (int j = -1; j <= 1; j++)
                         {
-                            byte grayValue = imageData[y + i, x + j];
+                            byte grayValue = image.Data[y + i, x + j, 0];
 
                             fxValue += grayValue * sx[i + 1, j + 1];
                             fyValue += grayValue * sy[i + 1, j + 1];
                         }
                     }
 
+                    fxChannel[y, x] = fxValue;
+                    fyChannel[y, x] = fyValue;
                     var gradient = Math.Min(255, Math.Sqrt(fxValue * fxValue + fyValue * fyValue));
                     gradients[y, x] = gradient;
-                    if (gradient >= tMin)
-                    {
-                        if (fxValue == 0)
-                        {
-                            angleImg.Data[y, x, 0] = 0;
-                            angleImg.Data[y, x, 1] = 0;
-                            angleImg.Data[y, x, 2] = 255;
-                        }
-                        else
-                        {
-                            var direction = Math.Atan(fyValue / fxValue);
-                            var angle = MapDirection(direction);
-
-                            angleImg.Data[y, x, 0] = angle[0];
-                            angleImg.Data[y, x, 1] = angle[1];
-                            angleImg.Data[y, x, 2] = angle[2];
-                        }
-                    }
-                    else
-                    {
-                        angleImg.Data[y, x, 0] = 0;
-                        angleImg.Data[y, x, 1] = 0;
-                        angleImg.Data[y, x, 2] = 0;
-                    }
-
-                    img.Data[y, x, 0] = (byte)Math.Round(gradient);
                 }
             }
-            return (img, angleImg, gradients);
+            return (fyChannel, fxChannel, gradients);
         }
+
         public static (Image<Gray, byte>, Image<Bgr, byte>, double[,]) DirectiiVariatiiMaxim(Image<Bgr, byte> image, int tMin)
         {
             var blueImage = new Image<Gray, byte>(image.Size);
@@ -166,43 +144,52 @@ namespace Algorithms.Sections
             var gradients = new double[image.Height, image.Width];
             var angleImage = new Image<Bgr, byte>(image.Size);
             var gradientImg = new Image<Gray, byte>(image.Size);
-            (var blueGradientImg, var blueAngleImage, var blueGradients) = Sobel(blueImage, tMin);
-            (var greenGradientImg, var greenAngleImage, var greenGradients) = Sobel(greenImage, tMin);
-            (var redGradientImg, var redAngleImage, var redGradients) = Sobel(redImage, tMin);
+            (var fyB, var fxB, var _) = SobelChannel(blueImage, tMin);
+            (var fyG, var fxG, var _) = SobelChannel(greenImage, tMin);
+            (var fyR, var fxR, var _) = SobelChannel(redImage, tMin);
+
+            double[,] fxxMatrix = new double[image.Height, image.Width];
+            double[,] fyyMatrix = new double[image.Height, image.Width];
+            double[,] fxyMatrix = new double[image.Height, image.Width];
+
+            double[,] lambda1Matrix = new double[image.Height, image.Width];
 
 
             for (int y = 0; y < image.Height; y++)
             {
                 for (int x = 0; x < image.Width; x++)
                 {
+                    var fxx = fxB[y, x] * fxB[y, x] + fxG[y, x] * fxG[y, x] + fxR[y, x] * fxR[y, x];
+                    var fyy = fyB[y, x] * fyB[y, x] + fyG[y, x] * fyG[y, x] + fyR[y, x] * fyR[y, x];
+                    var fxy = fxB[y, x] * fyB[y, x] + fxG[y, x] * fyG[y, x] + fxR[y, x] * fyR[y, x];
 
-                    var blueGradient = blueGradients[y, x];
-                    var greenGradient = greenGradients[y, x];
-                    var redGradient = redGradients[y, x];
+                    fxxMatrix[y, x] = fxx;
+                    fyyMatrix[y, x] = fyy;
+                    fxyMatrix[y, x] = fxy;
 
-                    var maxGradient = Math.Max(Math.Max(blueGradient, greenGradient), redGradient);
-                    gradients[y, x] = maxGradient;
+                    var sqrt = Math.Sqrt(Math.Pow(fxx - fyy, 2) + 4 * fxy * fxy);
+                    var lambda = (fxx + fyy + sqrt) / 2;
 
-                    if (maxGradient >= tMin)
+                    lambda1Matrix[y, x] = lambda;
+
+                    var gradient = Math.Sqrt(lambda1Matrix[y, x]);
+                    gradients[y, x] = gradient;
+
+                    if (gradients[y, x] >= tMin)
                     {
-                        if (blueGradient == maxGradient)
+                        if ((fxxMatrix[y, x] - fyyMatrix[y, x]) == 0)
                         {
-                            angleImage.Data[y, x, 0] = blueAngleImage.Data[y, x, 0];
-                            angleImage.Data[y, x, 1] = blueAngleImage.Data[y, x, 1];
-                            angleImage.Data[y, x, 2] = blueAngleImage.Data[y, x, 2];
+                            angleImage.Data[y, x, 0] = 0;
+                            angleImage.Data[y, x, 1] = 0;
+                            angleImage.Data[y, x, 2] = 255;
                         }
-                        else if (greenGradient == maxGradient)
-                        {
-                            angleImage.Data[y, x, 0] = greenAngleImage.Data[y, x, 0];
-                            angleImage.Data[y, x, 1] = greenAngleImage.Data[y, x, 1];
-                            angleImage.Data[y, x, 2] = greenAngleImage.Data[y, x, 2];
-                        }
-                        else
-                        {
-                            angleImage.Data[y, x, 0] = redAngleImage.Data[y, x, 0];
-                            angleImage.Data[y, x, 1] = redAngleImage.Data[y, x, 1];
-                            angleImage.Data[y, x, 2] = redAngleImage.Data[y, x, 2];
-                        }
+                        //TO Check and reevaluate
+                        var phi = Math.Atan(2 * fxy / (fxx - fyy));
+
+                        var angle = MapDirection(phi);
+                        angleImage.Data[y, x, 0] = angle[0];
+                        angleImage.Data[y, x, 1] = angle[1];
+                        angleImage.Data[y, x, 2] = angle[2];
                     }
                     else
                     {
@@ -210,8 +197,7 @@ namespace Algorithms.Sections
                         angleImage.Data[y, x, 1] = 0;
                         angleImage.Data[y, x, 2] = 0;
                     }
-
-                    gradientImg.Data[y, x, 0] = (byte)Math.Round(maxGradient);
+                    gradientImg.Data[y, x, 0] = (byte)Math.Round(gradients[y, x]);
                 }
             }
 

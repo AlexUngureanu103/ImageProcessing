@@ -1160,8 +1160,6 @@ namespace Framework.ViewModel
             }
             else if (DataProvider.ColorInitialImage != null)
             {
-                MessageBox.Show("Please convert image to grayscale first!");
-
                 var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
                 var (_, angleImage, gradients) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
 
@@ -1169,7 +1167,7 @@ namespace Framework.ViewModel
                 DataProvider.GrayProcessedImage = secondImg;
 
 
-                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
             }
         }
 
