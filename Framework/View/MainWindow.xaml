@@ -197,7 +197,7 @@
                 <MenuItem Header="Spline Tool"
                           Foreground="#1E1E1E"
                           Command="{Binding Path=MenuCommands.SplineToolCommand}"/>
-                
+
             </MenuItem>
 
             <MenuItem Header="Thresholding"
@@ -208,7 +208,7 @@
                       Command="{Binding Path=MenuCommands.ThresholdingCommand}"
                       CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                
+
                 <MenuItem Header="Triangle Binarization"
                       Command="{Binding Path=MenuCommands.TriangleThresholdingCommand}"
                       CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
@@ -231,7 +231,7 @@
                           Foreground="#1E1E1E"
                           Command="{Binding Path=MenuCommands.ClosingGrayCommand}"
                           CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
-                
+
             </MenuItem>
 
             <MenuItem Header="Morphological operations"
@@ -243,26 +243,27 @@
                           Foreground="#1E1E1E"
                           Command="{Binding Path=MenuCommands.ClosingGrayCommand}"
                           CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
-                
+
             </MenuItem>
 
             <MenuItem Header="Geometric transformations"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
 
+                <MenuItem Header="Deformare Sferica"
+                      Foreground="#1E1E1E"
+                      Command="{Binding Path=MenuCommands.DeformareSfericaCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
                 <MenuItem Header="Rotate"
                       Foreground="#1E1E1E">
                     <MenuItem Header="Clockwise"
                       Command="{Binding Path=MenuCommands.RotateClockwiseCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                    </MenuItem>
                     <MenuItem Header=" Anti-clockwise."
                       Command="{Binding Path=MenuCommands.RotateAntiClockwiseCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
-
-                    </MenuItem>
-
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
                 </MenuItem>
 
             </MenuItem>

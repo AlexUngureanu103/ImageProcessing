@@ -1022,6 +1022,52 @@ namespace Framework.ViewModel
         #endregion
 
         #region Geometric transformations
+
+        #region Deformare sferica
+
+
+        private ICommand _deformareSfericaCommand;
+        public ICommand DeformareSfericaCommand
+        {
+            get
+            {
+                if (_deformareSfericaCommand == null)
+                {
+                    _deformareSfericaCommand = new RelayCommand(DeformareSferica);
+                }
+                return _deformareSfericaCommand;
+            }
+        }
+
+        private void DeformareSferica(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image ! Deformare sferica.");
+                return;
+            }
+
+            var diaglogBox = new DialogBox(_mainVM, new List<string> { "Indice de reflexie", "Raza lentilei" });
+            diaglogBox.ShowDialog();
+
+            var values = diaglogBox.GetValues();
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                DataProvider.GrayProcessedImage = GeometricTransformations.SphericalDeformation(DataProvider.GrayInitialImage, values[0], values[1]);
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                DataProvider.ColorProcessedImage = GeometricTransformations.SphericalDeformation(DataProvider.ColorInitialImage, values[0], values[1]);
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+
+        }
+
+        #endregion
         #endregion
 
         #region Segmentation
