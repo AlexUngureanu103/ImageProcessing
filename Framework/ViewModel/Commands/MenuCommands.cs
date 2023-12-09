@@ -1309,7 +1309,6 @@ namespace Framework.ViewModel
                 return;
             }
 
-
             DataProvider.GrayProcessedImage = null;
             DataProvider.ColorProcessedImage = null;
 

@@ -27,7 +27,6 @@ namespace Algorithms.Sections
 
             var kernelOffset = 1;
 
-
             for (int y = kernelOffset; y < image.Height - kernelOffset; y++)
             {
                 for (int x = kernelOffset; x < image.Width - kernelOffset; x++)
@@ -60,7 +59,6 @@ namespace Algorithms.Sections
                         {
                             var direction = Math.Atan(fyValue / fxValue);
                             var angle = MapDirection(direction);
-
                             angleImg.Data[y, x, 0] = angle[0];
                             angleImg.Data[y, x, 1] = angle[1];
                             angleImg.Data[y, x, 2] = angle[2];
@@ -128,25 +126,13 @@ namespace Algorithms.Sections
 
         public static (Image<Gray, byte>, Image<Bgr, byte>, double[,]) DirectiiVariatiiMaxim(Image<Bgr, byte> image, int tMin)
         {
-            var blueImage = new Image<Gray, byte>(image.Size);
-            var greenImage = new Image<Gray, byte>(image.Size);
-            var redImage = new Image<Gray, byte>(image.Size);
-
-            for (int y = 0; y < image.Size.Height; y++)
-            {
-                for (int x = 0; x < image.Size.Width; x++)
-                {
-                    blueImage.Data[y, x, 0] = image.Data[y, x, 0];
-                    greenImage.Data[y, x, 0] = image.Data[y, x, 1];
-                    redImage.Data[y, x, 0] = image.Data[y, x, 2];
-                }
-            }
             var gradients = new double[image.Height, image.Width];
             var angleImage = new Image<Bgr, byte>(image.Size);
             var gradientImg = new Image<Gray, byte>(image.Size);
-            (var fyB, var fxB, var _) = SobelChannel(blueImage, tMin);
-            (var fyG, var fxG, var _) = SobelChannel(greenImage, tMin);
-            (var fyR, var fxR, var _) = SobelChannel(redImage, tMin);
+
+            (var fyB, var fxB, var _) = SobelChannel(image[0], tMin);
+            (var fyG, var fxG, var _) = SobelChannel(image[1], tMin);
+            (var fyR, var fxR, var _) = SobelChannel(image[2], tMin);
 
             double[,] fxxMatrix = new double[image.Height, image.Width];
             double[,] fyyMatrix = new double[image.Height, image.Width];
@@ -154,8 +140,7 @@ namespace Algorithms.Sections
 
             double[,] lambda1Matrix = new double[image.Height, image.Width];
 
-
-            for (int y = 0; y < image.Height; y++)
+            Parallel.For(0, image.Height, y =>
             {
                 for (int x = 0; x < image.Width; x++)
                 {
@@ -183,8 +168,7 @@ namespace Algorithms.Sections
                             angleImage.Data[y, x, 1] = 0;
                             angleImage.Data[y, x, 2] = 255;
                         }
-                        //TO Check and reevaluate
-                        var phi = Math.Atan(2 * fxy / (fxx - fyy));
+                        var phi = Math.Atan2(2 * fxy, (fxx - fyy)) / 2;
 
                         var angle = MapDirection(phi);
                         angleImage.Data[y, x, 0] = angle[0];
@@ -199,7 +183,7 @@ namespace Algorithms.Sections
                     }
                     gradientImg.Data[y, x, 0] = (byte)Math.Round(gradients[y, x]);
                 }
-            }
+            });
 
             return (gradientImg, angleImage, gradients);
         }
