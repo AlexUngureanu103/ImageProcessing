@@ -94,37 +94,39 @@ namespace Algorithms.Sections
                     var xInverse = Math.Max(0, x0 - z * Math.Tan(betaX));
                     var yInverse = Math.Max(0, y0 - z * Math.Tan(betaY));
 
-                    xInverse = Math.Round(xInverse);
-                    yInverse = Math.Round(yInverse);
-
                     xInverse = Math.Min(xInverse, image.Width - 1);
                     yInverse = Math.Min(yInverse, image.Height - 1);
 
-                    var x1 = (int)Math.Floor(xInverse);
-                    var y1 = (int)Math.Floor(yInverse);
-                    var x2 = x1 + 1;
-                    var y2 = y1 + 1;
-
-                    var weightX2 = xInverse - x1;
-                    var weightX1 = 1 - weightX2;
-                    var weightY2 = yInverse - y1;
-                    var weightY1 = 1 - weightY2;
-
-                    x1 = Math.Max(0, Math.Min(x1, image.Width - 1));
-                    y1 = Math.Max(0, Math.Min(y1, image.Height - 1));
-                    x2 = Math.Max(0, Math.Min(x2, image.Width - 1));
-                    y2 = Math.Max(0, Math.Min(y2, image.Height - 1));
-
-                    var pixelValue = weightX1 * weightY1 * image.Data[y1, x1, 0] +
-                                     weightX2 * weightY1 * image.Data[y1, x2, 0] +
-                                     weightX1 * weightY2 * image.Data[y2, x1, 0] +
-                                     weightX2 * weightY2 * image.Data[y2, x2, 0];
-
-                    pixelData[y, x] = (byte)pixelValue;
+                    pixelData[y, x] = (byte)BiliniarInterpolation(image, xInverse, yInverse);
                 }
             });
 
             return pixelData;
+        }
+
+        private static double BiliniarInterpolation(Image<Gray, byte> image, double xInverse, double yInverse)
+        {
+            var x1 = (int)Math.Floor(xInverse);
+            var y1 = (int)Math.Floor(yInverse);
+            var x2 = x1 + 1;
+            var y2 = y1 + 1;
+
+            var weightX2 = xInverse - x1;
+            var weightX1 = 1 - weightX2;
+            var weightY2 = yInverse - y1;
+            var weightY1 = 1 - weightY2;
+
+            x1 = Math.Max(0, Math.Min(x1, image.Width - 1));
+            y1 = Math.Max(0, Math.Min(y1, image.Height - 1));
+            x2 = Math.Max(0, Math.Min(x2, image.Width - 1));
+            y2 = Math.Max(0, Math.Min(y2, image.Height - 1));
+
+            var pixelValue = weightX1 * weightY1 * image.Data[y1, x1, 0] +
+                             weightX2 * weightY1 * image.Data[y1, x2, 0] +
+                             weightX1 * weightY2 * image.Data[y2, x1, 0] +
+                             weightX2 * weightY2 * image.Data[y2, x2, 0];
+
+            return pixelValue;
         }
 
         public static Image<Bgr, byte> SphericalDeformation(Image<Bgr, byte> image, double reflectionIndex, double rMax)
