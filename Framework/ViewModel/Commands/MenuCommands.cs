@@ -920,6 +920,8 @@ namespace Framework.ViewModel
 
         #region Filters
 
+        #region Median vectorial filter
+
         private ICommand _filtrulMedianVectorialCommand;
         public ICommand FiltrulMedianVectorialCommand
         {
@@ -969,6 +971,384 @@ namespace Framework.ViewModel
                 ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
             }
         }
+
+        #endregion
+
+        #region Gauss filter
+
+        private ICommand _gaussFilterCommand;
+        public ICommand GaussFilterCommand
+        {
+            get
+            {
+                if (_gaussFilterCommand == null)
+                {
+                    _gaussFilterCommand = new RelayCommand(GaussFilter);
+                }
+                return _gaussFilterCommand;
+            }
+        }
+
+        private void GaussFilter(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image ! Gauss Filter");
+                return;
+            }
+
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                DataProvider.GrayProcessedImage = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                DataProvider.ColorProcessedImage = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+        }
+
+        #endregion
+
+        #region Gradient magnitude image
+
+        private ICommand _gradientMagnitudeImageCommand;
+        public ICommand GradientMagnitudeImageCommand
+        {
+            get
+            {
+                if (_gradientMagnitudeImageCommand == null)
+                {
+                    _gradientMagnitudeImageCommand = new RelayCommand(GradientMagnitudeImage);
+                }
+                return _gradientMagnitudeImageCommand;
+            }
+        }
+
+        private void GradientMagnitudeImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image GradientMagnitudeImage!");
+                return;
+            }
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (gradientImage, _, _) = Filters.Sobel(img, (byte)values[0]);
+
+                DataProvider.GrayProcessedImage = gradientImage;
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+
+                var (gradientImage, _, _) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                DataProvider.GrayInitialImage = gradientImage;
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayInitialImage);
+            }
+        }
+
+        #endregion
+
+        #region Angle Image
+
+        private ICommand _angleImageCommand;
+        public ICommand AngleImageCommand
+        {
+            get
+            {
+                if (_angleImageCommand == null)
+                {
+                    _angleImageCommand = new RelayCommand(AngleImage);
+                }
+                return _angleImageCommand;
+            }
+        }
+
+        private void AngleImage(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image Angle Image!");
+                return;
+            }
+
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, _) = Filters.Sobel(img, (byte)values[0]);
+
+                DataProvider.ColorProcessedImage = angleImage;
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, _) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                DataProvider.ColorProcessedImage = angleImage;
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+        }
+
+        #endregion
+
+        #region NonmaximumSuppression
+
+        private ICommand _nonmaximumSuppressionCommand;
+        public ICommand NonmaximumSuppressionCommand
+        {
+            get
+            {
+                if (_nonmaximumSuppressionCommand == null)
+                {
+                    _nonmaximumSuppressionCommand = new RelayCommand(NonmaximumSuppression);
+                }
+                return _nonmaximumSuppressionCommand;
+            }
+        }
+
+        private void NonmaximumSuppression(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image NonmaximumSuppression!");
+                return;
+            }
+
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.Sobel(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+                DataProvider.GrayProcessedImage = secondImg;
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+                DataProvider.GrayProcessedImage = secondImg;
+
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+        }
+
+        #endregion
+
+        #region HysteresisThresholding
+
+        private ICommand _hysteresisThresholdingCommand;
+        public ICommand HysteresisThresholdingCommand
+        {
+            get
+            {
+                if (_hysteresisThresholdingCommand == null)
+                {
+                    _hysteresisThresholdingCommand = new RelayCommand(HysteresisThresholding);
+                }
+                return _hysteresisThresholdingCommand;
+            }
+        }
+
+        private void HysteresisThresholding(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image HysteresisThresholding!");
+                return;
+            }
+
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1", "T2" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
+            if (values[0] > values[1])
+            {
+                MessageBox.Show("T1 must be smaller than T2");
+                return;
+            }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.Sobel(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+
+                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+
+                DataProvider.GrayProcessedImage = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+        }
+        #endregion
+
+        #region CannyRGB EmguCV
+
+        private ICommand _cannyRGBEmguCVCommand;
+        public ICommand CannyRGBEmguCVCommand
+        {
+            get
+            {
+                if (_cannyRGBEmguCVCommand == null)
+                {
+                    _cannyRGBEmguCVCommand = new RelayCommand(CannyRGBEmguCV);
+                }
+                return _cannyRGBEmguCVCommand;
+            }
+        }
+
+        private void CannyRGBEmguCV(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image  CannyRGBEmguCV!");
+                return;
+            }
+
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1", "T2" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
+            if (values[0] > values[1])
+            {
+                MessageBox.Show("T1 must be smaller than T2");
+                return;
+            }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                var image = new Image<Gray, byte>(DataProvider.GrayInitialImage.Bitmap);
+                CvInvoke.Canny(DataProvider.GrayInitialImage, image, values[0], values[1]);
+                DataProvider.GrayProcessedImage = image;
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                var image = new Image<Bgr, byte>(DataProvider.ColorInitialImage.Bitmap);
+                CvInvoke.Canny(DataProvider.ColorInitialImage, image, values[0], values[1]);
+                DataProvider.ColorProcessedImage = image;
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+        }
+
+        #endregion
+
+        #region CannyRGB
+
+        private ICommand _cannyRGBCommand;
+        public ICommand CannyRGBCommand
+        {
+            get
+            {
+                if (_cannyRGBCommand == null)
+                {
+                    _cannyRGBCommand = new RelayCommand(CannyRGB);
+                }
+                return _cannyRGBCommand;
+            }
+        }
+
+        private void CannyRGB(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image  CannyRGB!");
+                return;
+            }
+
+            DataProvider.GrayProcessedImage = null;
+            DataProvider.ColorProcessedImage = null;
+
+            var sliderDialogBox = new SliderDialogBox(_mainVM, new List<string> { "T1", "T2" });
+            sliderDialogBox.ShowDialog();
+            var values = sliderDialogBox.GetValues();
+            if (values[0] > values[1])
+            {
+                MessageBox.Show("T1 must be smaller than T2");
+                return;
+            }
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                var img = DataProvider.GrayInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.Sobel(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+
+                var hysteresisImg = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
+
+                DataProvider.GrayProcessedImage = Tools.Thresholding(hysteresisImg, values[1]);
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                var img = DataProvider.ColorInitialImage.SmoothGaussian(5, 5, 1, 1);
+                var (_, angleImage, gradients) = Filters.DirectiiVariatiiMaxim(img, (byte)values[0]);
+
+                var secondImg = Filters.NonMaximaSupression(gradients, angleImage);
+
+                var hysteresisImg = Thresholding.HysteresisThresholding(secondImg, (byte)values[0], (byte)values[1]);
+
+                DataProvider.GrayProcessedImage = Tools.Thresholding(hysteresisImg, values[1]);
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+        }
+
+        #endregion
 
         #endregion
 
@@ -1022,6 +1402,52 @@ namespace Framework.ViewModel
         #endregion
 
         #region Geometric transformations
+
+        #region Deformare sferica
+
+
+        private ICommand _deformareSfericaCommand;
+        public ICommand DeformareSfericaCommand
+        {
+            get
+            {
+                if (_deformareSfericaCommand == null)
+                {
+                    _deformareSfericaCommand = new RelayCommand(DeformareSferica);
+                }
+                return _deformareSfericaCommand;
+            }
+        }
+
+        private void DeformareSferica(object parameter)
+        {
+            if (InitialImage == null)
+            {
+                MessageBox.Show("Please add an image ! Deformare sferica.");
+                return;
+            }
+
+            var diaglogBox = new DialogBox(_mainVM, new List<string> { "Indice de reflexie", "Raza lentilei" });
+            diaglogBox.ShowDialog();
+
+            var values = diaglogBox.GetValues();
+
+            if (DataProvider.GrayInitialImage != null)
+            {
+                DataProvider.GrayProcessedImage = GeometricTransformations.SphericalDeformation(DataProvider.GrayInitialImage, values[0], values[1]);
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.GrayProcessedImage);
+            }
+            else if (DataProvider.ColorInitialImage != null)
+            {
+                DataProvider.ColorProcessedImage = GeometricTransformations.SphericalDeformation(DataProvider.ColorInitialImage, values[0], values[1]);
+
+                ProcessedImage = ImageConverter.Convert(DataProvider.ColorProcessedImage);
+            }
+
+        }
+
+        #endregion
         #endregion
 
         #region Segmentation

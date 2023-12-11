@@ -30,10 +30,15 @@ namespace Algorithms.Sections
                 };
             }
 
-            Parallel.For(kernelOffset, img.Height - kernelOffset, y =>
+            Parallel.For(0, img.Height - 0, y =>
             {
-                for (int x = kernelOffset; x < img.Width - kernelOffset; x++)
+                for (int x = 0; x < img.Width - 0; x++)
                 {
+                    if (x - kernelOffset <= 0 || y - kernelOffset <= 0 || x + kernelOffset >= img.Width - 1 || y + kernelOffset >= img.Height - 1)
+                    {
+                        img.Data[y, x, 0] = image.Data[y, x, 0];
+                        continue;
+                    }
                     int maxBgr = 0;
                     for (int t = -kernelOffset; t < kernelOffset; t++)
                     {
@@ -70,10 +75,15 @@ namespace Algorithms.Sections
                 };
             }
 
-            Parallel.For(kernelOffset, img.Height - kernelOffset, y =>
+            Parallel.For(0, img.Height - 0, y =>
             {
-                for (int x = kernelOffset; x < img.Width - kernelOffset; x++)
+                for (int x = 0; x < img.Width - 0; x++)
                 {
+                    if (x - kernelOffset <= 0 || y - kernelOffset <= 0 || x + kernelOffset >= img.Width - 1 || y + kernelOffset >= img.Height - 1)
+                    {
+                        img.Data[y, x, 0] = image.Data[y, x, 0];
+                        continue;
+                    }
                     int minBgr = 255;
                     for (int t = -kernelOffset; t < kernelOffset; t++)
                     {

@@ -197,7 +197,7 @@
                 <MenuItem Header="Spline Tool"
                           Foreground="#1E1E1E"
                           Command="{Binding Path=MenuCommands.SplineToolCommand}"/>
-                
+
             </MenuItem>
 
             <MenuItem Header="Thresholding"
@@ -208,7 +208,7 @@
                       Command="{Binding Path=MenuCommands.ThresholdingCommand}"
                       CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                
+
                 <MenuItem Header="Triangle Binarization"
                       Command="{Binding Path=MenuCommands.TriangleThresholdingCommand}"
                       CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
@@ -221,17 +221,57 @@
                 <MenuItem Header="Low-pass"
                           Foreground="#1E1E1E">
 
+                    <MenuItem Header="Filtrul median vectorial"
+                          Foreground="#1E1E1E"
+                          Command="{Binding Path=MenuCommands.FiltrulMedianVectorialCommand}"
+                          CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
+                    <MenuItem Header="Gauss Filter"
+                          Foreground="#1E1E1E"
+                          Command="{Binding Path=MenuCommands.GaussFilterCommand}"
+                          CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
                 </MenuItem>
                 <MenuItem Header="High-pass"
                           Foreground="#1E1E1E">
 
+
+                    <MenuItem Header="Canny RGB"
+                          Foreground="#1E1E1E">
+                        <MenuItem Header="Gradient magnitude image"
+                              Foreground="#1E1E1E"
+                              Command="{Binding Path=MenuCommands.GradientMagnitudeImageCommand}"
+                              CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
+                        <MenuItem Header="Angle image"
+                              Foreground="#1E1E1E"
+                                Command="{Binding Path=MenuCommands.AngleImageCommand}"
+                                CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
+                        <MenuItem Header="Non-maximum suppression"
+                                Foreground="#1E1E1E"
+                                Command="{Binding Path=MenuCommands.NonmaximumSuppressionCommand}"
+                                CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
+                        <MenuItem Header="Hysteresis thresholding"
+                                Foreground="#1E1E1E"
+                                Command="{Binding Path=MenuCommands.HysteresisThresholdingCommand}"
+                                CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
+
+                        <MenuItem Header="Canny RGB"
+                                Foreground="#1E1E1E"
+                                Command="{Binding Path=MenuCommands.CannyRGBCommand}"
+                                CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+                        
+                        <MenuItem Header="Canny RGB EmguCV"
+                                Foreground="#1E1E1E"
+                                Command="{Binding Path=MenuCommands.CannyRGBEmguCVCommand}"
+                                CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+                    </MenuItem>
+
                 </MenuItem>
 
-                <MenuItem Header="Filtrul median vectorial"
-                          Foreground="#1E1E1E"
-                          Command="{Binding Path=MenuCommands.ClosingGrayCommand}"
-                          CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
-                
             </MenuItem>
 
             <MenuItem Header="Morphological operations"
@@ -243,26 +283,27 @@
                           Foreground="#1E1E1E"
                           Command="{Binding Path=MenuCommands.ClosingGrayCommand}"
                           CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
-                
+
             </MenuItem>
 
             <MenuItem Header="Geometric transformations"
                       Background="{Binding Path=Theme.MenuItemBackgroundColor}"
                       Foreground="{Binding Path=Theme.MenuItemForegroundColor}">
 
+                <MenuItem Header="Deformare Sferica"
+                      Foreground="#1E1E1E"
+                      Command="{Binding Path=MenuCommands.DeformareSfericaCommand}"
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
+
                 <MenuItem Header="Rotate"
                       Foreground="#1E1E1E">
                     <MenuItem Header="Clockwise"
                       Command="{Binding Path=MenuCommands.RotateClockwiseCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
 
-                    </MenuItem>
                     <MenuItem Header=" Anti-clockwise."
                       Command="{Binding Path=MenuCommands.RotateAntiClockwiseCommand}"
-                      CommandParameter="{Binding ElementName=canvasProcessedImage}">
-
-                    </MenuItem>
-
+                      CommandParameter="{Binding ElementName=canvasProcessedImage}"/>
                 </MenuItem>
 
             </MenuItem>

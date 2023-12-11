@@ -6,6 +6,53 @@ namespace Algorithms.Sections
 {
     public class Thresholding
     {
+        public static Image<Gray, byte> HysteresisThresholding(Image<Gray, byte> image, int tMin, int tMax)
+        {
+            var img = new Image<Gray, byte>(image.Size);
+
+            for (int y = 0; y < image.Size.Height; y++)
+                for (int x = 0; x < image.Size.Width; x++)
+                {
+                    if (image.Data[y, x, 0] < tMin)
+                    {
+                        img.Data[y, x, 0] = 0;
+                    }
+                    else if (image.Data[y, x, 0] > tMax)
+                    {
+                        img.Data[y, x, 0] = 255;
+                    }
+                    else if (ExploreNeighbours(image, x, y, tMax))
+                    {
+                        img.Data[y, x, 0] = 255;
+                    }
+                    else
+                    {
+                        img.Data[y, x, 0] = image.Data[y, x, 0];
+                    }
+                }
+
+            return img;
+        }
+
+        public static bool ExploreNeighbours(Image<Gray, byte> image, int x, int y, int tMax)
+        {
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (y + i < 0 || y + i >= image.Size.Height || x + j < 0 || x + j >= image.Size.Width)
+                    {
+                        continue;
+                    }
+                    else if (image.Data[y + i, x + j, 0] >= tMax)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public static Image<Gray, byte> TriangleThresholding(Image<Gray, byte> image)
         {
             //double[] testHistogram = {
