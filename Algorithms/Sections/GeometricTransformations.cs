@@ -110,15 +110,15 @@ namespace Algorithms.Sections
 
         private static double BiliniarInterpolation(Image<Gray, byte> image, double xInverse, double yInverse)
         {
-            var x1 = (int)Math.Floor(xInverse);
-            var y1 = (int)Math.Floor(yInverse);
-            var x2 = x1 + 1;
-            var y2 = y1 + 1;
+            var x1 = (int)Math.Floor(xInverse);// [xc]
+            var y1 = (int)Math.Floor(yInverse);// [yc]
+            var x2 = x1 + 1;// ([xc] + 1)
+            var y2 = y1 + 1;// ([yc] + 1)
 
-            var weightX2 = xInverse - x1;
-            var weightX1 = 1 - weightX2;
-            var weightY2 = yInverse - y1;
-            var weightY1 = 1 - weightY2;
+            var weightX2 = xInverse - x1; // {xc}
+            var weightX1 = 1 - weightX2; //  1-{xc}
+            var weightY2 = yInverse - y1; // {yc}
+            var weightY1 = 1 - weightY2; // 1-{yc}
 
             x1 = Math.Max(0, Math.Min(x1, image.Width - 1));
             y1 = Math.Max(0, Math.Min(y1, image.Height - 1));
@@ -129,6 +129,39 @@ namespace Algorithms.Sections
                              weightX2 * weightY1 * image.Data[y1, x2, 0] +
                              weightX1 * weightY2 * image.Data[y2, x1, 0] +
                              weightX2 * weightY2 * image.Data[y2, x2, 0];
+
+            // var pixelValue = (1-{xc})    *   (1-{yc})    *   f(x1,y1) +
+            //                  {xc}        *   (1-{yc})    *   f(x2,y1) +
+            //                  (1-{xc})    *   {yc}        *   f(x1,y2) +
+            //                  {xc}        *   {yc}        *   f(x2,y2)
+
+            //  f (xc , [yc ]) = ({xc})f ([xc ] + 1, [yc ]) + (1 − {xc})f ([xc ], [yc ])
+            //  f (xc , [yc ] + 1) = ({xc})f ([xc ] + 1, [yc ] + 1) + (1 − {xc})f ([xc ], [yc ] + 1)
+
+
+            //  f(xc, yc) = ({ yc})f(xc, [yc] + 1) + (1 − { yc})f(xc, [yc])
+
+
+            // Step: swap formulas from line 138 ans 139 into the formula from line 142
+
+            //  f(xc, yc) =     { yc}       *   (   ({xc})f ([xc ] + 1, [yc ] + 1) + (1 − {xc})f ([xc ], [yc ] + 1)  ) +
+            //                  (1 − { yc}) *   (   ({xc})f ([xc ] + 1, [yc ]) + (1 − {xc})f ([xc ], [yc ])   )
+
+
+            //  STEP: swap [xc] and [yc] with x1 and y1 &
+            //  ([xc] + 1 )and ([yc] + 1) with x2 and y2
+
+            //  f(xc, yc) =     { yc}       *   (   ({xc})f (x2, y2) + (1 − {xc})f (x1, y2)     ) +
+            //                  (1 − { yc}) *   (   ({xc})f (x2, y1) + (1 − {xc})f (x1, y1)     )
+
+            //  STEP complete formulas:
+
+            //  f(xc, yc) =     {yc}        *   {xc}        *    f(x2,y2) +             Line    136
+            //                  {yc}        *   (1-{xc})    *    f(x1,y2) +             Line    135
+            //                  (1-{yc})    *   {xc}        *    f(x2,y1) +             Line    134
+            //                  (1-{yc})    *   (1-{xc})    *    f(x1,y1)               Line    133
+
+
 
             return pixelValue;
         }
