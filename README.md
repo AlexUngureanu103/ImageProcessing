@@ -1,20 +1,10 @@
 # ImageProcessingFramework
 
-### Clonarea proiectului
+### Functionalities
 
-Pentru a putea clona proiectul local se vor executa următorii pași:
-1. Descarcă [GitBash](https://git-scm.com/downloads).
-2. Intră într-un folder și apasă click dreapta pe GitBash here.
-3. Configurează setările globale pentru git executând următoarele comenzi:
+1. Modify the luminosity of an image using an hermite curve.
+2. Image filtering using the Median filter with a 3x3 or 5x5 mask.
+3. Image binarization using the Triangle Algorithm.
+4. Edge detection for grayscale or color images using Canny Algorithm.
+5. Spherical deformation of an image.
 
-```git config --global user.name "name"```
-
-```git config --global user.email "email_adress_used_for_Github@example.com"```
-
-4. Mergi în calculator în locația în care dorești să clonezi proiectul si rulează comanda:
-
-```git clone https://github.com/biancalixandru0/ImageProcessingFramework.git```
-
-### Ghidul de utilizare al framework-ului
-
-Ghidul de utilizare al framework-ului este disponibil in folder-ul root sub denumirea de ImageProcessingFramework.pdf.
